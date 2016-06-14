@@ -1,0 +1,67 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <button id="recognize">Recognize</button>
+
+    <script src="{{ url_for('static', filename='js/zepto.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/recorder.js') }}"></script>
+
+    <script>
+    Zepto(function () {
+        navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+        window.AudioContext = (window.AudioContext || window.webkitAudioContext);
+
+        var audio_context = new window.AudioContext();
+        var recorder;
+
+        function onStreamConnected(stream) {
+            console.log('Connected');
+
+            window.audio_input = audio_context.createMediaStreamSource(stream);
+
+            recorder = new Recorder(window.audio_input);
+            recorder.record();
+
+            console.log('Recording');
+
+            window.setTimeout(function() {
+                recorder.stop();
+
+                console.log('Recording ended');
+
+                recorder.exportWAV(function(sample) {
+                    console.log('Sending');
+
+                    var fd = new FormData();
+                    fd.append('file', sample);
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{ url_for('sample') }}',
+                        data: fd,
+                        processData: false,
+                        contentType: false,
+                        success: function(data) {
+                            console.log('Sending OK');
+                            recorder.clear();
+                        },
+                        error: function(xhr, type) {
+                            console.log('Error sending sample');
+                        }
+                    });
+                });
+            }, 5000);
+        }
+
+        function onStreamError(err) {
+            console.error('Error getting microphone', err);
+        }
+
+        $('button#recognize').on('click', function() {
+            console.log('Getting permission');
+
+            navigator.getUserMedia({audio: true}, onStreamConnected, onStreamError);
+        });
+    });
+    </script>
+{% endblock %}

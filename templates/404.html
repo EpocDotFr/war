@@ -1,0 +1,7 @@
+{% extends 'layout.html' %}
+
+{% block title %}Not found | {{ super() }}{% endblock %}
+
+{% block content %}
+    <p>{% if error.description %}{{ error.description['message'] }}{% else %}Not found.{% endif %}</p>
+{% endblock %}
