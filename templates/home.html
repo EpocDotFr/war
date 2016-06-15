@@ -50,7 +50,7 @@
                         }
                     });
                 });
-            }, 5000);
+            }, {{ config['SAMPLE_DURATION'] * 1000 }});
         }
 
         function onStreamError(err) {
