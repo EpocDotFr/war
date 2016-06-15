@@ -71,4 +71,4 @@ def generate_fingerprint(sample_file_uuid):
     if not os.path.exists(sample_file_path):
         raise Exception('The sample file does not exists anymore.')
 
-    print(acoustid.fingerprint_file(sample_file_path))
+    print(acoustid.fingerprint_file(sample_file_path))  # TODO temporary
