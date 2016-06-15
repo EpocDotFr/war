@@ -1,6 +1,4 @@
 arrow
 click
 Flask
-Jinja2
-Werkzeug
 pyacoustid
