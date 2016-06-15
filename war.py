@@ -34,6 +34,7 @@ def sample():
 
     if not request.is_xhr or not request.files['file']:
         app.logger.error('Not an Ajax request or no sample')
+        status = 400
         result['data']['message'] = 'Invalid request'
 
     try:
@@ -57,11 +58,13 @@ def sample():
         result['data']['recognize_results'] = recognize_results
 
         # TODO end temporary
+        status = 200
     except Exception as e:
         app.logger.error(e)
+        status = 500
         result['data']['message'] = str(e)
 
-    return jsonify(result), 500
+    return jsonify(result), status
 
 
 # Not Found
