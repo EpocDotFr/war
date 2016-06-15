@@ -61,7 +61,7 @@ def sample():
         app.logger.error(e)
         result['data']['message'] = str(e)
 
-    return jsonify(result)
+    return jsonify(result), 500
 
 
 # Not Found
