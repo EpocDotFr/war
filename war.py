@@ -82,6 +82,7 @@ def error_500(error):
 
 # TODO put all functions bellow in a module
 
+
 def get_sample_file_path(sample_file_uuid):
     sample_file_destination = os.path.abspath(app.config['SAMPLES_PATH'])
     sample_file_name = '{}.wav'.format(sample_file_uuid)
@@ -101,7 +102,7 @@ def recognize(sample_file_uuid):
     fingerprint = acoustid.fingerprint_file(sample_file_path)
     
     app.logger.info('Result: {}'.format(fingerprint[1]))
-    app.logger.info('Sending match request to AcoustID');
+    app.logger.info('Sending match request to AcoustID')
     
     lookup_results = acoustid.lookup(app.config['ACOUSTID_API_KEY'], fingerprint[1], fingerprint[0])
     

@@ -1,0 +1,42 @@
+body {
+    background-color: #0c7367;
+}
+
+nav {
+    background-color: #12b2a0;
+    text-align: center;
+}
+
+nav ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    display: inline-block;
+    color: #3e3e3f;
+}
+
+nav a, nav a:visited {
+    color: inherit;
+    text-decoration: none;
+}
+
+header {
+    background-color: #fff;
+}
+
+.content {
+    background-color: #3e3e3f;
+}
+
+footer {
+    text-align: center;
+    color: #93BCB8;
+    font-size: 0.8em;
+    border-top: 1px solid #12b2a0;
+}
+
+footer a, footer a:visited {
+    text-decoration: none;
+    border-bottom: 1px dotted;
+    color: inherit;
+}
