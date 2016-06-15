@@ -13,7 +13,7 @@ def home():
     return render_template('home.html')
 
 
-# Receive and handle the sample WAV file
+# Receive and handle the sample WAV file via AJAX upload
 @app.route('/sample', methods=['POST'])
 def sample():
     result = {
@@ -23,7 +23,7 @@ def sample():
 
     if not request.is_xhr or not request.files['file']:
         result['data']['message'] = 'Bad request.'
-        abort(400, result)  # TODO improve this
+        abort(400, result)  # FIXME improve this to return proper JSON
 
     try:
         sample_file = request.files['file']
@@ -32,14 +32,14 @@ def sample():
 
         sample_file.save(get_sample_file_path(sample_file_uuid))
 
-        # TODO everything after this line is tmeporary
+        # TODO everything after this line is temporary
 
         generate_fingerprint(sample_file_uuid)
 
         # TODO end temporary
     except Exception as e:
         result['data']['message'] = str(e)
-        abort(500, result)  # TODO improve this
+        abort(500, result)  # FIXME improve this to return proper JSON
 
     return jsonify(result)
 
@@ -55,6 +55,7 @@ def error_404(error):
 def error_500(error):
     return render_template('500.html', error=error)
 
+# TODO put all functions bellow in a module
 
 def get_sample_file_path(sample_file_uuid):
     sample_file_destination = os.path.abspath(app.config['SAMPLES_PATH'])
