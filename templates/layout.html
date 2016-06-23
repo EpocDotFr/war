@@ -20,7 +20,7 @@
             <img src="{{ url_for('static', filename='images/logo_128.png') }}" width="128" height="128">
         </div>
         <div class="right">
-            <h1>This is WAR! <small>(Web Audio Recognizer)</small></h1>
+            This is WAR! <small>(Web Audio Recognizer)</small>
         </div>
     </header>
 
@@ -30,7 +30,7 @@
 
     <footer>
         <p><strong>WAR</strong> is kindly brought to you by <a href="http://www.epoc.fr">Epoc</a></p>
-        <p><a href="#">About</a> • <a href="#">FAQ</a></p>
+        <p><a href="{{ url_for('about') }}">About</a> • <a href="{{ url_for('faq') }}">FAQ</a></p>
     </footer>
 </body>
 </html>
