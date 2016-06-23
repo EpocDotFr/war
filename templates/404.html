@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 
-{% block title %}Not found | {{ super() }}{% endblock %}
+{% block title %}Not found • {% endblock %}
 
 {% block content %}
-    <p>{% if error.description %}{{ error.description['message'] }}{% else %}Not found.{% endif %}</p>
+    <p>There's nothing here!</p>
 {% endblock %}

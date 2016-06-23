@@ -83,14 +83,14 @@ def sample():
 @app.errorhandler(404)
 def error_404(error):
     app.logger.warning(error)
-    return render_template('404.html', error=error)
+    return render_template('404.html')
 
 
 # Internal Server Error
 @app.errorhandler(500)
 def error_500(error):
     app.logger.error(error)
-    return render_template('500.html', error=error)
+    return render_template('500.html')
 
 # TODO put all functions bellow in a module
 
