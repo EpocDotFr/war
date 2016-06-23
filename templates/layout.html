@@ -17,20 +17,25 @@
 <body>
     <header>
         <div class="left">
-            <img src="{{ url_for('static', filename='images/logo_128.png') }}" width="128" height="128">
+            <a href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='images/logo_128.png') }}" width="128" height="128"></a>
         </div>
         <div class="right">
-            This is WAR! <small>(Web Audio Recognizer)</small>
+            <span class="title">This is WAR!</span>
+            <span class="subtitle">(Web Audio Recognizer)</span>
         </div>
     </header>
+
+    <div class="separator"></div>
 
     <div class="content">
         {% block content %} {% endblock %}
     </div>
 
+    <div class="separator"></div>
+
     <footer>
-        <p><strong>WAR</strong> is kindly brought to you by <a href="http://www.epoc.fr">Epoc</a></p>
-        <p><a href="{{ url_for('about') }}">About</a> • <a href="{{ url_for('faq') }}">FAQ</a></p>
+        <p><strong>WAR</strong> is kindly brought to you by <a href="http://www.epoc.fr">Epoc</a> • Logo courtesy of <a href="http://www.webalys.com/">Webalys</a></p>
+        <p><a href="{{ url_for('faq') }}">FAQ</a></p>
     </footer>
 </body>
 </html>
