@@ -2,30 +2,25 @@ body {
     background-color: #0c7367;
 }
 
-nav {
-    background-color: #12b2a0;
-    text-align: center;
-}
-
-nav ul {
-    margin: 0;
-    padding: 0;
-    list-style-type: none;
-    display: inline-block;
-    color: #3e3e3f;
-}
-
-nav a, nav a:visited {
-    color: inherit;
-    text-decoration: none;
-}
-
 header {
     background-color: #fff;
+    display: table;
+    width: 100%;
+}
+
+header .left,
+header .right {
+    display: table-cell;
+    vertical-align: top;
+}
+
+header .left {
+    text-align: right;
 }
 
 .content {
-    background-color: #3e3e3f;
+    border-top: 1px solid #000;
+    background-color: #505050;
 }
 
 footer {
@@ -35,8 +30,14 @@ footer {
     border-top: 1px solid #12b2a0;
 }
 
-footer a, footer a:visited {
+footer a,
+footer a:visited {
     text-decoration: none;
     border-bottom: 1px dotted;
     color: inherit;
+}
+
+footer a:hover,
+footer a:focus {
+    border-bottom: 1px solid;
 }

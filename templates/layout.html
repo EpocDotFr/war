@@ -16,21 +16,21 @@
 </head>
 <body>
     <header>
-        <img src="{{ url_for('static', filename='images/logo_128.png') }}" width="128" height="128">
+        <div class="left">
+            <img src="{{ url_for('static', filename='images/logo_128.png') }}" width="128" height="128">
+        </div>
+        <div class="right">
+            <h1>This is WAR! <small>(Web Audio Recognizer)</small></h1>
+        </div>
     </header>
-
-    <nav>
-        <ul>
-            <li>About</li>
-        </ul>
-    </nav>
 
     <div class="content">
         {% block content %} {% endblock %}
     </div>
 
     <footer>
-        <p>WAR is brought to you by <a href="http://www.epoc.fr">Epoc</a></p>
+        <p><strong>WAR</strong> is kindly brought to you by <a href="http://www.epoc.fr">Epoc</a></p>
+        <p><a href="#">About</a> • <a href="#">FAQ</a></p>
     </footer>
 </body>
 </html>
