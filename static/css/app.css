@@ -23,13 +23,6 @@ a:focus {
     border-bottom: 1px solid;
 }
 
-.separator {
-    border-top: 1px solid #000;
-    border-bottom: 1px solid #12b2a0;
-    background-color: #505050;
-    height: 5px;
-}
-
 /************************************************************************
  * Header */
 
@@ -63,7 +56,7 @@ header .left {
 }
 
 header .right .title {
-    font-size: 40px;
+    font-size: 42px;
     text-shadow: 1px 1px 1px #000;
 }
 
@@ -92,12 +85,21 @@ header .subtitle {
 
 .content h1 {
     margin: 0;
+    margin-bottom: 15px;
     text-shadow: 1px 1px 1px #000;
     border-bottom: 1px solid #008474;
 }
 
 .content h2 {
     text-shadow: 1px 1px 1px #000;
+}
+
+/************************************************************************
+ * Recognize block */
+
+.recognize-block,
+.recognize-block p {
+    text-align: center;
 }
 
 /************************************************************************
@@ -111,22 +113,25 @@ header .subtitle {
 }
 
 .alert-success {
-    background-color: #c5e69e;
-    color: #333;
-    border: 1px solid #217b00;
+    background-color: #83bc66;
+    color: #FFF;
+    border: 1px solid #98c587;
 }
 
 .alert-error {
     background-color: #facb1b;
     color: #333;
-    border: 1px solid #a88405;
+    border: 1px solid #ffe176;
 }
 
 /************************************************************************
  * Footer */
 
 footer {
+    border-top: 1px solid #2C2C2C;
+    border-bottom: 1px solid #12b2a0;
+    background-color: #505050;
     text-align: center;
-    color: #93BCB8;
+    color: #ccc;
     font-size: 14px;
 }

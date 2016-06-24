@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+{% block title %}About • {% endblock %}
+
+{% block content %}
+    <h1>About</h1>
+
+    <p><strong>Web Audio Recognizer</strong> (<strong>WAR</strong>) is a simple web page that allow you to recognize unknown music tracks and get the associated artist and title. Think about a Chazam, but web-based.</p>
+
+    <p>You can either submit an audio file or capture / sing the music via your microphone, or even capture the music currently playing from your speakers (a little bit of configuration is needed for this, see <a href="#">in the FAQ</a>).</p>
+
+    <h2>Author and genesis</h2>
+
+    <p><strong>WAR</strong> was created by <a href="http://www.epoc.fr/">Epoc</a>. He primarly created it for himself, because he was frustated that <a href="http://www.di.fm/">Digitally Imported</a> - a great web radio he listen for years - often play tracks that are mixes. Since mixes are several tracks mixed together in one huge track, you can't get the real tracks name.</p>
+    <p>As he uses several methods at several places to listen to DI, he wanted a system that didn't need to install anything (other than a modern web browser).</p>
+    <p>He also needed that this system searches several audio databases in one time to maximize the chances to get positive matches.</p>
+
+    <h2>Technologies</h2>
+
+    <p><strong>WAR</strong> is rolling on Python.</p>
+{% endblock %}

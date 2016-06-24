@@ -28,6 +28,12 @@ def faq():
     return render_template('faq.html')
 
 
+# About page
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+
 # Receive and handle the sample WAV file via AJAX upload
 @app.route('/sample', methods=['POST'])
 def sample():

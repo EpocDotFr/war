@@ -1,15 +1,19 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+    <h1>This is WAR! <small>(Web Audio Recognizer)</small></h1>
+
     <div class="alert-success">This is done! All right.</div>
     <div class="alert-error">Uh no, something went wrong.</div>
 
-    <p>How would you like to recognize a music track?</p>
+    <div class="recognize-block">
+        <p>How would you like to recognize your music track?</p>
 
-    <p>By recoding</p>
-    <p>By uploading</p>
+        <button id="by-recording">By recording</button>
+        <button id="by-uploading">By uploading</button>
 
-    <button id="recognize">Recognize</button>
+        <p><small>There were 1 506 recognization requests so far.<br>1 147 of them matched, but not the 359 others.</small></p>
+    </div>
 
     <script src="{{ url_for('static', filename='js/zepto.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/recorder.js') }}"></script>
@@ -65,7 +69,7 @@
             console.error('Error getting microphone', err);
         }
 
-        $('button#recognize').on('click', function() {
+        $('button#by-recording').on('click', function() {
             console.log('Getting permission');
 
             navigator.getUserMedia({audio: true}, onStreamConnected, onStreamError);
