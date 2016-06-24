@@ -1,7 +1,9 @@
 body {
     background: #0c7367 url("/static/images/bg.png");
     color: #94EAE3;
-    font-size: 0.9em;
+    font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    line-height: 1.42857143;
+    font-size: 1em;
 }
 
 a, a:visited {
@@ -25,7 +27,7 @@ header {
     width: 100%;
 }
 
-header img {
+header .left img {
     border-radius: 50%;
     background-color: #fff;
 }
@@ -43,20 +45,21 @@ header .left {
 }
 
 header .right {
-    vertical-align: top;
+    margin-top: 20px;
+    vertical-align: middle;
 }
 
-header .title,
-header .subtitle {
+header .right .title,
+header .right .subtitle {
     display: block;
 }
 
-header .title {
-    font-size: 2em;
+header .right .title {
+    font-size: 3em;
 }
 
 header .subtitle {
-    font-size: 0.8em;
+    font-size: 1.1em;
 }
 
 .content {
@@ -66,5 +69,5 @@ header .subtitle {
 footer {
     text-align: center;
     color: #93BCB8;
-    font-size: 0.8em;
+    font-size: 0.9em;
 }
