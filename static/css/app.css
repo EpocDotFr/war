@@ -1,18 +1,24 @@
+
+/************************************************************************
+ * General styles */
+
 body {
     background: #0c7367 url("/static/images/bg.png");
     color: #94EAE3;
     font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
     line-height: 1.42857143;
-    font-size: 1em;
+    font-size: 16px;
 }
 
-a, a:visited {
+a,
+a:visited {
     text-decoration: none;
     border-bottom: 1px dotted;
     color: inherit;
 }
 
-a:hover, a:focus {
+a:hover,
+a:focus {
     text-decoration: none;
     border-bottom: 1px solid;
 }
@@ -23,6 +29,9 @@ a:hover, a:focus {
     background-color: #505050;
     height: 5px;
 }
+
+/************************************************************************
+ * Header */
 
 header {
     display: table;
@@ -41,6 +50,7 @@ header .right {
     display: table-cell;
     width: 50%;
     padding: 15px;
+    vertical-align: middle;
 }
 
 header .left img {
@@ -50,32 +60,73 @@ header .left img {
 
 header .left {
     text-align: right;
-    vertical-align: bottom;
-}
-
-header .right {
-    vertical-align: middle;
-}
-
-header .right .title,
-header .right .subtitle {
-    display: block;
 }
 
 header .right .title {
-    font-size: 3em;
+    font-size: 40px;
+    text-shadow: 1px 1px 1px #000;
 }
 
 header .subtitle {
-    font-size: 1.1em;
+    font-size: 18px;
 }
 
+/************************************************************************
+ * Content */
+
 .content {
-    padding: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    max-width: 992px;
+    margin: 0 auto;
 }
+
+.content p {
+    text-align: justify;
+}
+
+.content h1,
+.content h2 {
+    text-shadow: 1px 1px 1px #000;
+}
+
+.content h1 {
+    margin: 0;
+    text-shadow: 1px 1px 1px #000;
+    border-bottom: 1px solid #008474;
+}
+
+.content h2 {
+    text-shadow: 1px 1px 1px #000;
+}
+
+/************************************************************************
+ * Alerts */
+
+.alert-success,
+.alert-error {
+    padding: 10px;
+    border-radius: 3px;
+    margin-bottom: 15px;
+}
+
+.alert-success {
+    background-color: #c5e69e;
+    color: #333;
+    border: 1px solid #217b00;
+}
+
+.alert-error {
+    background-color: #facb1b;
+    color: #333;
+    border: 1px solid #a88405;
+}
+
+/************************************************************************
+ * Footer */
 
 footer {
     text-align: center;
     color: #93BCB8;
-    font-size: 0.9em;
+    font-size: 14px;
 }

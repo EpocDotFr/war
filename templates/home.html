@@ -1,6 +1,14 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+    <div class="alert-success">This is done! All right.</div>
+    <div class="alert-error">Uh no, something went wrong.</div>
+
+    <p>How would you like to recognize a music track?</p>
+
+    <p>By recoding</p>
+    <p>By uploading</p>
+
     <button id="recognize">Recognize</button>
 
     <script src="{{ url_for('static', filename='js/zepto.min.js') }}"></script>
