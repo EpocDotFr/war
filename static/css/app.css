@@ -115,13 +115,13 @@ header .subtitle {
 .alert-success {
     background-color: #83bc66;
     color: #FFF;
-    border: 1px solid #98c587;
+    border: 2px solid #446636;
 }
 
 .alert-error {
     background-color: #facb1b;
     color: #333;
-    border: 1px solid #ffe176;
+    border: 2px solid #333;
 }
 
 /************************************************************************
