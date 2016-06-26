@@ -102,20 +102,49 @@ header .subtitle {
     text-align: center;
 }
 
+.recognize-block .choices {
+    display: inline-block;
+}
+
+.recognize-block .choices button {
+    padding: 6px 8px;
+    background-color: #12b2a0;
+    float: left;
+    position: relative;
+    border-top: 1px solid #333;
+    border-bottom: 1px solid #333;
+    border-right: 1px solid #333;
+    border-left: none;
+    cursor: pointer;
+    background: linear-gradient(to bottom,  rgba(251,214,214,1) 0%,rgba(251,199,199,1) 59%,rgba(247,148,147,1) 100%);
+}
+
+.recognize-block .choices button:first-child {
+    border-left: 1px solid #333;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+}
+
+.recognize-block .choices button:last-child {
+    border-right: 1px solid #333;
+    border-bottom-right-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
 /************************************************************************
  * Alerts */
 
 .alert-success,
 .alert-error {
     padding: 10px;
-    border-radius: 3px;
+    border-radius: 5px;
     margin-bottom: 15px;
 }
 
 .alert-success {
     background-color: #83bc66;
     color: #FFF;
-    border: 2px solid #446636;
+    border: 2px solid #89DA69;
 }
 
 .alert-error {

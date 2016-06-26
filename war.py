@@ -1,4 +1,5 @@
-from flask import Flask, render_template, jsonify, request, abort
+from flask import Flask, render_template, jsonify, request
+from werkzeug.utils import secure_filename
 from logging.handlers import RotatingFileHandler
 import os
 import uuid
@@ -44,8 +45,8 @@ def sample():
     
     app.logger.info('New request')
 
-    if not request.is_xhr or not request.files['file']:
-        app.logger.error('Not an Ajax request or no sample')
+    if not request.is_xhr or 'file' not in request.files or request.files['file'] == '':
+        app.logger.error('Invalid sample request')
         status = 400
         result['data']['message'] = 'Invalid request'
 
