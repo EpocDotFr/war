@@ -1,5 +1,4 @@
 from flask import Flask, render_template, jsonify, request
-from werkzeug.utils import secure_filename
 from logging.handlers import RotatingFileHandler
 from acrcloud.recognizer import ACRCloudRecognizer
 import os
