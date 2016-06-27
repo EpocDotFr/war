@@ -47,7 +47,7 @@ def sample():
     app.logger.info('New request')
 
     if not request.is_xhr or 'file' not in request.files or request.files['file'] == '':
-        app.logger.error('Invalid sample request')
+        app.logger.error('Invalid request')
         status = 400
         result['data']['message'] = 'Invalid request'
     else:
@@ -87,7 +87,7 @@ def sample():
             # TODO end temporary
             # -----------------------------------------------------
 
-            status = 200
+            status = 202
         except Exception as e:
             app.logger.error(e)
             status = 500
