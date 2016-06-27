@@ -1,10 +1,11 @@
 from flask import Flask, render_template, jsonify, request
 from werkzeug.utils import secure_filename
 from logging.handlers import RotatingFileHandler
+from acrcloud.recognizer import ACRCloudRecognizer
 import os
 import uuid
-import acoustid
 import logging
+import json
 
 
 app = Flask(__name__)
@@ -49,33 +50,48 @@ def sample():
         app.logger.error('Invalid sample request')
         status = 400
         result['data']['message'] = 'Invalid request'
+    else:
+        try:
+            sample_file = request.files['file']
 
-    try:
-        sample_file = request.files['file']
+            sample_file_uuid = uuid.uuid4()
+            
+            sample_file_path = get_sample_file_path(sample_file_uuid)
+            
+            app.logger.info('Saving sample file to {}'.format(sample_file_path))
 
-        sample_file_uuid = uuid.uuid4()
-        
-        sample_file_path = get_sample_file_path(sample_file_uuid)
-        
-        app.logger.info('Saving sample file to {}'.format(sample_file_path))
+            sample_file.save(sample_file_path)
+            
+            result['result'] = 'success'
+            result['data']['uuid'] = sample_file_uuid
 
-        sample_file.save(sample_file_path)
-        
-        result['result'] = 'success'
-        result['data']['uuid'] = sample_file_uuid
+            # -----------------------------------------------------
+            # TODO everything after this line is temporary
 
-        # TODO everything after this line is temporary
+            # ACRCloud tests
 
-        recognize_results = recognize(sample_file_uuid)
-        
-        result['data']['recognize_results'] = recognize_results
+            config = {
+                    'host': 'eu-west-1.api.acrcloud.com',
+                    'access_key': '572705ff4cb98dd76eede63c7a72d825',
+                    'access_secret': 'vwagGtTe062U3XgqkRhV1Se9FJIC369Wu2Sibb8F',
+                    'debug': False,
+                    'timeout': 10
+            }
 
-        # TODO end temporary
-        status = 200
-    except Exception as e:
-        app.logger.error(e)
-        status = 500
-        result['data']['message'] = str(e)
+            acrcloud = ACRCloudRecognizer(config)
+
+            sample_file_path = get_sample_file_path(sample_file_uuid)
+
+            result['data']['recognize_results'] = json.loads(acrcloud.recognize_by_file(sample_file_path, 0))
+
+            # TODO end temporary
+            # -----------------------------------------------------
+
+            status = 200
+        except Exception as e:
+            app.logger.error(e)
+            status = 500
+            result['data']['message'] = str(e)
 
     return jsonify(result), status
 
@@ -112,14 +128,15 @@ def recognize(sample_file_uuid):
     
     app.logger.info('Fingerprinting {}'.format(sample_file_path))
     
-    fingerprint = acoustid.fingerprint_file(sample_file_path)
+    # FIXME no more used
+    # fingerprint = acoustid.fingerprint_file(sample_file_path)
     
-    app.logger.info('Result: {}'.format(fingerprint[1]))
-    app.logger.info('Sending match request to AcoustID')
+    # app.logger.info('Result: {}'.format(fingerprint[1]))
+    # app.logger.info('Sending match request to AcoustID')
     
-    lookup_results = acoustid.lookup(app.config['ACOUSTID_API_KEY'], fingerprint[1], fingerprint[0])
+    # lookup_results = acoustid.lookup(app.config['ACOUSTID_API_KEY'], fingerprint[1], fingerprint[0])
     
-    if not lookup_results['status'] or lookup_results['status'] != 'ok':
-        raise Exception(lookup_results['message'])
+    # if not lookup_results['status'] or lookup_results['status'] != 'ok':
+    #     raise Exception(lookup_results['message'])
     
-    return lookup_results['results']
+    # return lookup_results['results']

@@ -5,12 +5,7 @@
     <div class="alert-error">Uh no, something went wrong.</div>-->
 
     <div class="recognize-block">
-        <p>How would you like to recognize your music track?</p>
-
-        <div class="choices">
-            <button id="by-recording">By recording</button>
-            <button id="by-uploading">By uploading</button>
-        </div>
+        <p><button id="recognize">Recognize</button></p>
 
         <!--<p><small>There were <strong>1 506</strong> recognition requests so far.<br><strong>1 147</strong> of them matched, but not the <strong>359</strong> others.</small></p>-->
     </div>
@@ -69,7 +64,7 @@
             console.error('Error getting microphone', err);
         }
 
-        $('button#by-recording').on('click', function() {
+        $('button#recognize').on('click', function() {
             console.log('Getting permission');
 
             navigator.getUserMedia({audio: true}, onStreamConnected, onStreamError);

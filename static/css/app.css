@@ -42,7 +42,9 @@ header .left,
 header .right {
     display: table-cell;
     width: 50%;
-    padding: 15px;
+    padding-top: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
     vertical-align: middle;
 }
 
@@ -102,33 +104,14 @@ header .subtitle {
     text-align: center;
 }
 
-.recognize-block .choices {
-    display: inline-block;
-}
-
-.recognize-block .choices button {
-    padding: 6px 8px;
+.recognize-block button {
+    padding: 8px 10px;
     background-color: #12b2a0;
-    float: left;
-    position: relative;
-    border-top: 1px solid #333;
-    border-bottom: 1px solid #333;
-    border-right: 1px solid #333;
-    border-left: none;
+    border: 1px solid #333;
+    border-radius: 5px;
     cursor: pointer;
-    background: linear-gradient(to bottom,  rgba(251,214,214,1) 0%,rgba(251,199,199,1) 59%,rgba(247,148,147,1) 100%);
-}
-
-.recognize-block .choices button:first-child {
-    border-left: 1px solid #333;
-    border-bottom-left-radius: 5px;
-    border-top-left-radius: 5px;
-}
-
-.recognize-block .choices button:last-child {
-    border-right: 1px solid #333;
-    border-bottom-right-radius: 5px;
-    border-top-right-radius: 5px;
+    background: linear-gradient(to bottom, rgba(251,214,214,1) 0%,rgb(245, 226, 226) 59%,rgb(252, 168, 167) 100%);
+    font-size: 20px;
 }
 
 /************************************************************************
