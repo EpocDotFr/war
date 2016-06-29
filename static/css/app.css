@@ -97,6 +97,21 @@ header .subtitle {
 }
 
 /************************************************************************
+ * Buttons */
+
+.button {
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #94EAE3;
+    border: 1px solid #505050;
+}
+
+.button:hover,
+.button:focus {
+    border-color: #46FFD8;
+}
+
+/************************************************************************
  * Recognize block */
 
 .recognize-block,
@@ -106,34 +121,42 @@ header .subtitle {
 
 .recognize-block button {
     padding: 8px 10px;
-    background-color: #12b2a0;
-    border: 1px solid #333;
-    border-radius: 5px;
-    cursor: pointer;
-    background: linear-gradient(to bottom, rgba(251,214,214,1) 0%,rgb(245, 226, 226) 59%,rgb(252, 168, 167) 100%);
     font-size: 20px;
+}
+
+.recognize-block #progress {
+    display: none;
 }
 
 /************************************************************************
  * Alerts */
 
 .alert-success,
-.alert-error {
+.alert-error,
+.alert-info {
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 15px;
+    border-width: 2px;
+    border-style: solid;
 }
 
 .alert-success {
     background-color: #83bc66;
     color: #FFF;
-    border: 2px solid #89DA69;
+    border-color: #89DA69;
 }
 
 .alert-error {
     background-color: #facb1b;
     color: #333;
-    border: 2px solid #333;
+    border-color: #333;
+}
+
+.alert-info {
+    background-color: #5C5C5C;
+    color: #FFF;
+    border-color: #787878;
 }
 
 /************************************************************************

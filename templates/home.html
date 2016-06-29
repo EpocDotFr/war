@@ -1,13 +1,12 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <!--<div class="alert-success">This is done! All right.</div>
-    <div class="alert-error">Uh no, something went wrong.</div>-->
-
     <div class="recognize-block">
         <p>Click the <strong>Recognize</strong> button bellow, give <strong>WAR</strong> the permission to access one of your recording devices, and wait {{ config['SAMPLE_DURATION'] }} seconds for the results!</p>
 
-        <p><button id="recognize">Recognize</button></p>
+        <p><button id="recognize" class="button">Recognize</button></p>
+
+        <div id="progress"></div>
 
         <p><small>There were <strong>1 506</strong> recognition requests so far.<br><strong>1 147</strong> (<strong>76</strong> %) of them matched, but not the <strong>359</strong> (<strong>24</strong> %) others.</small></p>
     </div>
@@ -23,23 +22,24 @@
         var audio_context = new window.AudioContext();
         var recorder;
 
-        function onStreamConnected(stream) {
-            console.log('Connected');
+        var div_progress = $('div#progress');
+        var button_recognize = $('button#recognize');
 
+        function onStreamConnected(stream) {
             window.audio_input = audio_context.createMediaStreamSource(stream);
 
             recorder = new Recorder(window.audio_input);
             recorder.record();
 
-            console.log('Recording');
+            displayStatus('info', 'Recording');
 
             window.setTimeout(function() {
                 recorder.stop();
 
-                console.log('Recording ended');
+                displayStatus('success', 'Recording success');
 
                 recorder.exportWAV(function(sample) {
-                    console.log('Sending');
+                    displayStatus('info', 'Sending sample...');
 
                     var fd = new FormData();
                     fd.append('file', sample);
@@ -51,11 +51,11 @@
                         processData: false,
                         contentType: false,
                         success: function(data) {
-                            console.log('Sending OK');
+                            displayStatus('success', 'Recognization request sended successfuly');
                             recorder.clear();
                         },
                         error: function(xhr, type) {
-                            console.log('Error sending sample');
+                            displayStatus('error', 'Error sending recognization request');
                         }
                     });
                 });
@@ -63,11 +63,18 @@
         }
 
         function onStreamError(err) {
-            console.error('Error getting microphone', err);
+            displayStatus('error', 'Error while getting the input device: '+err);
         }
 
-        $('button#recognize').on('click', function() {
-            console.log('Getting permission');
+        function displayStatus(type, message) {
+            div_progress.text(message);
+            div_progress.removeClass();
+            div_progress.addClass('alert-'+type);
+            div_progress.show();
+        }
+
+        button_recognize.on('click', function() {
+            displayStatus('info', 'Waiting for the permission...');
 
             navigator.getUserMedia({audio: true}, onStreamConnected, onStreamError);
         });
