@@ -17,7 +17,7 @@ logging_handler.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s - %(
 app.logger.addHandler(logging_handler)
 
 
-# Home page with the Recognize button
+# Home page
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -35,9 +35,15 @@ def about():
     return render_template('about.html')
 
 
-# Receive and handle the sample WAV file via AJAX upload
-@app.route('/sample', methods=['POST'])
-def sample():
+# Stats page
+@app.route('/stats')
+def stats():
+    return render_template('stats.html')
+
+
+# Sample recognization handling
+@app.route('/recognize', methods=['POST'])
+def recognize():
     result = {
         'result': 'failure',
         'data': {}
@@ -45,13 +51,13 @@ def sample():
     
     app.logger.info('New request')
 
-    if not request.is_xhr or 'file' not in request.files or request.files['file'] == '':
+    if not request.is_xhr or 'sample' not in request.files or request.files['sample'] == '':
         app.logger.error('Invalid request')
         status = 400
         result['data']['message'] = 'Invalid request'
     else:
         try:
-            sample_file = request.files['file']
+            sample_file = request.files['sample']
 
             sample_file_uuid = uuid.uuid4()
             

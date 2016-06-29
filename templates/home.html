@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="recognize-block">
-        <p>Click the <strong>Recognize</strong> button bellow, give <strong>WAR</strong> the permission to access one of your recording devices, and wait {{ config['SAMPLE_DURATION'] }} seconds for the results!</p>
+        <p>Welcome to <strong>WAR</strong>! Click the <strong>Recognize</strong> button bellow, give <strong>WAR</strong> the permission to access one of your recording devices, and wait {{ config['SAMPLE_DURATION'] }} seconds until the sample is submitted.</p>
 
         <p><button id="recognize" class="button">Recognize</button></p>
 
@@ -31,31 +31,31 @@
             recorder = new Recorder(window.audio_input);
             recorder.record();
 
-            displayStatus('info', 'Recording');
+            displayStatus('info', 'Recording... Please wait {{ config['SAMPLE_DURATION'] }} seconds.');
 
             window.setTimeout(function() {
                 recorder.stop();
 
-                displayStatus('success', 'Recording success');
+                displayStatus('success', 'Recording ended');
 
                 recorder.exportWAV(function(sample) {
                     displayStatus('info', 'Sending sample...');
 
                     var fd = new FormData();
-                    fd.append('file', sample);
+                    fd.append('sample', sample);
 
                     $.ajax({
                         type: 'POST',
-                        url: '{{ url_for('sample') }}',
+                        url: '{{ url_for('recognize') }}',
                         data: fd,
                         processData: false,
                         contentType: false,
                         success: function(data) {
-                            displayStatus('success', 'Recognization request sended successfuly');
+                            displayStatus('success', 'Recognization request sent successfuly.');
                             recorder.clear();
                         },
                         error: function(xhr, type) {
-                            displayStatus('error', 'Error sending recognization request');
+                            displayStatus('error', 'Error sending recognization request.');
                         }
                     });
                 });
@@ -63,7 +63,7 @@
         }
 
         function onStreamError(err) {
-            displayStatus('error', 'Error while getting the input device: '+err);
+            displayStatus('error', 'Error while getting the recording device: '+err);
         }
 
         function displayStatus(type, message) {
