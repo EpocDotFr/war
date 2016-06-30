@@ -103,8 +103,9 @@ header .subtitle {
 .button {
     border-radius: 5px;
     cursor: pointer;
-    background-color: #94EAE3;
-    border: 1px solid #505050;
+    background-color: #099686;
+    border: 1px solid #0CBDA9;
+    color: #fff;
 }
 
 .button:hover,
@@ -177,10 +178,11 @@ header .subtitle {
 .table td,
 .table th {
     padding: 10px;
+    text-align: left;
 }
 
-.table tfoot th {
-    text-align: left;
+.table thead th {
+    border-bottom-width: 2px;
 }
 
 /************************************************************************
