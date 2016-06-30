@@ -104,7 +104,6 @@ def recognize():
 # Not Found
 @app.errorhandler(404)
 def error_404(error):
-    app.logger.warning(error)
     return render_template('404.html')
 
 
@@ -113,6 +112,13 @@ def error_404(error):
 def error_500(error):
     app.logger.error(error)
     return render_template('500.html')
+
+
+# Service Unavailable
+@app.errorhandler(503)
+def error_503(error):
+    return render_template('503.html')
+
 
 # TODO put all functions bellow in a module
 
