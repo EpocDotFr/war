@@ -90,7 +90,7 @@ header .subtitle {
     margin: 0;
     margin-bottom: 15px;
     text-shadow: 1px 1px 1px #000;
-    border-bottom: 1px solid #008474;
+    border-bottom: 1px dotted #099886;
 }
 
 .content h2 {
@@ -158,6 +158,29 @@ header .subtitle {
     background-color: #5C5C5C;
     color: #FFF;
     border-color: #787878;
+}
+
+/************************************************************************
+ * Tables */
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table,
+.table td,
+.table th {
+    border: 1px solid #099886;
+}
+
+.table td,
+.table th {
+    padding: 10px;
+}
+
+.table tfoot th {
+    text-align: left;
 }
 
 /************************************************************************
