@@ -79,6 +79,8 @@ def recognize():
             result['result'] = 'success'
             result['data']['uuid'] = sample_file_uuid
 
+            # TODO create the beanstalk job
+
             status = 202
         except Exception as e:
             app.logger.error(e)

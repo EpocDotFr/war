@@ -6,3 +6,6 @@ LOGS_PATH = 'storage/logs/'
 SAMPLE_DURATION = 10
 LOGGER_HANDLER_POLICY = 'production'
 ENABLED_AUDIO_DATABASES = ('ACRCloud', 'Gracenote', 'AudibleMagic', 'MufinAudioID', 'AcoustID')
+ACRCLOUD_HOST = 'blablah.api.acrcloud.com'
+ACRCLOUD_ACCESS_KEY = 'dsfsdffds'
+ACRCLOUD_ACCESS_SECRET = 'dsfsdffds'

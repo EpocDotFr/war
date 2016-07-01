@@ -1,4 +1,5 @@
 from acrcloud.recognizer import ACRCloudRecognizer
+from war import app
 import json
 
 
@@ -27,16 +28,17 @@ class ACRCloud(AudioDatabaseInterface):
             raise Exception('The sample file does not exists')
 
         config = {
-                'host': 'eu-west-1.api.acrcloud.com',
-                'access_key': '572705ff4cb98dd76eede63c7a72d825',
-                'access_secret': 'vwagGtTe062U3XgqkRhV1Se9FJIC369Wu2Sibb8F',
-                'debug': False,
+                'host': app.config['ACRCLOUD_HOST'],
+                'access_key': app.config['ACRCLOUD_ACCESS_KEY'],
+                'access_secret': app.config['ACRCLOUD_ACCESS_SECRET'],
+                'debug': app.config['DEBUG'],
                 'timeout': 10
         }
 
         acrcloud = ACRCloudRecognizer(config)
 
         # TODO handle errors from response
+        # TODO make response the same along others
         return json.loads(acrcloud.recognize_by_file(sample_file_path, 0))
 
 
