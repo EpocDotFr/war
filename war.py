@@ -1,14 +1,17 @@
 from flask import Flask, render_template, jsonify, request
 from logging.handlers import RotatingFileHandler
-from acrcloud.recognizer import ACRCloudRecognizer
 import os
 import uuid
 import logging
-import json
 
+# -----------------------------------------------------------
+# Boot
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
+
+# -----------------------------------------------------------
+# Logging configuration
 
 logging_handler = RotatingFileHandler(os.path.join(app.config['LOGS_PATH'], 'war.log'), maxBytes=10000, backupCount=2)
 logging_handler.setLevel(logging.INFO)
@@ -16,6 +19,10 @@ logging_handler.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s - %(
 
 app.logger.addHandler(logging_handler)
 
+from utils import get_sample_file_path
+
+# -----------------------------------------------------------
+# Routes
 
 # Home page
 @app.route('/')
@@ -70,33 +77,11 @@ def recognize():
             result['result'] = 'success'
             result['data']['uuid'] = sample_file_uuid
 
-            # -----------------------------------------------------
-            # TODO everything after this line is temporary
-
-            # ACRCloud tests
-
-            config = {
-                    'host': 'eu-west-1.api.acrcloud.com',
-                    'access_key': '572705ff4cb98dd76eede63c7a72d825',
-                    'access_secret': 'vwagGtTe062U3XgqkRhV1Se9FJIC369Wu2Sibb8F',
-                    'debug': False,
-                    'timeout': 10
-            }
-
-            acrcloud = ACRCloudRecognizer(config)
-
-            sample_file_path = get_sample_file_path(sample_file_uuid)
-
-            result['data']['recognize_results'] = json.loads(acrcloud.recognize_by_file(sample_file_path, 0))
-
-            # TODO end temporary
-            # -----------------------------------------------------
-
             status = 202
         except Exception as e:
             app.logger.error(e)
             status = 500
-            result['data']['message'] = str(e)
+            result['data']['message'] = 'Oops, there were a server error.'
 
     return jsonify(result), status
 
@@ -118,36 +103,3 @@ def error_500(error):
 @app.errorhandler(503)
 def error_503(error):
     return render_template('503.html')
-
-
-# TODO put all functions bellow in a module
-
-
-def get_sample_file_path(sample_file_uuid):
-    sample_file_destination = os.path.abspath(app.config['SAMPLES_PATH'])
-    sample_file_name = '{}.wav'.format(sample_file_uuid)
-    sample_file_path = os.path.join(sample_file_destination, sample_file_name)
-
-    return sample_file_path
-
-
-def recognize(sample_file_uuid):
-    sample_file_path = get_sample_file_path(sample_file_uuid)
-
-    if not os.path.exists(sample_file_path):
-        raise Exception('The sample file does not exists')
-    
-    app.logger.info('Fingerprinting {}'.format(sample_file_path))
-    
-    # FIXME no more used
-    # fingerprint = acoustid.fingerprint_file(sample_file_path)
-    
-    # app.logger.info('Result: {}'.format(fingerprint[1]))
-    # app.logger.info('Sending match request to AcoustID')
-    
-    # lookup_results = acoustid.lookup(app.config['ACOUSTID_API_KEY'], fingerprint[1], fingerprint[0])
-    
-    # if not lookup_results['status'] or lookup_results['status'] != 'ok':
-    #     raise Exception(lookup_results['message'])
-    
-    # return lookup_results['results']
