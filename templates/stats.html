@@ -17,36 +17,14 @@
         </tr>
         </thead>
         <tbody>
+        {% for audio_database_id, audio_database_instance in audio_databases.items() %}
         <tr>
-            <td><a href="https://www.acrcloud.com/">ACRCloud</a></td>
+            <td><a href="{{ audio_database_instance.website() }}">{{ audio_database_instance.name() }}</a></td>
             <td>4 156 (<strong>76</strong> %)</td>
             <td>165 (<strong>24</strong> %)</td>
             <td>4 321</td>
         </tr>
-        <tr>
-            <td><a href="http://www.gracenote.com/music/music-recognition/">Gracenote</a></td>
-            <td>4 156 (<strong>76</strong> %)</td>
-            <td>165 (<strong>24</strong> %)</td>
-            <td>4 321</td>
-        </tr>
-        <tr>
-            <td><a href="http://www.audiblemagic.com/">Audible Magic</a></td>
-            <td>4 156 (<strong>76</strong> %)</td>
-            <td>165 (<strong>24</strong> %)</td>
-            <td>4 321</td>
-        </tr>
-        <tr>
-            <td><a href="https://www.mufin.com/products/audioid-server/">Mufin AudioID</a></td>
-            <td>4 156 (<strong>76</strong> %)</td>
-            <td>165 (<strong>24</strong> %)</td>
-            <td>4 321</td>
-        </tr>
-        <tr>
-            <td><a href="https://acoustid.org/">AcoustID</a></td>
-            <td>4 156 (<strong>76</strong> %)</td>
-            <td>165 (<strong>24</strong> %)</td>
-            <td>4 321</td>
-        </tr>
+        {% endfor %}
         </tbody>
         <tfoot>
         <tr>

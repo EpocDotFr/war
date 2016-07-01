@@ -19,7 +19,7 @@ logging_handler.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s - %(
 
 app.logger.addHandler(logging_handler)
 
-from utils import get_sample_file_path
+from utils import get_sample_file_path, get_enabled_audio_databases
 
 # -----------------------------------------------------------
 # Routes
@@ -45,7 +45,9 @@ def about():
 # Stats page
 @app.route('/stats')
 def stats():
-    return render_template('stats.html')
+    audio_databases = get_enabled_audio_databases()
+
+    return render_template('stats.html', audio_databases=audio_databases)
 
 
 # Sample recognization handling
