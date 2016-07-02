@@ -1,1 +1,1 @@
-from war import app as application
+from war import app

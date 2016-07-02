@@ -1,4 +1,4 @@
 arrow
 click
-Flask
+flask
 pybeanstalk
