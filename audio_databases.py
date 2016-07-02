@@ -1,7 +1,5 @@
-from acrcloud.recognizer import ACRCloudRecognizer
 from war import app
 from utils import get_sample_file_path
-import json
 import os
 
 
@@ -24,6 +22,9 @@ class ACRCloud(AudioDatabaseInterface):
         return 'ACRCloud'
 
     def recognize(self, sample_file_uuid):
+        from acrcloud.recognizer import ACRCloudRecognizer
+        import json
+
         sample_file_path = get_sample_file_path(sample_file_uuid)
 
         if not os.path.exists(sample_file_path):
