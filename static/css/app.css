@@ -99,17 +99,25 @@ header .subtitle {
 /************************************************************************
  * Buttons */
 
-.button {
+button {
     border-radius: 5px;
     cursor: pointer;
     background-color: #099686;
     border: 1px solid #0CBDA9;
     color: #fff;
+    box-shadow: 0 5px 2px #07564d;
+    position: relative;
 }
 
-.button:hover,
-.button:focus {
+button:hover,
+button:focus {
     border-color: #FACB1B;
+}
+
+button:active {
+    top: 3px;
+    box-shadow: 0 2px 2px #07564d;
+    border-color: #8C720D;
 }
 
 /************************************************************************
@@ -163,28 +171,28 @@ header .subtitle {
 /************************************************************************
  * Tables */
 
-.table {
+table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.table,
-.table td,
-.table th {
+table,
+table td,
+table th {
     border: 1px solid #099886;
 }
 
-.table td,
-.table th {
+table td,
+table th {
     padding: 10px;
     text-align: left;
 }
 
-.table thead th {
+table thead th {
     border-bottom-width: 2px;
 }
 
-.table tfoot th {
+table tfoot th {
     border-top-width: 2px;
 }
 
