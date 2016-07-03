@@ -7,7 +7,7 @@ import logging
 # -----------------------------------------------------------
 # Boot
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 app.config.from_pyfile('config.py')
 
 # -----------------------------------------------------------
