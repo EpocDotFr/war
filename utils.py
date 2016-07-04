@@ -1,5 +1,15 @@
 from war import app
+from pymongo import MongoClient
 import os
+
+
+def get_db():
+    mongodb_host = app.config['MONGODB_HOST']
+    mongodb_port = app.config['MONGODB_PORT']
+
+    mongodb_client = MongoClient('mongodb://{}:{}'.format(mongodb_host, mongodb_port))
+
+    return mongodb_client.war
 
 
 def get_sample_file_path(sample_file_uuid):

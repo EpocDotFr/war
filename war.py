@@ -19,7 +19,7 @@ logging_handler.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s - %(
 
 app.logger.addHandler(logging_handler)
 
-from utils import get_sample_file_path, get_enabled_audio_databases
+from utils import get_sample_file_path, get_enabled_audio_databases, get_db
 
 # -----------------------------------------------------------
 # Routes
@@ -46,7 +46,14 @@ def about():
 # Stats page
 @app.route('/stats')
 def stats():
+    db = get_db()
+
     audio_databases = get_enabled_audio_databases()
+
+    # TODO refactore the stats getter in the audio databases classes
+    for audio_database_id, audio_database_instance in audio_databases.items():
+        audio_database_stats = db.stats.find_one({'audio_database_id': audio_database_id})
+        # TODO audio_database_stats = None or document
 
     return render_template('stats.html', audio_databases=audio_databases)
 
