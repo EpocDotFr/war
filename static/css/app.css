@@ -3,7 +3,7 @@
  * General styles */
 
 body {
-    background: #0c7367 url("/static/images/bg.png");
+    background: #0c7367 url("/images/bg.png");
     color: #94EAE3;
     font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
     line-height: 1.42857143;

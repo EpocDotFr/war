@@ -19,19 +19,19 @@
         <tbody>
         {% for audio_database_id, audio_database_instance in audio_databases.items() %}
         <tr>
-            <td><a href="{{ audio_database_instance.website() }}">{{ audio_database_instance.name() }}</a></td>
-            <td>4 156 (<strong>76</strong> %)</td>
-            <td>165 (<strong>24</strong> %)</td>
-            <td>4 321</td>
+            <td><a href="{{ audio_database_instance.get_website() }}">{{ audio_database_instance.get_name() }}</a></td>
+            <td>{{ audio_database_instance.get_stats().successes }} (<strong>XX</strong> %)</td>
+            <td>{{ audio_database_instance.get_stats().failures }} (<strong>XX</strong> %)</td>
+            <td>{{ audio_database_instance.get_stats().successes + audio_database_instance.get_stats().failures }}</td>
         </tr>
         {% endfor %}
         </tbody>
         <tfoot>
         <tr>
             <th>Total</th>
-            <th>4 156 (<strong>76</strong> %)</th>
-            <th>165 (<strong>24</strong> %)</th>
-            <th>4 321</th>
+            <th>{{ global_stats.total_successes }} (<strong>XX</strong> %)</th>
+            <th>{{ global_stats.total_failures }} (<strong>XX</strong> %)</th>
+            <th>{{ global_stats.total_successes + global_stats.total_failures }}</th>
         </tr>
         </tfoot>
     </table>

@@ -10,7 +10,7 @@
 
         <div id="progress"></div>
 
-        <p><small>There were <strong>1 506</strong> recognition requests so far.<br><strong>1 147</strong> (<strong>76</strong> %) of them matched, the other <strong>359</strong> (<strong>24</strong> %) didn't.</small></p>
+        <p><small>There were <strong>{{ global_stats.total_successes + global_stats.total_failures }}</strong> recognition requests so far.<br><strong>{{ global_stats.total_successes }}</strong> (<strong>XX</strong> %) of them matched, the other <strong>{{ global_stats.total_failures }}</strong> (<strong>XX</strong> %) didn't.</small></p>
     </div>
 
     <script src="{{ url_for('static', filename='js/zepto.min.js') }}"></script>

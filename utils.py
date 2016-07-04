@@ -12,6 +12,19 @@ def get_db():
     return mongodb_client.war
 
 
+def get_global_stats(db):
+    global_stats = db.war.aggregate([
+        {'$group': {
+            '_id': None,
+            'total_successes': {'$sum': '$successes'},
+            'total_failures': {'$sum': '$failures'}
+        }}
+    ])
+
+    # FIXME doesn't return at least one line with empty totals
+    return list(global_stats)
+
+
 def get_sample_file_path(sample_file_uuid):
     sample_file_destination = os.path.abspath(app.config['SAMPLES_PATH'])
     sample_file_name = '{}.wav'.format(sample_file_uuid)
@@ -20,7 +33,7 @@ def get_sample_file_path(sample_file_uuid):
     return sample_file_path
 
 
-def get_enabled_audio_databases():
+def get_enabled_audio_databases(db):
     ret = {}
 
     enabled_audio_databases = app.config['ENABLED_AUDIO_DATABASES']
@@ -29,7 +42,7 @@ def get_enabled_audio_databases():
 
     for audio_database_classname in enabled_audio_databases:
         audio_database_class = getattr(audio_databases_module, audio_database_classname)
-        audio_database_instance = audio_database_class()
+        audio_database_instance = audio_database_class(db)
 
         ret[audio_database_classname] = audio_database_instance
 

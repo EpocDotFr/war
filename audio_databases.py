@@ -4,21 +4,53 @@ import os
 
 
 class AudioDatabaseInterface:
-    def website(self):
+    db = None
+    stats = None
+
+    def __init__(self, db):
+        self.db = db
+
+    def get_website(self):
         raise NotImplementedError('Should be implemented')
 
-    def name(self):
+    def get_name(self):
         raise NotImplementedError('Should be implemented')
 
     def recognize(self, sample_file_uuid):
         raise NotImplementedError('Should be implemented')
 
+    def get_stats(self):
+        audio_database = self.__class__.__name__
+
+        if self.stats is None:
+            db_stats = self.db.stats.find_one({'audio_database': audio_database})
+
+            stat = {
+                'successes': 0,
+                'failures': 0
+            }
+
+            if db_stats is None:
+                self.db.stats.insert_one({
+                    **{
+                        'audio_database': audio_database
+                    },
+                    **stat
+                })
+            else:
+                stat['successes'] = db_stats['successes']
+                stat['failures'] = db_stats['failures']
+
+            self.stats = stat
+
+        return self.stats
+
 
 class ACRCloud(AudioDatabaseInterface):
-    def website(self):
+    def get_website(self):
         return 'https://www.acrcloud.com/'
 
-    def name(self):
+    def get_name(self):
         return 'ACRCloud'
 
     def recognize(self, sample_file_uuid):
@@ -47,10 +79,10 @@ class ACRCloud(AudioDatabaseInterface):
 
 
 class Gracenote(AudioDatabaseInterface):
-    def website(self):
+    def get_website(self):
         return 'http://www.gracenote.com/'
 
-    def name(self):
+    def get_name(self):
         return 'Gracenote'
 
     def recognize(self, sample_file_uuid):
@@ -58,10 +90,10 @@ class Gracenote(AudioDatabaseInterface):
 
 
 class AudibleMagic(AudioDatabaseInterface):
-    def website(self):
+    def get_website(self):
         return 'http://www.audiblemagic.com/'
 
-    def name(self):
+    def get_name(self):
         return 'Audible Magic'
 
     def recognize(self, sample_file_uuid):
@@ -69,10 +101,10 @@ class AudibleMagic(AudioDatabaseInterface):
 
 
 class MufinAudioID(AudioDatabaseInterface):
-    def website(self):
+    def get_website(self):
         return 'https://www.mufin.com/'
 
-    def name(self):
+    def get_name(self):
         return 'Mufin AudioID'
 
     def recognize(self, sample_file_uuid):
@@ -80,10 +112,10 @@ class MufinAudioID(AudioDatabaseInterface):
 
 
 class AcoustID(AudioDatabaseInterface):
-    def website(self):
+    def get_website(self):
         return 'https://acoustid.org/'
 
-    def name(self):
+    def get_name(self):
         return 'AcoustID'
 
     def recognize(self, sample_file_uuid):

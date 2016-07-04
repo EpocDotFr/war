@@ -19,7 +19,7 @@ logging_handler.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s - %(
 
 app.logger.addHandler(logging_handler)
 
-from utils import get_sample_file_path, get_enabled_audio_databases, get_db
+from utils import get_sample_file_path, get_enabled_audio_databases, get_db, get_global_stats
 
 # -----------------------------------------------------------
 # Routes
@@ -28,7 +28,11 @@ from utils import get_sample_file_path, get_enabled_audio_databases, get_db
 # Home page
 @app.route('/')
 def home():
-    return render_template('home.html')
+    db = get_db()
+
+    global_stats = get_global_stats(db)
+
+    return render_template('home.html', global_stats=global_stats)
 
 
 # FAQ page
@@ -48,14 +52,10 @@ def about():
 def stats():
     db = get_db()
 
-    audio_databases = get_enabled_audio_databases()
+    audio_databases = get_enabled_audio_databases(db)
+    global_stats = get_global_stats(db)
 
-    # TODO refactore the stats getter in the audio databases classes
-    for audio_database_id, audio_database_instance in audio_databases.items():
-        audio_database_stats = db.stats.find_one({'audio_database_id': audio_database_id})
-        # TODO audio_database_stats = None or document
-
-    return render_template('stats.html', audio_databases=audio_databases)
+    return render_template('stats.html', audio_databases=audio_databases, global_stats=global_stats)
 
 
 # Sample recognization handling
