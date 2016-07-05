@@ -13,7 +13,7 @@ def get_db():
 
 
 def get_global_stats(db):
-    global_stats = db.war.aggregate([
+    global_stats_db = db.stats.aggregate([
         {'$group': {
             '_id': None,
             'total_successes': {'$sum': '$successes'},
@@ -21,8 +21,24 @@ def get_global_stats(db):
         }}
     ])
 
-    # FIXME doesn't return at least one line with empty totals
-    return list(global_stats)
+    global_stats = list(global_stats_db)
+
+    if len(global_stats) == 1:
+        global_stats = global_stats[0]
+
+        global_stats['total_successes_and_failures'] = global_stats['total_successes'] + global_stats['total_failures']
+        global_stats['total_successes_percent'] = round(global_stats['total_successes'] * (global_stats['total_successes_and_failures'] / 100))
+        global_stats['total_failures_percent'] = round(global_stats['total_failures'] * (global_stats['total_successes_and_failures'] / 100))
+
+        return global_stats
+
+    return {
+        'total_successes': 0,
+        'total_failures': 0,
+        'total_successes_and_failures': 0,
+        'total_successes_percent': 0,
+        'total_failures_percent': 0
+    }
 
 
 def get_sample_file_path(sample_file_uuid):

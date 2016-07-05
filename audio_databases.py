@@ -37,9 +37,16 @@ class AudioDatabaseInterface:
                     },
                     **stat
                 })
+
+                stat['total'] = 0
+                stat['successes_percent'] = 0
+                stat['failures_percent'] = 0
             else:
                 stat['successes'] = db_stats['successes']
                 stat['failures'] = db_stats['failures']
+                stat['total'] = db_stats['successes'] + db_stats['failures']
+                stat['successes_percent'] = round(db_stats['successes'] * (stat['total'] / 100))
+                stat['failures_percent'] = round(db_stats['failures'] * (stat['total'] / 100))
 
             self.stats = stat
 

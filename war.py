@@ -24,7 +24,6 @@ from utils import get_sample_file_path, get_enabled_audio_databases, get_db, get
 # -----------------------------------------------------------
 # Routes
 
-
 # Home page
 @app.route('/')
 def home():
