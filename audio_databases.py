@@ -64,10 +64,7 @@ class ACRCloud(AudioDatabaseInterface):
         from acrcloud.recognizer import ACRCloudRecognizer
         import json
 
-        sample_file_path = get_sample_file_path(sample_file_uuid)
-
-        if not os.path.exists(sample_file_path):
-            raise Exception('The sample file does not exists')
+        sample_file_path = get_sample_file_path(sample_file_uuid, True)
 
         config = {
                 'host': app.config['ACRCLOUD_HOST'],
@@ -126,11 +123,8 @@ class AcoustID(AudioDatabaseInterface):
         return 'AcoustID'
 
     def recognize(self, sample_file_uuid):
-        sample_file_path = get_sample_file_path(sample_file_uuid)
+        # sample_file_path = get_sample_file_path(sample_file_uuid, True)
 
-        if not os.path.exists(sample_file_path):
-            raise Exception('The sample file does not exists')
-        
         # fingerprint = acoustid.fingerprint_file(sample_file_path)
         
         # app.logger.info('Result: {}'.format(fingerprint[1]))

@@ -1,5 +1,6 @@
 from war import app
 from pymongo import MongoClient
+from beanstalk import serverconn
 import os
 
 
@@ -10,6 +11,13 @@ def get_db():
     mongodb_client = MongoClient('mongodb://{}:{}'.format(mongodb_host, mongodb_port))
 
     return mongodb_client.war
+
+
+def get_queue():
+    beanstalkd_host = app.config['BEANSTALKD_HOST']
+    beanstalkd_port = app.config['BEANSTALKD_PORT']
+
+    return serverconn.ServerConn(beanstalkd_host, beanstalkd_port)
 
 
 def get_global_stats(db):
@@ -41,10 +49,13 @@ def get_global_stats(db):
     }
 
 
-def get_sample_file_path(sample_file_uuid):
+def get_sample_file_path(sample_file_uuid, check_if_exists=False):
     sample_file_destination = os.path.abspath(app.config['SAMPLES_PATH'])
     sample_file_name = '{}.wav'.format(sample_file_uuid)
     sample_file_path = os.path.join(sample_file_destination, sample_file_name)
+
+    if not os.path.exists(sample_file_path):
+        raise Exception('The sample file does not exists')
 
     return sample_file_path
 

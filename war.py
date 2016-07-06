@@ -1,7 +1,7 @@
 from flask import Flask, render_template, jsonify, request
 from logging.handlers import RotatingFileHandler
+from beanstalk import job
 import os
-import uuid
 import logging
 
 # -----------------------------------------------------------
@@ -19,7 +19,7 @@ logging_handler.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s - %(
 
 app.logger.addHandler(logging_handler)
 
-from utils import get_sample_file_path, get_enabled_audio_databases, get_db, get_global_stats
+from utils import get_sample_file_path, get_enabled_audio_databases, get_db, get_global_stats, get_queue
 
 # -----------------------------------------------------------
 # Routes
@@ -65,34 +65,45 @@ def recognize():
         'data': {}
     }
     
-    app.logger.info('New request')
-
     if not request.is_xhr or 'sample' not in request.files or request.files['sample'] == '':
-        app.logger.error('Invalid request')
+        app.logger.warning('Invalid request')
         status = 400
         result['data']['message'] = 'Invalid request'
     else:
         try:
+            db = get_db()
+
+            enabled_audio_databases = app.config['ENABLED_AUDIO_DATABASES']
+
+            db_data = {}
+
+            for audio_database_classname in enabled_audio_databases:
+                db_data[audio_database_classname] = {}
+
+            inserted = db.recognizations.insert_one(db_data)
+
+            sample_id = inserted.inserted_id
+
+            queue_connection = get_queue()
+            queue_connection.job = job.Job
+            
+            job_data = {'sample_id': sample_id}
+
+            job = job.Job(data=job_data, conn=queue_connection, tube='recognizations')
+            job.Queue()
+
             sample_file = request.files['sample']
-
-            sample_file_uuid = uuid.uuid4()
-            
-            sample_file_path = get_sample_file_path(sample_file_uuid)
-            
-            app.logger.info('Saving sample file to {}'.format(sample_file_path))
-
+            sample_file_path = get_sample_file_path(sample_id)
             sample_file.save(sample_file_path)
             
             result['result'] = 'success'
-            result['data']['uuid'] = sample_file_uuid
-
-            # TODO create the beanstalk job
+            result['data']['sample_id'] = sample_id
 
             status = 202
         except Exception as e:
             app.logger.error(e)
             status = 500
-            result['data']['message'] = 'Oops, there were a server error.'
+            result['data']['message'] = 'Oops, there were a server error, sorry. We have been informed about this.'
 
     return jsonify(result), status
 
