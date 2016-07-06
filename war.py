@@ -1,6 +1,5 @@
 from flask import Flask, render_template, jsonify, request
 from logging.handlers import RotatingFileHandler
-from beanstalk import job
 import os
 import logging
 
@@ -84,13 +83,11 @@ def recognize():
 
             sample_id = inserted.inserted_id
 
-            queue_connection = get_queue()
-            queue_connection.job = job.Job
-            
-            job_data = {'sample_id': sample_id}
+            recognization_job_data = {'sample_id': sample_id}
 
-            job = job.Job(data=job_data, conn=queue_connection, tube='recognizations')
-            job.Queue()
+            queue_connection = get_queue()
+            queue_connection.use('recognizations')
+            queue_connection.put(jsonify(recognization_job_data))
 
             sample_file = request.files['sample']
             sample_file_path = get_sample_file_path(sample_id)
@@ -103,7 +100,7 @@ def recognize():
         except Exception as e:
             app.logger.error(e)
             status = 500
-            result['data']['message'] = 'Oops, there were a server error, sorry. We have been informed about this.'
+            result['data']['message'] = 'Sorry, there were a server error. We have been informed about this.'
 
     return jsonify(result), status
 

@@ -1,6 +1,5 @@
 from war import app
 from utils import get_sample_file_path
-import os
 
 
 class AudioDatabaseInterface:
@@ -123,6 +122,7 @@ class AcoustID(AudioDatabaseInterface):
         return 'AcoustID'
 
     def recognize(self, sample_file_uuid):
+        pass
         # sample_file_path = get_sample_file_path(sample_file_uuid, True)
 
         # fingerprint = acoustid.fingerprint_file(sample_file_path)
