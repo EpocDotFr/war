@@ -108,17 +108,17 @@ def recognize():
 # Not Found
 @app.errorhandler(404)
 def error_404(error):
-    return render_template('404.html')
+    return render_template('404.html'), 404
 
 
 # Internal Server Error
 @app.errorhandler(500)
 def error_500(error):
     app.logger.error(error)
-    return render_template('500.html')
+    return render_template('500.html'), 500
 
 
 # Service Unavailable
 @app.errorhandler(503)
 def error_503(error):
-    return render_template('503.html')
+    return render_template('503.html'), 503
