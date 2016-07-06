@@ -1,6 +1,6 @@
 from war import app
 from pymongo import MongoClient
-from pystalkd.Beanstalkd import Connection
+from pystalkd import Beanstalkd
 import os
 
 
@@ -17,7 +17,7 @@ def get_queue():
     beanstalkd_host = app.config['BEANSTALKD_HOST']
     beanstalkd_port = app.config['BEANSTALKD_PORT']
 
-    return Connection(beanstalkd_host, beanstalkd_port)
+    return Beanstalkd.Connection(beanstalkd_host, beanstalkd_port)
 
 
 def get_global_stats(db):
