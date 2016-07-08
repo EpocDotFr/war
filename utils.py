@@ -1,23 +1,24 @@
+from flask import g
 from war import app
 from pymongo import MongoClient
 from pystalkd import Beanstalkd
 import os
 
 
-def get_db():
-    mongodb_host = app.config['MONGODB_HOST']
-    mongodb_port = app.config['MONGODB_PORT']
+def get_database():
+    if not hasattr(g, 'database'):
+        mongodb_client = MongoClient('mongodb://{}:{}'.format(app.config['MONGODB_HOST'], app.config['MONGODB_PORT']))
 
-    mongodb_client = MongoClient('mongodb://{}:{}'.format(mongodb_host, mongodb_port))
+        g.database = mongodb_client.war
 
-    return mongodb_client.war
+    return g.database
 
 
 def get_queue():
-    beanstalkd_host = app.config['BEANSTALKD_HOST']
-    beanstalkd_port = app.config['BEANSTALKD_PORT']
+    if not hasattr(g, 'queue'):
+        g.queue = Beanstalkd.Connection(app.config['BEANSTALKD_HOST'], app.config['BEANSTALKD_PORT'])
 
-    return Beanstalkd.Connection(beanstalkd_host, beanstalkd_port)
+    return g.queue
 
 
 def get_global_stats(db):

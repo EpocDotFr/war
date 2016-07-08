@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, g
 from logging.handlers import RotatingFileHandler
 import os
 import logging
@@ -18,7 +18,22 @@ logging_handler.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s - %(
 
 app.logger.addHandler(logging_handler)
 
-from utils import get_sample_file_path, get_enabled_audio_databases, get_db, get_global_stats, get_queue
+from utils import *
+
+# -----------------------------------------------------------
+# Hooks
+
+@app.teardown_appcontext
+def close_database(error):
+    if hasattr(g, 'database'):
+        g.database.client.close()
+
+
+@app.teardown_appcontext
+def close_queue(error):
+    if hasattr(g, 'queue'):
+        g.queue.close()
+
 
 # -----------------------------------------------------------
 # Routes
@@ -26,7 +41,7 @@ from utils import get_sample_file_path, get_enabled_audio_databases, get_db, get
 # Home page
 @app.route('/')
 def home():
-    db = get_db()
+    db = get_database()
 
     global_stats = get_global_stats(db)
 
@@ -48,7 +63,7 @@ def about():
 # Stats page
 @app.route('/stats')
 def stats():
-    db = get_db()
+    db = get_database()
 
     audio_databases = get_enabled_audio_databases(db)
     global_stats = get_global_stats(db)
@@ -59,7 +74,7 @@ def stats():
 # Sample recognization handling
 @app.route('/recognize', methods=['POST'])
 def recognize():
-    result = {
+    ajax_response = {
         'result': 'failure',
         'data': {}
     }
@@ -67,10 +82,10 @@ def recognize():
     if not request.is_xhr or 'sample' not in request.files or request.files['sample'] == '':
         app.logger.warning('Invalid request')
         status = 400
-        result['data']['message'] = 'Invalid request'
+        ajax_response['data']['message'] = 'Invalid request'
     else:
         try:
-            db = get_db()
+            db = get_database()
 
             enabled_audio_databases = app.config['ENABLED_AUDIO_DATABASES']
 
@@ -93,16 +108,16 @@ def recognize():
             sample_file_path = get_sample_file_path(sample_id)
             sample_file.save(sample_file_path)
             
-            result['result'] = 'success'
-            result['data']['sample_id'] = sample_id
+            ajax_response['result'] = 'success'
+            ajax_response['data']['sample_id'] = sample_id
 
             status = 202
         except Exception as e:
             app.logger.error(e)
             status = 500
-            result['data']['message'] = 'Sorry, there were a server error. We have been informed about this.'
+            ajax_response['data']['message'] = 'Sorry, there were a server error. We have been informed about this.'
 
-    return jsonify(result), status
+    return jsonify(ajax_response), status
 
 
 # Not Found
