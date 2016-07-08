@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify, request, g
 from logging.handlers import RotatingFileHandler
 import os
 import logging
+import json
 
 # -----------------------------------------------------------
 # Boot
@@ -96,13 +97,13 @@ def recognize():
 
             inserted = db.recognizations.insert_one(db_data)
 
-            sample_id = inserted.inserted_id
+            sample_id = str(inserted.inserted_id)
 
             recognization_job_data = {'sample_id': sample_id}
 
             queue_connection = get_queue()
             queue_connection.use('recognizations')
-            queue_connection.put(jsonify(recognization_job_data))
+            queue_connection.put(json.dumps(recognization_job_data))
 
             sample_file = request.files['sample']
             sample_file_path = get_sample_file_path(sample_id)

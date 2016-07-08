@@ -55,7 +55,7 @@ def get_sample_file_path(sample_file_uuid, check_if_exists=False):
     sample_file_name = '{}.wav'.format(sample_file_uuid)
     sample_file_path = os.path.join(sample_file_destination, sample_file_name)
 
-    if not os.path.exists(sample_file_path):
+    if check_if_exists and not os.path.exists(sample_file_path):
         raise Exception('The sample file does not exists')
 
     return sample_file_path
