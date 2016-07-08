@@ -7,7 +7,7 @@ import os
 
 def get_database():
     if not hasattr(g, 'database'):
-        mongodb_client = MongoClient('mongodb://{}:{}'.format(app.config['MONGODB_HOST'], app.config['MONGODB_PORT']))
+        mongodb_client = MongoClient('mongodb://{}:{}'.format(app.config['MONGODB_HOST'], app.config['MONGODB_PORT']), connectTimeoutMS=3000, serverSelectionTimeoutMS=3000)
 
         g.database = mongodb_client.war
 
