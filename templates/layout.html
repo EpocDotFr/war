@@ -40,5 +40,22 @@
         <p><strong>WAR</strong> is kindly brought to you by <a href="https://www.epoc.fr">Epoc</a> • © 2016 Epoc • Logo courtesy of <a href="http://www.webalys.com/">Webalys</a></p>
         <p><a href="{{ url_for('about') }}">About</a> • <a href="{{ url_for('faq') }}">FAQ</a> • <a href="{{ url_for('stats') }}">Stats</a></p>
     </footer>
+    
+    {% if config['DEBUG'] == False: %}
+    <script type="text/javascript">
+      var _gauges = _gauges || [];
+      (function() {
+        var t   = document.createElement('script');
+        t.type  = 'text/javascript';
+        t.async = true;
+        t.id    = 'gauges-tracker';
+        t.setAttribute('data-site-id', '577f8924c88d900296007007');
+        t.setAttribute('data-track-path', 'https://track.gaug.es/track.gif');
+        t.src = 'https://d36ee2fcip1434.cloudfront.net/track.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(t, s);
+      })();
+    </script>
+    {% endif %}
 </body>
 </html>
