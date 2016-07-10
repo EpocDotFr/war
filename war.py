@@ -1,9 +1,8 @@
-from flask import Flask, render_template, jsonify, request, g
+from flask import Flask, render_template, jsonify, request
 from logging.handlers import RotatingFileHandler
 import os
 import logging
 import json
-import click
 
 # -----------------------------------------------------------
 # Boot
@@ -91,6 +90,12 @@ def faq():
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+
+# Terms of service page
+@app.route('/tos')
+def tos():
+    return render_template('tos.html')
 
 
 # Stats page
