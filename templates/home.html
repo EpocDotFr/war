@@ -13,7 +13,7 @@
         <p><small>There were <strong>{{ global_stats.total_successes_and_failures }}</strong> recognition requests so far.<br><strong>{{ global_stats.total_successes }}</strong> (<strong>{{ global_stats.total_successes_percent }}</strong> %) of them matched, the other <strong>{{ global_stats.total_failures }}</strong> (<strong>{{ global_stats.total_failures_percent }}</strong> %) didn't.</small></p>
     </div>
 
-    <script src="{{ url_for('static', filename='js/zepto.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.6/zepto.min.js"></script>
     <script src="{{ url_for('static', filename='js/recorder.js') }}"></script>
     <script>
     Zepto(function () {
