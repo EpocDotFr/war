@@ -3,6 +3,7 @@ from logging.handlers import RotatingFileHandler
 import os
 import logging
 import json
+import click
 
 # -----------------------------------------------------------
 # Boot
@@ -21,8 +22,39 @@ app.logger.addHandler(logging_handler)
 
 from utils import *
 
+
+# -----------------------------------------------------------
+# CLI commands
+
+@app.cli.command()
+def worker():
+    queue = get_queue()
+    queue.watch('recognizations')
+
+    job = queue.reserve()
+
+    try:
+        job_data = json.loads(job.body)
+
+        db = get_database()
+
+        audio_databases = get_enabled_audio_databases(db)
+
+        for audio_database_id, audio_database_instance in audio_databases.items():
+            recognization_results = audio_database_instance.recognize(job_data['sample_id'])
+
+            # TODO proper error handling
+            db.recognizations.update_one({"_id": job_data['sample_id']}, {audio_database_id: recognization_results})
+
+        job.delete()
+    except Exception as e:
+        app.logger.warning(str(e))
+        job.bury()
+
+
 # -----------------------------------------------------------
 # Hooks
+
 
 @app.teardown_appcontext
 def close_database(error):
@@ -93,7 +125,7 @@ def recognize():
             db_data = {}
 
             for audio_database_classname in enabled_audio_databases:
-                db_data[audio_database_classname] = {}
+                db_data[audio_database_classname] = None
 
             inserted = db.recognizations.insert_one(db_data)
 
@@ -101,9 +133,9 @@ def recognize():
 
             recognization_job_data = {'sample_id': sample_id}
 
-            queue_connection = get_queue()
-            queue_connection.use('recognizations')
-            queue_connection.put(json.dumps(recognization_job_data))
+            queue = get_queue()
+            queue.use('recognizations')
+            queue.put(json.dumps(recognization_job_data))
 
             sample_file = request.files['sample']
             sample_file_path = get_sample_file_path(sample_id)

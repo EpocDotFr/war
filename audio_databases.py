@@ -15,7 +15,7 @@ class AudioDatabaseInterface:
     def get_name(self):
         raise NotImplementedError('Should be implemented')
 
-    def recognize(self, sample_file_uuid):
+    def recognize(self, sample_id):
         raise NotImplementedError('Should be implemented')
 
     def get_stats(self):
@@ -59,11 +59,11 @@ class ACRCloud(AudioDatabaseInterface):
     def get_name(self):
         return 'ACRCloud'
 
-    def recognize(self, sample_file_uuid):
+    def recognize(self, sample_id):
         from acrcloud.recognizer import ACRCloudRecognizer
         import json
 
-        sample_file_path = get_sample_file_path(sample_file_uuid, True)
+        sample_file_path = get_sample_file_path(sample_id, check_if_exists=True)
 
         config = {
                 'host': app.config['ACRCLOUD_HOST'],
@@ -77,7 +77,6 @@ class ACRCloud(AudioDatabaseInterface):
 
         # TODO handle errors from response
         # TODO make response the same along others
-        # TODO MongoDB find_one_and_update
         return json.loads(acrcloud.recognize_by_file(sample_file_path, 0))
 
 
@@ -88,7 +87,7 @@ class Gracenote(AudioDatabaseInterface):
     def get_name(self):
         return 'Gracenote'
 
-    def recognize(self, sample_file_uuid):
+    def recognize(self, sample_id):
         pass
 
 
@@ -99,7 +98,7 @@ class AudibleMagic(AudioDatabaseInterface):
     def get_name(self):
         return 'Audible Magic'
 
-    def recognize(self, sample_file_uuid):
+    def recognize(self, sample_id):
         pass
 
 
@@ -110,7 +109,7 @@ class MufinAudioID(AudioDatabaseInterface):
     def get_name(self):
         return 'Mufin AudioID'
 
-    def recognize(self, sample_file_uuid):
+    def recognize(self, sample_id):
         pass
 
 
@@ -121,9 +120,9 @@ class AcoustID(AudioDatabaseInterface):
     def get_name(self):
         return 'AcoustID'
 
-    def recognize(self, sample_file_uuid):
+    def recognize(self, sample_id):
         pass
-        # sample_file_path = get_sample_file_path(sample_file_uuid, True)
+        # sample_file_path = get_sample_file_path(sample_id, True)
 
         # fingerprint = acoustid.fingerprint_file(sample_file_path)
         
