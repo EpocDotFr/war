@@ -3,6 +3,7 @@ from logging.handlers import RotatingFileHandler
 import os
 import logging
 import json
+import pymongo
 
 # -----------------------------------------------------------
 # Boot
@@ -24,6 +25,21 @@ from utils import *
 
 # -----------------------------------------------------------
 # CLI commands
+
+@app.cli.command()
+def initdb():
+    db = get_database()
+
+    db.recognizations.create_index('audio_database')
+
+
+@app.cli.command()
+def emptydb():
+    db = get_database()
+
+    db.recognizations.delete_many({})
+    db.stats.delete_many({})
+
 
 @app.cli.command()
 def worker():
