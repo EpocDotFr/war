@@ -28,6 +28,7 @@ from utils import *
 
 @app.cli.command()
 def initdb():
+    """Initialize the MongoDB collections"""
     db = get_database()
 
     db.recognizations.create_index('audio_database')
@@ -35,6 +36,7 @@ def initdb():
 
 @app.cli.command()
 def emptydb():
+    """Empty the MongoDB collections"""
     db = get_database()
 
     db.recognizations.delete_many({})
@@ -43,6 +45,7 @@ def emptydb():
 
 @app.cli.command()
 def worker():
+    """Start a beanstalkd worker"""
     queue = get_queue()
     queue.watch('recognizations')
 
@@ -56,14 +59,16 @@ def worker():
         audio_databases = get_enabled_audio_databases(db)
 
         for audio_database_id, audio_database_instance in audio_databases.items():
-            recognization_results = audio_database_instance.recognize(job_data['sample_id'])
+            try:
+                recognization_results = audio_database_instance.recognize(job_data['sample_id'])
 
-            # TODO proper error handling
-            db.recognizations.update_one({"_id": job_data['sample_id']}, {audio_database_id: recognization_results})
+                db.recognizations.update_one({"_id": job_data['sample_id']}, {audio_database_id: recognization_results})
+            except Exception as e:
+                app.logger.error(str(e))
 
         job.delete()
     except Exception as e:
-        app.logger.warning(str(e))
+        app.logger.error(str(e))
         job.bury()
 
 
@@ -167,7 +172,7 @@ def recognize():
 
             status = 202
         except Exception as e:
-            app.logger.error(e)
+            app.logger.error(str(e))
             status = 500
             ajax_response['data']['message'] = 'Sorry, there were a server error. We have been informed about this.'
 
@@ -183,7 +188,7 @@ def error_404(error):
 # Internal Server Error
 @app.errorhandler(500)
 def error_500(error):
-    app.logger.error(error)
+    app.logger.error(str(error))
     return render_template('500.html'), 500
 
 
