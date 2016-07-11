@@ -62,7 +62,7 @@ def worker():
             try:
                 recognization_results = audio_database_instance.recognize(job_data['sample_id'])
 
-                db.recognizations.update_one({"_id": job_data['sample_id']}, {audio_database_id: recognization_results})
+                db.recognizations.update_one({"_id": job_data['sample_id']}, {"$set": {audio_database_id: recognization_results}})
             except Exception as e:
                 app.logger.error(str(e))
 
