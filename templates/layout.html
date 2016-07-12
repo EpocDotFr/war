@@ -19,6 +19,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
 
+    {% if config['NO_INDEX'] %}<meta name="robots" content="noindex, nofollow" />{% endif %}
+
     <meta name="google-site-verification" content="TCvS4J7s1J_4HY3BF5tqeGMM45VZgKANeBDPY8k2ins">
 </head>
 <body>
@@ -42,7 +44,7 @@
         <p>thisiswar.online © 2016 Epoc • Logo courtesy of <a href="http://www.webalys.com/">Webalys</a></p>
     </footer>
     
-    {% if config['DEBUG'] == False %}
+    {% if config['INCLUDE_WEB_ANALYTICS'] %}
     <script type="text/javascript">
       var _gauges = _gauges || [];
       (function() {

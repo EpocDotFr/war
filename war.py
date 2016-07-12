@@ -22,6 +22,12 @@ app.logger.addHandler(logging_handler)
 
 from utils import *
 
+# -----------------------------------------------------------
+# Configuration parameters that cannot be customized via
+# the config.py file
+
+app.config['INCLUDE_WEB_ANALYTICS'] = not app.config['DEBUG']
+app.config['NO_INDEX'] = False
 
 # -----------------------------------------------------------
 # CLI commands
@@ -91,6 +97,7 @@ def close_queue(error):
 # -----------------------------------------------------------
 # Routes
 
+
 # Home page
 @app.route('/')
 def home():
@@ -101,16 +108,16 @@ def home():
     return render_template('home.html', global_stats=global_stats)
 
 
-# FAQ page
-@app.route('/faq')
-def faq():
-    return render_template('faq.html')
-
-
 # About page
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+
+# FAQ page
+@app.route('/faq')
+def faq():
+    return render_template('faq.html')
 
 
 # Terms of service page
@@ -128,6 +135,15 @@ def stats():
     global_stats = get_global_stats(db)
 
     return render_template('stats.html', audio_databases=audio_databases, global_stats=global_stats)
+
+
+# Admin page
+@app.route('/admin')
+def admin():
+    app.config['INCLUDE_WEB_ANALYTICS'] = False
+    app.config['NO_INDEX'] = True
+
+    return render_template('admin.html')
 
 
 # Sample recognization handling
