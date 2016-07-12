@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, g
 from logging.handlers import RotatingFileHandler
 import os
 import logging
