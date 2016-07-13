@@ -137,13 +137,13 @@ def stats():
     return render_template('stats.html', audio_databases=audio_databases, global_stats=global_stats)
 
 
-# Admin page
-@app.route('/admin')
-def admin():
+# Monitoring page
+@app.route('/monitoring')
+def monitoring():
     app.config['INCLUDE_WEB_ANALYTICS'] = False
     app.config['NO_INDEX'] = True
 
-    return render_template('admin.html')
+    return render_template('monitoring.html')
 
 
 # Sample recognization handling

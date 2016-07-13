@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
 
-    {% if config['NO_INDEX'] %}<meta name="robots" content="noindex, nofollow" />{% endif %}
+    {% if config['NO_INDEX'] %}<meta name="robots" content="noindex,nofollow,noarchive" />{% endif %}
 
     <meta name="google-site-verification" content="TCvS4J7s1J_4HY3BF5tqeGMM45VZgKANeBDPY8k2ins">
 </head>
