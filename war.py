@@ -1,8 +1,8 @@
-from flask import Flask, render_template, jsonify, request, g
+from flask import Flask, render_template, jsonify, request, g, abort, flash, json
 from logging.handlers import RotatingFileHandler
+from bson.objectid import ObjectId
 import os
 import logging
-import json
 import pymongo
 
 # -----------------------------------------------------------
@@ -171,9 +171,9 @@ def recognize():
             for audio_database_classname in enabled_audio_databases:
                 db_data[audio_database_classname] = None
 
-            recognization = db.samples.insert_one(db_data)
+            sample = db.samples.insert_one(db_data)
 
-            sample_id = str(recognization.inserted_id)
+            sample_id = str(sample.inserted_id)
 
             recognization_job_data = {'sample_id': sample_id}
 
@@ -188,6 +188,8 @@ def recognize():
             ajax_response['result'] = 'success'
             ajax_response['data']['sample_id'] = sample_id
 
+            flash('Your sample was successfully submitted!', 'success')
+
             status = 202
         except Exception as e:
             app.logger.error(str(e))
@@ -198,19 +200,19 @@ def recognize():
 
 
 # Sample results
-@app.route('/<sample_id>')
+@app.route('/r/<sample_id>')
 def sample_results(sample_id):
     app.config['INCLUDE_WEB_ANALYTICS'] = False
     app.config['NO_INDEX'] = True
 
     db = get_database()
 
-    sample = db.samples.find_one({'_id': sample_id})
+    sample = db.samples.find_one({'_id': ObjectId(sample_id)})
 
     if sample is None:
         abort(404)
 
-    return render_template('sample_results.html', recognization=recognization)
+    return render_template('sample_results.html', sample=sample)
 
 
 # Not Found

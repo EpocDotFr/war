@@ -1,10 +1,13 @@
 {% extends 'layout.html' %}
 
-{% block title %}Your recognization results • {% endblock %}
+{% block title %}Results • {% endblock %}
 
 {% block content %}
-    <h1>Your recognization results</h1>
+    <h1>Results</h1>
 
-    <p>TODO!</p>
-    <p>Link to this page, message when arriving from the home that please wait for the results here, you can close this page and go here again with the link</p>
+    {% if not sample['done'] %}
+	    <p>Please wait while your sample is being processed. The results are displayed in realtime below (no need to refresh this page!).</p>
+	    <p>You can also close this page and access it at any given time using this link:</p>
+	    <p class="text-center">{{ url_for('sample_results', sample_id=sample['_id'], _external=True) }}</p>
+    {% endif %}
 {% endblock %}

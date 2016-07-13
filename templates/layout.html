@@ -35,6 +35,14 @@
     </header>
 
     <div class="content">
+        {% with flash_messages = get_flashed_messages(with_categories=true) %}
+          {% if flash_messages %}
+            {% for category, message in flash_messages %}
+              <div class="alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
         {% block content %} {% endblock %}
     </div>
 

@@ -51,7 +51,7 @@
                         contentType: false,
                         success: function(response, status, xhr) {
                             if (response.result == 'success') {
-                                location.replace('/'+response.data.sample_id);
+                                location.replace('/r/'+response.data.sample_id);
                             } else {
                                 displayStatus('error', response.data.message);
                             }

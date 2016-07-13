@@ -24,6 +24,10 @@ a:focus {
     color: #FACB1B;
 }
 
+.text-center {
+    text-align: center !important;
+}
+
 /************************************************************************
  * Header */
 
