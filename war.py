@@ -164,7 +164,9 @@ def recognize():
 
             enabled_audio_databases = app.config['ENABLED_AUDIO_DATABASES']
 
-            db_data = {}
+            db_data = {
+                'done': False
+            }
 
             for audio_database_classname in enabled_audio_databases:
                 db_data[audio_database_classname] = None
