@@ -37,8 +37,6 @@
             window.setTimeout(function() {
                 recorder.stop();
 
-                displayStatus('success', 'Recording ended');
-
                 recorder.exportWAV(function(sample) {
                     displayStatus('info', 'Sending sample...');
 
@@ -53,8 +51,7 @@
                         contentType: false,
                         success: function(response, status, xhr) {
                             if (response.result == 'success') {
-                                displayStatus('success', 'Recognization request sent successfuly! Please wait a few minutes.');
-                                // TODO make things with response.data.sample_id
+                                location.replace('/'+response.data.sample_id);
                             } else {
                                 displayStatus('error', response.data.message);
                             }
@@ -87,7 +84,7 @@
         }
 
         button_recognize.on('click', function() {
-            displayStatus('info', 'Waiting for the permission...');
+            displayStatus('info', 'Waiting for your permission...');
             button_recognize.attr('disabled', true);
 
             navigator.getUserMedia({audio: true}, onStreamConnected, onStreamError);

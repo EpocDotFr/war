@@ -37,7 +37,7 @@ def initdb():
     """Initialize the MongoDB collections"""
     db = get_database()
 
-    db.recognizations.create_index('audio_database')
+    db.samples.create_index('audio_database')
 
 
 @app.cli.command()
@@ -45,7 +45,7 @@ def emptydb():
     """Empty the MongoDB collections"""
     db = get_database()
 
-    db.recognizations.delete_many({})
+    db.samples.delete_many({})
     db.stats.delete_many({})
 
 
@@ -53,7 +53,7 @@ def emptydb():
 def worker():
     """Start a beanstalkd worker"""
     queue = get_queue()
-    queue.watch('recognizations')
+    queue.watch('samples')
 
     job = queue.reserve()
 
@@ -68,7 +68,7 @@ def worker():
             try:
                 recognization_results = audio_database_instance.recognize(job_data['sample_id'])
 
-                db.recognizations.update_one({"_id": job_data['sample_id']}, {"$set": {audio_database_id: recognization_results}})
+                db.samples.update_one({'_id': job_data['sample_id']}, {'$set': {audio_database_id: recognization_results}})
             except Exception as e:
                 app.logger.error(str(e))
 
@@ -169,14 +169,14 @@ def recognize():
             for audio_database_classname in enabled_audio_databases:
                 db_data[audio_database_classname] = None
 
-            inserted = db.recognizations.insert_one(db_data)
+            recognization = db.samples.insert_one(db_data)
 
-            sample_id = str(inserted.inserted_id)
+            sample_id = str(recognization.inserted_id)
 
             recognization_job_data = {'sample_id': sample_id}
 
             queue = get_queue()
-            queue.use('recognizations')
+            queue.use('samples')
             queue.put(json.dumps(recognization_job_data))
 
             sample_file = request.files['sample']
@@ -193,6 +193,22 @@ def recognize():
             ajax_response['data']['message'] = 'Sorry, there were a server error. We have been informed about this.'
 
     return jsonify(ajax_response), status
+
+
+# Sample results
+@app.route('/<sample_id>')
+def sample_results(sample_id):
+    app.config['INCLUDE_WEB_ANALYTICS'] = False
+    app.config['NO_INDEX'] = True
+
+    db = get_database()
+
+    sample = db.samples.find_one({'_id': sample_id})
+
+    if sample is None:
+        abort(404)
+
+    return render_template('sample_results.html', recognization=recognization)
 
 
 # Not Found
