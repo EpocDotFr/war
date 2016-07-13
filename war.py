@@ -72,6 +72,7 @@ def worker():
             except Exception as e:
                 app.logger.error(str(e))
 
+        db.samples.update_one({'_id': job_data['sample_id']}, {'$set': {'done': True}})
         job.delete()
     except Exception as e:
         app.logger.error(str(e))
