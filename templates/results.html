@@ -8,7 +8,7 @@
 	    <p>You can also close this page and access it at any given time using this link:</p>
 	    <p class="text-center">{{ url_for('results', sample_id=sample['_id'], _external=True) }}</p>
     {% else %}
-    	<p>Your sample finished being processed! Here are the results.</p>
+    	<p>Your sample finished being processed! Here are the final results.</p>
     {% endif %}
 
     {% for result in results %}
