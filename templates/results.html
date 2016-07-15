@@ -13,6 +13,6 @@
 
     {% for result in results %}
     	<h2>{{ result.audio_database_name }} said...</h2>
-    	<p>It is <strong>{{ result.track.artist }}</strong> with <strong>{{ result.track.title }}</strong> from the album <strong>{{ result.track.album }}</strong>. Search on <a href="https://www.youtube.com/results?search_query={{ result.track.search_term }}">Youtube</a>, <a href="https://www.deezer.com/search/{{ result.track.search_term }}">Deezer</a> or <a href="https://open.spotify.com/search/{{ result.track.search_term }}">Spotify</a></p>
+    	<p>It is <strong>{{ result.track.artist }}</strong> with <strong>{{ result.track.title }}</strong> from the album <strong>{{ result.track.album }}</strong>. Search on <a href="https://www.youtube.com/results?search_query={{ result.search_terms }}">Youtube</a>, <a href="https://www.deezer.com/search/{{ result.search_terms }}">Deezer</a> or <a href="https://open.spotify.com/search/{{ result.search_terms }}">Spotify</a></p>
     {% endfor %}
 {% endblock %}

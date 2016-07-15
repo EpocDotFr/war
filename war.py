@@ -224,19 +224,19 @@ def results(sample_id):
 
     for audio_database_id, audio_database_instance in audio_databases.items():
         if audio_database_id in sample and sample[audio_database_id] is not None:
-            search_term = []
+            search_terms = []
 
             if 'artist' in sample[audio_database_id]:
-                search_term.append(sample[audio_database_id]['artist'])
+                search_terms.append(sample[audio_database_id]['artist'])
 
             if 'title' in sample[audio_database_id]:
-                search_term.append(sample[audio_database_id]['title'])
-            
+                search_terms.append(sample[audio_database_id]['title'])
+
             results.append({
                 'audio_database_id': audio_database_id,
                 'audio_database_name': audio_database_instance.get_name(),
                 'track': sample[audio_database_id],
-                'search_term': quote_plus(' '.join(search_term))
+                'search_terms': quote_plus(' '.join(search_terms))
             })
 
     return render_template('results.html', sample=sample, results=results)
