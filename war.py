@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify, request, g, abort, flash, json
 from logging.handlers import RotatingFileHandler
 from bson.objectid import ObjectId
+from urllib.parse import quote_plus
 import os
 import logging
 import pymongo
@@ -222,11 +223,20 @@ def results(sample_id):
     audio_databases = get_enabled_audio_databases(db)
 
     for audio_database_id, audio_database_instance in audio_databases.items():
-        if sample[audio_database_id] is not None:
+        if audio_database_id in sample and sample[audio_database_id] is not None:
+            search_term = []
+
+            if 'artist' in sample[audio_database_id]:
+                search_term.append(sample[audio_database_id]['artist'])
+
+            if 'title' in sample[audio_database_id]:
+                search_term.append(sample[audio_database_id]['title'])
+            
             results.append({
                 'audio_database_id': audio_database_id,
                 'audio_database_name': audio_database_instance.get_name(),
-                'track': sample[audio_database_id]
+                'track': sample[audio_database_id],
+                'search_term': quote_plus(' '.join(search_term))
             })
 
     return render_template('results.html', sample=sample, results=results)

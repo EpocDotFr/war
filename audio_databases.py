@@ -96,7 +96,7 @@ class ACRCloud(AudioDatabaseInterface):
         if 'album' in track:
             results['album'] = track['album']['name']
 
-        if 'artist' in track:
+        if 'artists' in track:
             results['artist'] = track['artists'][0]['name']
 
         if 'title' in track:
