@@ -202,7 +202,7 @@ def recognize():
 
 # Sample results
 @app.route('/r/<sample_id>')
-def sample_results(sample_id):
+def results(sample_id):
     app.config['INCLUDE_WEB_ANALYTICS'] = False
     app.config['NO_INDEX'] = True
 
@@ -213,7 +213,7 @@ def sample_results(sample_id):
     if sample is None:
         abort(404)
 
-    return render_template('sample_results.html', sample=sample)
+    return render_template('results.html', sample=sample)
 
 
 # Not Found
