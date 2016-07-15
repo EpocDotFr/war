@@ -68,11 +68,15 @@ def worker():
             try:
                 recognization_results = audio_database_instance.recognize(job_data['sample_id'])
 
-                db.samples.update_one({'_id': job_data['sample_id']}, {'$set': {audio_database_id: recognization_results}})
+                if recognization_results is False:
+                    db.stats.update_one({'audio_database': audio_database_id}, {'$inc': {'failures': 1}})
+                else:
+                    db.samples.update_one({'_id': ObjectId(job_data['sample_id'])}, {'$set': {audio_database_id: recognization_results}})
+                    db.stats.update_one({'audio_database': audio_database_id}, {'$inc': {'successes': 1}})
             except Exception as e:
                 app.logger.error(str(e))
 
-        db.samples.update_one({'_id': job_data['sample_id']}, {'$set': {'done': True}})
+        db.samples.update_one({'_id': ObjectId(job_data['sample_id'])}, {'$set': {'done': True}})
         job.delete()
     except Exception as e:
         app.logger.error(str(e))
@@ -213,7 +217,19 @@ def results(sample_id):
     if sample is None:
         abort(404)
 
-    return render_template('results.html', sample=sample)
+    results = []
+
+    audio_databases = get_enabled_audio_databases(db)
+
+    for audio_database_id, audio_database_instance in audio_databases.items():
+        if sample[audio_database_id] is not None:
+            results.append({
+                'audio_database_id': audio_database_id,
+                'audio_database_name': audio_database_instance.get_name(),
+                'track': sample[audio_database_id]
+            })
+
+    return render_template('results.html', sample=sample, results=results)
 
 
 # Not Found

@@ -4,8 +4,15 @@
 
 {% block content %}
     {% if not sample['done'] %}
-	    <p>Please wait while your sample is being processed. The results are displayed in realtime below (no need to refresh this page!).</p>
+	    <p>Your sample is being processed. The results are displayed in realtime below (no need to refresh this page!).</p>
 	    <p>You can also close this page and access it at any given time using this link:</p>
-	    <p class="text-center">{{ url_for('sample_results', sample_id=sample['_id'], _external=True) }}</p>
+	    <p class="text-center">{{ url_for('results', sample_id=sample['_id'], _external=True) }}</p>
+    {% else %}
+    	<p>Your sample finished being processed! Here are the results.</p>
     {% endif %}
+
+    {% for result in results %}
+    	<h2>{{ result.audio_database_name }}</h2>
+    	<p>{{ result.track.artist }} - {{ result.track.title }} - {{ result.track.album }} <a href="https://www.youtube.com/results?search_query={{ result.track.artist }} {{ result.track.title }}">Search on Youtube</a></p>
+    {% endfor %}
 {% endblock %}

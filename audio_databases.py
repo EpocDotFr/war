@@ -61,7 +61,7 @@ class ACRCloud(AudioDatabaseInterface):
 
     def recognize(self, sample_id):
         from acrcloud.recognizer import ACRCloudRecognizer
-        import json
+        from flask import json
 
         sample_file_path = get_sample_file_path(sample_id, check_if_exists=True)
 
@@ -75,9 +75,34 @@ class ACRCloud(AudioDatabaseInterface):
 
         acrcloud = ACRCloudRecognizer(config)
 
-        # TODO handle errors from response
-        # TODO make response the same along others
-        return json.loads(acrcloud.recognize_by_file(sample_file_path, 0))
+        json_response = json.loads(acrcloud.recognize_by_file(sample_file_path, 0))
+
+        if 'status' not in json_response:
+            raise Exception('The ACRCloud response is not valid')
+
+        if json_response['status']['code'] == 1001: # No result
+            return False
+
+        if json_response['status']['code'] != 0:
+            raise Exception(json_response['status']['msg'])
+
+        if 'music' not in json_response['metadata']:
+            return False
+
+        track = json_response['metadata']['music'][0]
+
+        results = {}
+
+        if 'album' in track:
+            results['album'] = track['album']['name']
+
+        if 'artist' in track:
+            results['artist'] = track['artists'][0]['name']
+
+        if 'title' in track:
+            results['title'] = track['title']
+
+        return results
 
 
 class Gracenote(AudioDatabaseInterface):
