@@ -81,7 +81,7 @@ def worker():
         sample = db.samples.find_one({'_id': sample_object_id})
 
         if sample is None:
-            raise Exception('The sample {} does not exists'.format(sample_id))
+            raise Exception('The sample {} does not exists in the database'.format(sample_id))
 
         push_channel = 'results-{}'.format(sample_id)
 
