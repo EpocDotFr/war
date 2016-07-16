@@ -118,6 +118,11 @@ def worker():
 # Hooks
 
 
+@app.before_request
+def check_under_maintenance():
+    if os.path.exists('maintenance'):
+        abort(503)
+
 @app.teardown_appcontext
 def close_database(error):
     if hasattr(g, 'database'):
