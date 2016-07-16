@@ -36,8 +36,8 @@ def get_global_stats(db):
         global_stats = global_stats[0]
 
         global_stats['total_successes_and_failures'] = global_stats['total_successes'] + global_stats['total_failures']
-        global_stats['total_successes_percent'] = round((global_stats['total_successes'] * 100) / global_stats['total_successes_and_failures'])
-        global_stats['total_failures_percent'] = round((global_stats['total_failures'] * 100) / global_stats['total_successes_and_failures'])
+        global_stats['total_successes_percent'] = 0 if global_stats['total_successes_and_failures'] == 0 else round((global_stats['total_successes'] * 100) / global_stats['total_successes_and_failures'])
+        global_stats['total_failures_percent'] = 0 if global_stats['total_successes_and_failures'] == 0 else round((global_stats['total_failures'] * 100) / global_stats['total_successes_and_failures'])
 
         return global_stats
 
