@@ -4,15 +4,59 @@
 
 {% block content %}
     {% if not sample['done'] %}
-	    <p>Your sample is being processed. The results are displayed in realtime below (no need to refresh this page!).</p>
-	    <p>You can also close this page and access it at any given time using this link:</p>
-	    <p class="text-center">{{ url_for('results', sample_id=sample['_id'], _external=True) }}</p>
+        <div id="processing">
+            <p>Your sample is being processed. The results are displayed in realtime below (no need to refresh this page!).</p>
+            <p>You can also close this page and access it at any given time using this link:</p>
+            <p class="text-center"><input type="text" readonly value="{{ url_for('results', sample_id=sample['_id'], _external=True) }}" onClick="this.setSelectionRange(0, this.value.length)"></p>
+        </div>
     {% else %}
-    	<p>Your sample finished being processed! Here are the final results.</p>
+        <div id="done">
+            <p>Your sample finished being processed! Here are the final results.</p>
+        </div>
     {% endif %}
 
-    {% for result in results %}
-    	<h2>{{ result.audio_database_name }} said...</h2>
-    	<p>It is <strong>{{ result.track.artist }}</strong> with <strong>{{ result.track.title }}</strong> from the album <strong>{{ result.track.album }}</strong>. Search on <a href="https://www.youtube.com/results?search_query={{ result.search_terms }}">Youtube</a>, <a href="https://www.deezer.com/search/{{ result.search_terms }}">Deezer</a> or <a href="https://open.spotify.com/search/{{ result.search_terms }}">Spotify</a></p>
-    {% endfor %}
+    <div id="results">
+        {% for result in results %}
+            <h2>{{ result.audio_database_name }} said...</h2>
+            <p>It is <strong>{{ result.track.artist }}</strong> with <strong>{{ result.track.title }}</strong> from the album <strong>{{ result.track.album }}</strong>. Search on <a href="https://www.youtube.com/results?search_query={{ result.search_terms }}">Youtube</a>, <a href="https://www.deezer.com/search/{{ result.search_terms }}">Deezer</a> or <a href="https://open.spotify.com/search/{{ result.search_terms }}">Spotify</a></p>
+        {% endfor %}
+    </div>
+
+    {% if not sample['done'] %}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.7/zepto.min.js"></script>
+        <script src="https://js.pusher.com/3.1/pusher.min.js"></script>
+        <script>
+        Zepto(function () {
+            {% if config['DEBUG'] %}Pusher.logToConsole = true;{% endif %}
+
+            var div_processing = $('div#processing');
+            var div_done = $('div#done');
+            var div_results = $('div#results');
+
+            var pusher = new Pusher('{{ config['PUSHER_KEY'] }}', {
+                cluster: '{{ config['PUSHER_CLUSTER'] }}',
+                encrypted: true
+            });
+
+            var channel = pusher.subscribe('results-{{ sample['_id'] }}');
+
+            channel.bind('error', function(data) {
+                console.log(data)
+            });
+
+            channel.bind('failure', function(data) {
+                console.log(data)
+            });
+
+            channel.bind('success', function(data) {
+                console.log(data)
+            });
+
+            channel.bind('done', function(data) {
+                div_processing.remove();
+                div_done.show();
+            });
+        });
+        </script>
+    {% endif %}
 {% endblock %}

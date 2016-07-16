@@ -4,7 +4,6 @@ from bson.objectid import ObjectId
 from urllib.parse import quote_plus
 import os
 import logging
-import pymongo
 
 # -----------------------------------------------------------
 # Boot
@@ -33,9 +32,10 @@ app.config['NO_INDEX'] = False
 # -----------------------------------------------------------
 # CLI commands
 
+
 @app.cli.command()
 def initdb():
-    """Initialize the MongoDB collections"""
+    """Initialize the MongoDB collections."""
     db = get_database()
 
     db.samples.create_index('audio_database')
@@ -43,7 +43,7 @@ def initdb():
 
 @app.cli.command()
 def emptydb():
-    """Empty the MongoDB collections"""
+    """Empty the MongoDB database."""
     db = get_database()
 
     db.samples.delete_many({})
@@ -51,33 +51,63 @@ def emptydb():
 
 
 @app.cli.command()
+def resetdb():
+    """Clear then init the MongoDB database."""
+    db = get_database()
+
+    db.samples.drop()
+    db.stats.drop()
+
+    initdb()
+
+
+@app.cli.command()
 def worker():
-    """Start a beanstalkd worker"""
+    """Start a beanstalkd worker."""
     queue = get_queue()
     queue.watch('samples')
 
     job = queue.reserve()
 
-    try:
-        job_data = json.loads(job.body)
+    push = get_push()
 
+    try:
         db = get_database()
+
+        job_data = json.loads(job.body)
+        sample_id = job_data['sample_id']
+        sample_object_id = ObjectId(sample_id)
+
+        sample = db.samples.find_one({'_id': sample_object_id})
+
+        if sample is None:
+            raise Exception('The sample {} does not exists'.format(sample_id))
+
+        push_channel = 'results-{}'.format(sample_id)
 
         audio_databases = get_enabled_audio_databases(db)
 
         for audio_database_id, audio_database_instance in audio_databases.items():
-            try:
-                recognization_results = audio_database_instance.recognize(job_data['sample_id'])
+            if audio_database_id in sample and sample[audio_database_id] is not None:
+                continue
 
-                if recognization_results is False:
+            try:
+                recognization_results = audio_database_instance.recognize(sample_id)
+
+                db.samples.update_one({'_id': sample_object_id}, {'$set': {audio_database_id: recognization_results}})
+
+                if not recognization_results:
                     db.stats.update_one({'audio_database': audio_database_id}, {'$inc': {'failures': 1}})
+                    push.trigger(push_channel, 'failure', {'audio_database': audio_database_instance.get_name()})
                 else:
-                    db.samples.update_one({'_id': ObjectId(job_data['sample_id'])}, {'$set': {audio_database_id: recognization_results}})
                     db.stats.update_one({'audio_database': audio_database_id}, {'$inc': {'successes': 1}})
+                    push.trigger(push_channel, 'success', {**{'audio_database': audio_database_instance.get_name()}, **recognization_results})
             except Exception as e:
+                push.trigger(push_channel, 'error', {'audio_database': audio_database_instance.get_name()})
                 app.logger.error(str(e))
 
-        db.samples.update_one({'_id': ObjectId(job_data['sample_id'])}, {'$set': {'done': True}})
+        db.samples.update_one({'_id': sample_object_id}, {'$set': {'done': True}})
+        push.trigger(push_channel, 'done', {})
         job.delete()
     except Exception as e:
         app.logger.error(str(e))

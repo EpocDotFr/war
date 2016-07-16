@@ -3,6 +3,7 @@ from war import app
 from pymongo import MongoClient
 from pystalkd import Beanstalkd
 import os
+import pusher
 
 
 def get_database():
@@ -19,6 +20,19 @@ def get_queue():
         g.queue = Beanstalkd.Connection(app.config['BEANSTALKD_HOST'], app.config['BEANSTALKD_PORT'])
 
     return g.queue
+
+
+def get_push():
+    if not hasattr(g, 'push'):
+        g.push = pusher.Pusher(
+          app_id=app.config['PUSHER_APP_ID'],
+          key=app.config['PUSHER_KEY'],
+          secret=app.config['PUSHER_SECRET'],
+          cluster=app.config['PUSHER_CLUSTER'],
+          ssl=True
+        )
+
+    return g.push
 
 
 def get_global_stats(db):

@@ -111,17 +111,26 @@ button {
     color: #fff;
     box-shadow: 0 5px 2px #07564d;
     position: relative;
+    outline: 0;
 }
 
 button:hover,
 button:focus {
     border-color: #FACB1B;
+    outline: 0;
 }
 
 button:active {
     top: 3px;
     box-shadow: 0 2px 2px #07564d;
     border-color: #8C720D;
+    outline: 0;
+}
+
+button:disabled {
+    background-color: #017a6c;
+    border-color: #009281;
+    color: #0ca080;
 }
 
 /************************************************************************
@@ -139,6 +148,20 @@ button:active {
 
 .recognize-block #progress {
     display: none;
+}
+
+/************************************************************************
+ * Results page */
+
+#processing input {
+    background-color: #0F695E;
+    padding: 6px 10px;
+    font-size: 18px;
+    border: 1px solid #94eae3;
+    border-radius: 5px;
+    width: 420px;
+    color: #94eae3;
+    text-align: center;
 }
 
 /************************************************************************
