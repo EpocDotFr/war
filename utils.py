@@ -4,6 +4,7 @@ from pymongo import MongoClient
 from pystalkd import Beanstalkd
 import os
 import pusher
+import magic
 
 
 def get_database():
@@ -89,3 +90,9 @@ def get_enabled_audio_databases(db):
         ret[audio_database_classname] = audio_database_instance
 
     return ret
+
+
+def is_sample_valid(sample_file):
+    mime = magic.from_buffer(sample_file.read(), mime=True)
+
+    return mime in ['audio/vnd.wave', 'audio/wav', 'audio/wave']

@@ -2,3 +2,4 @@ flask
 pystalkd
 pymongo
 pusher
+python-magic

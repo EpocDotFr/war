@@ -195,47 +195,53 @@ def recognize():
         'data': {}
     }
     
-    if not request.is_xhr or 'sample' not in request.files or request.files['sample'] == '':
+    if not request.is_xhr or 'sample' not in request.files:
         app.logger.warning('Invalid request')
         status = 400
         ajax_response['data']['message'] = 'Invalid request'
     else:
-        try:
-            db = get_database()
+        sample_file = request.files['sample']
 
-            enabled_audio_databases = app.config['ENABLED_AUDIO_DATABASES']
+        if not is_sample_valid(sample_file):
+            app.logger.warning('Invalid sample file')
+            status = 400
+            ajax_response['data']['message'] = 'Invalid sample file'
+        else:
+            try:
+                db = get_database()
 
-            db_data = {
-                'done': False
-            }
+                enabled_audio_databases = app.config['ENABLED_AUDIO_DATABASES']
 
-            for audio_database_classname in enabled_audio_databases:
-                db_data[audio_database_classname] = None
+                db_data = {
+                    'done': False
+                }
 
-            sample = db.samples.insert_one(db_data)
+                for audio_database_classname in enabled_audio_databases:
+                    db_data[audio_database_classname] = None
 
-            sample_id = str(sample.inserted_id)
+                sample = db.samples.insert_one(db_data)
 
-            recognization_job_data = {'sample_id': sample_id}
+                sample_id = str(sample.inserted_id)
 
-            queue = get_queue()
-            queue.use('samples')
-            queue.put(json.dumps(recognization_job_data))
+                recognization_job_data = {'sample_id': sample_id}
 
-            sample_file = request.files['sample']
-            sample_file_path = get_sample_file_path(sample_id)
-            sample_file.save(sample_file_path)
-            
-            ajax_response['result'] = 'success'
-            ajax_response['data']['sample_id'] = sample_id
+                queue = get_queue()
+                queue.use('samples')
+                queue.put(json.dumps(recognization_job_data))
 
-            flash('Your sample was successfully submitted!', 'success')
+                sample_file_path = get_sample_file_path(sample_id)
+                sample_file.save(sample_file_path)
 
-            status = 202
-        except Exception as e:
-            app.logger.error(str(e))
-            status = 500
-            ajax_response['data']['message'] = 'Sorry, there were a server error. We have been informed about this.'
+                ajax_response['result'] = 'success'
+                ajax_response['data']['sample_id'] = sample_id
+
+                flash('Your sample was successfully submitted!', 'success')
+
+                status = 202
+            except Exception as e:
+                app.logger.error(str(e))
+                status = 500
+                ajax_response['data']['message'] = 'Sorry, there were a server error. We have been informed about this.'
 
     return jsonify(ajax_response), status
 
