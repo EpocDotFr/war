@@ -29,6 +29,7 @@ from utils import *
 app.config['INCLUDE_WEB_ANALYTICS'] = not app.config['DEBUG']
 app.config['NO_INDEX'] = False
 
+
 # -----------------------------------------------------------
 # CLI commands
 
@@ -98,12 +99,34 @@ def worker():
 
                 if not recognization_results:
                     db.stats.update_one({'audio_database': audio_database_id}, {'$inc': {'failures': 1}})
-                    push.trigger(push_channel, 'failure', {'audio_database': audio_database_instance.get_name()})
+
+                    push.trigger(push_channel, 'failure', {
+                        'audio_database_id': audio_database_id,
+                        'audio_database_name': audio_database_instance.get_name()
+                    })
                 else:
                     db.stats.update_one({'audio_database': audio_database_id}, {'$inc': {'successes': 1}})
-                    push.trigger(push_channel, 'success', {**{'audio_database': audio_database_instance.get_name()}, **recognization_results})
+
+                    search_terms = []
+
+                    if 'artist' in recognization_results:
+                        search_terms.append(recognization_results['artist'])
+
+                    if 'title' in recognization_results:
+                        search_terms.append(recognization_results['title'])
+
+                    push.trigger(push_channel, 'success', {
+                        'audio_database_id': audio_database_id,
+                        'audio_database_name': audio_database_instance.get_name(),
+                        'track': recognization_results,
+                        'search_terms': quote_plus(' '.join(search_terms))
+                    })
             except Exception as e:
-                push.trigger(push_channel, 'error', {'audio_database': audio_database_instance.get_name()})
+                push.trigger(push_channel, 'error', {
+                    'audio_database_id': audio_database_id,
+                    'audio_database_name': audio_database_instance.get_name()
+                })
+
                 app.logger.error(str(e))
 
         db.samples.update_one({'_id': sample_object_id}, {'$set': {'done': True}})
@@ -122,6 +145,7 @@ def worker():
 def check_under_maintenance():
     if os.path.exists('maintenance'):
         abort(503)
+
 
 @app.teardown_appcontext
 def close_database(error):
@@ -194,7 +218,7 @@ def recognize():
         'result': 'failure',
         'data': {}
     }
-    
+
     if not request.is_xhr or 'sample' not in request.files:
         app.logger.warning('Invalid request')
         status = 400
@@ -283,8 +307,7 @@ def results(sample_id):
             else:
                 results.append({
                     'audio_database_id': audio_database_id,
-                    'audio_database_name': audio_database_instance.get_name(),
-                    'track': sample[audio_database_id]
+                    'audio_database_name': audio_database_instance.get_name()
                 })
 
     return render_template('results.html', sample=sample, results=results)
