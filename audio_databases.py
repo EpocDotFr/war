@@ -44,8 +44,10 @@ class AudioDatabaseInterface:
                 stat['successes'] = db_stats['successes']
                 stat['failures'] = db_stats['failures']
                 stat['total'] = db_stats['successes'] + db_stats['failures']
-                stat['successes_percent'] = 0 if stat['total'] == 0 else round((db_stats['successes'] * 100) / stat['total'])
-                stat['failures_percent'] = 0 if stat['total'] == 0 else round((db_stats['failures'] * 100) / stat['total'])
+                stat['successes_percent'] = 0 if stat['total'] == 0 else round(
+                    (db_stats['successes'] * 100) / stat['total'])
+                stat['failures_percent'] = 0 if stat['total'] == 0 else round(
+                    (db_stats['failures'] * 100) / stat['total'])
 
             self.stats = stat
 
@@ -66,11 +68,11 @@ class ACRCloud(AudioDatabaseInterface):
         sample_file_path = get_sample_file_path(sample_id, check_if_exists=True)
 
         config = {
-                'host': app.config['ACRCLOUD_HOST'],
-                'access_key': app.config['ACRCLOUD_ACCESS_KEY'],
-                'access_secret': app.config['ACRCLOUD_ACCESS_SECRET'],
-                'debug': app.config['DEBUG'],
-                'timeout': 10
+            'host': app.config['ACRCLOUD_HOST'],
+            'access_key': app.config['ACRCLOUD_ACCESS_KEY'],
+            'access_secret': app.config['ACRCLOUD_ACCESS_SECRET'],
+            'debug': app.config['DEBUG'],
+            'timeout': 10
         }
 
         acrcloud = ACRCloudRecognizer(config)
@@ -80,7 +82,7 @@ class ACRCloud(AudioDatabaseInterface):
         if 'status' not in json_response:
             raise Exception('The ACRCloud response is not valid')
 
-        if json_response['status']['code'] == 1001: # No result
+        if json_response['status']['code'] == 1001:  # No result
             return False
 
         if json_response['status']['code'] != 0:
@@ -150,13 +152,13 @@ class AcoustID(AudioDatabaseInterface):
         # sample_file_path = get_sample_file_path(sample_id, True)
 
         # fingerprint = acoustid.fingerprint_file(sample_file_path)
-        
+
         # app.logger.info('Result: {}'.format(fingerprint[1]))
         # app.logger.info('Sending match request to AcoustID')
-        
+
         # lookup_results = acoustid.lookup(app.config['ACOUSTID_API_KEY'], fingerprint[1], fingerprint[0])
-        
+
         # if not lookup_results['status'] or lookup_results['status'] != 'ok':
         #     raise Exception(lookup_results['message'])
-        
+
         # return lookup_results['results']
