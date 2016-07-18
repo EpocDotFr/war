@@ -3,20 +3,17 @@
 {% block title %}Results{% endblock %}
 
 {% block content %}
-    {% if not sample['done'] %}
-        <div id="processing">
-            <p class="alert-info">Your sample is now being processed. The results are displayed in realtime below (no need to refresh this page!).</p>
-            <p>You can close this page and access it at any given time using this link:</p>
-            <p class="text-center"><input type="text" readonly value="{{ url_for('results', sample_id=sample['_id'], _external=True) }}" onClick="this.setSelectionRange(0, this.value.length)"></p>
-        </div>
-    {% else %}
-        <div id="done" class="alert-success">Your sample finished being processed! Here are the final results.</div>
-    {% endif %}
+    <div id="processing" {% if sample['done'] %}style="display: none"{% endif %}>
+        <p class="alert-info">Your sample is now being processed. The results are displayed in realtime below (no need to refresh this page!).</p>
+        <p>You can close this page and access it at any given time using this link:</p>
+        <p class="text-center"><input type="text" readonly value="{{ url_for('results', sample_id=sample['_id'], _external=True) }}" onClick="this.setSelectionRange(0, this.value.length)"></p>
+    </div>
+    <div id="done" class="alert-success" {% if not sample['done'] %}style="display: none"{% endif %}>Your sample finished being processed! Here are the final results.</div>
 
     <div id="results">
         {% for result in results %}
             <h2>{{ result.audio_database_name }} said...</h2>
-            {% if result.track == False %}
+            {% if not 'track' in result %}
                 <p>Sorry, I don't know :/</p>
             {% else %}
                 <p>It is <strong>{{ result.track.artist }}</strong> with <strong>{{ result.track.title }}</strong> from the album <strong>{{ result.track.album }}</strong>. Search on <a href="https://www.youtube.com/results?search_query={{ result.search_terms }}">Youtube</a>, <a href="https://www.deezer.com/search/{{ result.search_terms }}">Deezer</a> or <a href="https://open.spotify.com/search/{{ result.search_terms }}">Spotify</a></p>
@@ -43,15 +40,15 @@
             var channel = pusher.subscribe('results-{{ sample['_id'] }}');
 
             channel.bind('error', function(data) {
-                console.log(data);
+                div_results.append('<h2>'+data.audio_database_name+' said...</h2><p>Sorry, an error occured :/</p>');
             });
 
             channel.bind('failure', function(data) {
-                console.log(data);
+                div_results.append('<h2>'+data.audio_database_name+' said...</h2><p>Sorry, I don\'t know :/</p>');
             });
 
             channel.bind('success', function(data) {
-                console.log(data);
+                div_results.append('<h2>'+data.audio_database_name+' said...</h2><p>It is <strong>'+data.track.artist+'</strong> with <strong>'+data.track.title+'</strong> from the album <strong>'+data.track.album+'</strong>. Search on <a href="https://www.youtube.com/results?search_query='+data.search_terms+'">Youtube</a>, <a href="https://www.deezer.com/search/'+data.search_terms+'">Deezer</a> or <a href="https://open.spotify.com/search/'+data.search_terms+'">Spotify</a></p>');
             });
 
             channel.bind('done', function(data) {

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, g, abort, flash, json
+from flask import Flask, render_template, jsonify, request, g, abort, json
 from logging.handlers import RotatingFileHandler
 from bson.objectid import ObjectId
 from urllib.parse import quote_plus
@@ -259,8 +259,6 @@ def recognize():
                 ajax_response['result'] = 'success'
                 ajax_response['data']['sample_id'] = sample_id
 
-                flash('Your sample was successfully submitted!', 'success')
-
                 status = 202
             except Exception as e:
                 app.logger.error(str(e))
@@ -289,7 +287,12 @@ def results(sample_id):
 
     for audio_database_id, audio_database_instance in audio_databases.items():
         if audio_database_id in sample and sample[audio_database_id] is not None:
-            if sample[audio_database_id] is not False:
+            if sample[audio_database_id] is False:
+                results.append({
+                    'audio_database_id': audio_database_id,
+                    'audio_database_name': audio_database_instance.get_name()
+                })
+            else:
                 search_terms = []
 
                 if 'artist' in sample[audio_database_id]:
@@ -303,11 +306,6 @@ def results(sample_id):
                     'audio_database_name': audio_database_instance.get_name(),
                     'track': sample[audio_database_id],
                     'search_terms': quote_plus(' '.join(search_terms))
-                })
-            else:
-                results.append({
-                    'audio_database_id': audio_database_id,
-                    'audio_database_name': audio_database_instance.get_name()
                 })
 
     return render_template('results.html', sample=sample, results=results)
