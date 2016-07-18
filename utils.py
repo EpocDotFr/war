@@ -5,6 +5,7 @@ from pystalkd import Beanstalkd
 import os
 import pusher
 import wave
+import arrow
 
 
 def get_database():
@@ -37,8 +38,23 @@ def get_push():
     return g.push
 
 
+def get_latest_news(db):
+    latest_news = db.news.find().limit(1).sort('date', 1)  # TODO SALE
+
+    latest_news = list(latest_news)
+
+    if len(latest_news) == 1:
+        latest_news = latest_news[0]
+
+        latest_news['date'] = arrow.get(latest_news['date'])
+
+        return latest_news
+    else:
+        return None
+
+
 def get_global_stats(db):
-    global_stats_db = db.stats.aggregate([
+    global_stats = db.stats.aggregate([
         {'$group': {
             '_id': None,
             'total_successes': {'$sum': '$successes'},
@@ -46,7 +62,7 @@ def get_global_stats(db):
         }}
     ])
 
-    global_stats = list(global_stats_db)
+    global_stats = list(global_stats)
 
     if len(global_stats) == 1:
         global_stats = global_stats[0]

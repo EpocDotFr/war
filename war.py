@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, g, abort, json
+from flask import Flask, render_template, jsonify, request, abort, json
 from logging.handlers import RotatingFileHandler
 from bson.objectid import ObjectId
 from urllib.parse import quote_plus
@@ -36,28 +36,31 @@ app.config['NO_INDEX'] = False
 
 @app.cli.command()
 def initdb():
-    """Initialize the MongoDB collections."""
+    """Create the MongoDB collection's goods."""
     db = get_database()
 
     db.samples.create_index('audio_database')
+    db.news.create_index('slug')
 
 
 @app.cli.command()
 def emptydb():
-    """Empty the MongoDB database."""
+    """Empty the MongoDB database (don't remvoe the collections)."""
     db = get_database()
 
     db.samples.delete_many({})
     db.stats.delete_many({})
+    db.news.delete_many({})
 
 
 @app.cli.command()
 def resetdb():
-    """Clear then init the MongoDB database."""
+    """Drop then create the MongoDB database."""
     db = get_database()
 
     db.samples.drop()
     db.stats.drop()
+    db.news.drop()
 
     initdb()
 
@@ -143,7 +146,7 @@ def worker():
 
 @app.before_request
 def check_under_maintenance():
-    if os.path.exists('maintenance'):
+    if os.path.exists('maintenance') and not request.path.startswith('/manage'):
         abort(503)
 
 
@@ -170,7 +173,12 @@ def home():
 
     global_stats = get_global_stats(db)
 
-    return render_template('home.html', global_stats=global_stats)
+    latest_news = None
+
+    if app.config['DEBUG']:
+        latest_news = get_latest_news(db)
+
+    return render_template('home.html', global_stats=global_stats, latest_news=latest_news)
 
 
 # About page
@@ -202,13 +210,25 @@ def stats():
     return render_template('stats.html', audio_databases=audio_databases, global_stats=global_stats)
 
 
-# Monitoring page
-@app.route('/monitoring')
-def monitoring():
+# News list
+@app.route('/news')
+def news():
+    return render_template('news.html')
+
+
+# One news
+@app.route('/news/<slug>')
+def one_news(slug):
+    return render_template('one_news.html')
+
+
+# Managing dashboard
+@app.route('/manage')
+def manage():
     app.config['INCLUDE_WEB_ANALYTICS'] = False
     app.config['NO_INDEX'] = True
 
-    return render_template('monitoring.html')
+    return render_template('manage.html')
 
 
 # Sample recognization handling
@@ -271,7 +291,6 @@ def recognize():
 # Sample results
 @app.route('/r/<sample_id>')
 def results(sample_id):
-    app.config['INCLUDE_WEB_ANALYTICS'] = False
     app.config['NO_INDEX'] = True
 
     db = get_database()
@@ -281,14 +300,14 @@ def results(sample_id):
     if sample is None:
         abort(404)
 
-    results = []
+    res = []
 
     audio_databases = get_enabled_audio_databases(db)
 
     for audio_database_id, audio_database_instance in audio_databases.items():
         if audio_database_id in sample and sample[audio_database_id] is not None:
             if sample[audio_database_id] is False:
-                results.append({
+                res.append({
                     'audio_database_id': audio_database_id,
                     'audio_database_name': audio_database_instance.get_name()
                 })
@@ -301,14 +320,14 @@ def results(sample_id):
                 if 'title' in sample[audio_database_id]:
                     search_terms.append(sample[audio_database_id]['title'])
 
-                results.append({
-                    'audio_database_id': audio_database_id,
-                    'audio_database_name': audio_database_instance.get_name(),
-                    'track': sample[audio_database_id],
-                    'search_terms': quote_plus(' '.join(search_terms))
-                })
+                    res.append({
+                        'audio_database_id': audio_database_id,
+                        'audio_database_name': audio_database_instance.get_name(),
+                        'track': sample[audio_database_id],
+                        'search_terms': quote_plus(' '.join(search_terms))
+                    })
 
-    return render_template('results.html', sample=sample, results=results)
+    return render_template('results.html', sample=sample, results=res)
 
 
 # Not Found

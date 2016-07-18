@@ -1,6 +1,6 @@
 
 /************************************************************************
- * General styles */
+ * Global styles */
 
 body {
     background: #0c7367 url("/images/bg.png");
@@ -22,6 +22,11 @@ a:focus {
     text-decoration: none;
     border-bottom: 1px solid;
     color: #FACB1B;
+}
+
+p {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .text-center {
@@ -100,6 +105,11 @@ header .subtitle {
     text-shadow: 1px 1px 1px #000;
 }
 
+.content hr {
+    border: 0;
+    border-top: 1px dotted #099886;
+}
+
 /************************************************************************
  * Buttons */
 
@@ -131,37 +141,6 @@ button:disabled {
     background-color: #017a6c;
     border-color: #009281;
     color: #0ca080;
-}
-
-/************************************************************************
- * Recognize block */
-
-.recognize-block,
-.recognize-block p {
-    text-align: center;
-}
-
-.recognize-block button {
-    padding: 8px 10px;
-    font-size: 20px;
-}
-
-.recognize-block #progress {
-    display: none;
-}
-
-/************************************************************************
- * Results page */
-
-#processing input {
-    background-color: #0F695E;
-    padding: 6px 10px;
-    font-size: 18px;
-    border: 1px solid #94eae3;
-    border-radius: 5px;
-    width: 420px;
-    color: #94eae3;
-    text-align: center;
 }
 
 /************************************************************************
@@ -207,6 +186,7 @@ table,
 table td,
 table th {
     border: 1px solid #099886;
+    background-color: #006f62;
 }
 
 table td,
@@ -233,4 +213,41 @@ footer {
     text-align: center;
     color: #ccc;
     font-size: 14px;
+}
+
+/************************************************************************
+ * Home page */
+
+.recognize-block,
+.recognize-block p {
+    text-align: center;
+}
+
+.recognize-block button {
+    padding: 8px 10px;
+    font-size: 20px;
+}
+
+.recognize-block #progress {
+    display: none;
+}
+
+.latest-news {
+    text-align: center !important;
+    margin: 0;
+    font-weight: normal;
+}
+
+/************************************************************************
+ * Results page */
+
+#processing input {
+    background-color: #0F695E;
+    padding: 6px 10px;
+    font-size: 18px;
+    border: 1px solid #94eae3;
+    border-radius: 5px;
+    width: 420px;
+    color: #94eae3;
+    text-align: center;
 }
