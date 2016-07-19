@@ -170,6 +170,11 @@ def get_password(username):
     return None
 
 
+@auth.error_handler
+def auth_error():
+    abort(403)
+
+
 # -----------------------------------------------------------
 # Routes
 
