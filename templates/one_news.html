@@ -1,7 +1,9 @@
 {% extends 'layout.html' %}
 
-{% block title %}TODO{% endblock %}
+{% block title %}News › {{ the_news.title }}{% endblock %}
 
 {% block content %}
-    <p>TODO!</p>
+	<p><small>Published {{ the_news.date.humanize() }}</small></p>
+
+    {{ the_news.content|safe }}
 {% endblock %}

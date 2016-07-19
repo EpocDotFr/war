@@ -3,3 +3,4 @@ pystalkd
 pymongo
 pusher
 arrow
+mistune

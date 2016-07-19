@@ -101,6 +101,12 @@ header .subtitle {
     border-bottom: 1px dotted #099886;
 }
 
+.content h1 small {
+    float: right;
+    font-size: 60%;
+    margin-top: 8px;
+}
+
 .content h2 {
     text-shadow: 1px 1px 1px #000;
 }

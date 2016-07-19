@@ -4,6 +4,7 @@ from bson.objectid import ObjectId
 from urllib.parse import quote_plus
 import os
 import logging
+import mistune
 
 # -----------------------------------------------------------
 # Boot
@@ -45,7 +46,7 @@ def initdb():
 
 @app.cli.command()
 def emptydb():
-    """Empty the MongoDB database (don't remvoe the collections)."""
+    """Empty the MongoDB database."""
     db = get_database()
 
     db.samples.delete_many({})
@@ -62,12 +63,10 @@ def resetdb():
     db.stats.drop()
     db.news.drop()
 
-    initdb()
-
 
 @app.cli.command()
 def worker():
-    """Start a beanstalkd worker."""
+    """Start the beanstalkd worker."""
     queue = get_queue()
     queue.watch('samples')
 
@@ -219,7 +218,17 @@ def news():
 # One news
 @app.route('/news/<slug>')
 def one_news(slug):
-    return render_template('one_news.html')
+    db = get_database()
+
+    the_news = db.news.find_one({'slug': slug})
+
+    if the_news is None:
+        abort(404)
+
+    the_news['date'] = arrow.get(the_news['date'])
+    the_news['content'] = mistune.markdown(the_news['content'])
+
+    return render_template('one_news.html', the_news=the_news)
 
 
 # Managing dashboard
