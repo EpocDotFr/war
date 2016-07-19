@@ -4,3 +4,4 @@ pymongo
 pusher
 arrow
 mistune
+flask_httpauth

@@ -1,4 +1,5 @@
 from flask import Flask, render_template, jsonify, request, abort, json
+from flask_httpauth import HTTPBasicAuth
 from logging.handlers import RotatingFileHandler
 from bson.objectid import ObjectId
 from urllib.parse import quote_plus
@@ -11,6 +12,7 @@ import mistune
 
 app = Flask(__name__, static_url_path='')
 app.config.from_pyfile('config.py')
+auth = HTTPBasicAuth()
 
 # -----------------------------------------------------------
 # Logging configuration
@@ -161,6 +163,13 @@ def close_queue(error):
         g.queue.close()
 
 
+@auth.get_password
+def get_password(username):
+    if username in app.config['MONITORING_USERS']:
+        return app.config['MONITORING_USERS'].get(username)
+    return None
+
+
 # -----------------------------------------------------------
 # Routes
 
@@ -233,6 +242,7 @@ def one_news(slug):
 
 # Managing dashboard
 @app.route('/manage')
+@auth.login_required
 def manage():
     app.config['INCLUDE_WEB_ANALYTICS'] = False
     app.config['NO_INDEX'] = True
