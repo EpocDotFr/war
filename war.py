@@ -3,6 +3,7 @@ from flask_httpauth import HTTPBasicAuth
 from logging.handlers import RotatingFileHandler
 from bson.objectid import ObjectId
 from urllib.parse import quote_plus
+import gauges
 import os
 import logging
 import mistune
@@ -14,6 +15,8 @@ import PyRSS2Gen
 app = Flask(__name__, static_url_path='')
 app.config.from_pyfile('config.py')
 auth = HTTPBasicAuth()
+
+gauges.TOKEN = app.config['GAUGES_API_TOKEN']
 
 # -----------------------------------------------------------
 # Logging configuration
