@@ -1,30 +1,32 @@
 import requests
 
-
-ENDPOINT = 'https://secure.gaug.es/'
+_ENDPOINT = 'https://secure.gaug.es/'
 TOKEN = None
 
 
 def _call(resource, method='GET'):
-	url = ENDPOINT + resource
+    url = _ENDPOINT + resource
 
-	headers = {
-		'X-Gauges-Token': TOKEN
-	}
+    if TOKEN is None:
+        raise Exception('Gauges token isn\'t defined')
 
-	response = requests.request(method, url, headers=headers)
+    headers = {
+        'X-Gauges-Token': TOKEN
+    }
 
-	response_json = response.json()
+    response = requests.request(method, url, headers=headers)
 
-	if not response.ok:
-		message = response_json['message'] if 'message' in response_json else 'Unknow error'
+    response_json = response.json()
 
-		raise Exception(message)
+    if not response.ok:
+        message = response_json['message'] if 'message' in response_json else 'Unknow error'
 
-	return response_json
+        raise Exception(message)
+
+    return response_json
 
 
 def get_gauge(gauge_id):
-	result = _call('gauges/' + gauge_id)
+    result = _call('gauges/' + gauge_id)
 
-	return result['gauge']
+    return result['gauge']

@@ -171,12 +171,13 @@ def close_queue(error):
 def get_password(username):
     if username in app.config['MONITORING_USERS']:
         return app.config['MONITORING_USERS'].get(username)
+
     return None
 
 
 @auth.error_handler
 def auth_error():
-    abort(403)
+    return render_template('403.html')
 
 
 # -----------------------------------------------------------
@@ -238,28 +239,28 @@ def news():
 def news_rss():
     db = get_database()
 
-    news = db.news.find().limit(10) # TODO order by date
+    news_list = db.news.find().limit(10)  # TODO order by date
 
     rss_items = []
 
-    for the_news in news:
+    for the_news in news_list:
         rss_items.append(PyRSS2Gen.RSSItem(
-            title = the_news['title'],
-            link = url_for('one_news', slug=the_news['slug'], _external=True),
-            description = mistune.markdown(the_news['content']),
-            guid = PyRSS2Gen.Guid(url_for('one_news', slug=the_news['slug'], _external=True)),
-            pubDate = arrow.get(the_news['date']).datetime
+            title=the_news['title'],
+            link=url_for('one_news', slug=the_news['slug'], _external=True),
+            description=mistune.markdown(the_news['content']),
+            guid=PyRSS2Gen.Guid(url_for('one_news', slug=the_news['slug'], _external=True)),
+            pubDate=arrow.get(the_news['date']).datetime
         ))
 
     rss = PyRSS2Gen.RSS2(
-        title = 'Latest news from WAR (Web Audio Recognizer)',
-        link = url_for('home', _external=True),
-        description = 'Latest news from WAR (Web Audio Recognizer)',
-        lastBuildDate = arrow.now().datetime,
-        items = rss_items
+        title='Latest news from WAR (Web Audio Recognizer)',
+        link=url_for('home', _external=True),
+        description='Latest news from WAR (Web Audio Recognizer)',
+        lastBuildDate=arrow.now().datetime,
+        items=rss_items
     )
 
-    return Response(rss.to_xml(encoding='utf-8'),  mimetype='application/rss+xml')
+    return Response(rss.to_xml(encoding='utf-8'), mimetype='application/rss+xml')
 
 
 # One news
@@ -285,7 +286,9 @@ def manage():
     app.config['INCLUDE_WEB_ANALYTICS'] = False
     app.config['NO_INDEX'] = True
 
-    return render_template('manage.html')
+    visits = gauges.get_gauge(app.config['GAUGES_SITE_ID'])
+
+    return render_template('manage.html', visits=visits)
 
 
 # Sample recognization handling

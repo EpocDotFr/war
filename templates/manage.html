@@ -3,5 +3,17 @@
 {% block title %}Manage{% endblock %}
 
 {% block content %}
-    <p>TODO!</p>
+    <h2>Visits</h2>
+
+    <ul>
+        <li><strong>All time:</strong> {{ visits.all_time.views }} views, {{ visits.all_time.people }} people</li>
+        <li><strong>Today:</strong> {{ visits.today.views }} views, {{ visits.today.people }} people</li>
+        <li><strong>Yesterday:</strong> {{ visits.yesterday.views }} views, {{ visits.yesterday.people }} people</li>
+    </ul>
+
+    <h2>Server</h2>
+
+    <ul>
+        <li></li>
+    </ul>
 {% endblock %}
