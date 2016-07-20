@@ -3,5 +3,10 @@
 {% block title %}News{% endblock %}
 
 {% block content %}
-    <p>TODO!</p>
+    {% for the_news in news_list %}
+        <h2>{{ the_news.title }}</h2>
+        <p>Published {{ the_news.date }}</p>
+    {% else %}
+        <div class="alert-info">No news found.</div>
+    {% endfor %}
 {% endblock %}

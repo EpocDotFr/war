@@ -192,6 +192,13 @@ table,
 table td,
 table th {
     border: 1px solid #099886;
+}
+
+table td {
+    background-color: #02665A;
+}
+
+table th {
     background-color: #006f62;
 }
 

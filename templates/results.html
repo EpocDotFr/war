@@ -18,6 +18,8 @@
             {% else %}
                 <p>It is <strong>{{ result.track.artist }}</strong> with <strong>{{ result.track.title }}</strong> from the album <strong>{{ result.track.album }}</strong>. Search on <a href="https://www.youtube.com/results?search_query={{ result.search_terms }}">Youtube</a>, <a href="https://www.deezer.com/search/{{ result.search_terms }}">Deezer</a> or <a href="https://open.spotify.com/search/{{ result.search_terms }}">Spotify</a></p>
             {% endif %}
+        {% else %}
+            <div class="alert-info">No results at this moment.</div>
         {% endfor %}
     </div>
 

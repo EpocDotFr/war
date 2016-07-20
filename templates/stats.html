@@ -16,12 +16,16 @@
         </thead>
         <tbody>
         {% for audio_database_id, audio_database_instance in audio_databases.items() %}
-        <tr>
-            <td><a href="{{ audio_database_instance.get_website() }}">{{ audio_database_instance.get_name() }}</a></td>
-            <td>{{ audio_database_instance.get_stats().successes }} (<strong>{{ audio_database_instance.get_stats().successes_percent }}</strong> %)</td>
-            <td>{{ audio_database_instance.get_stats().failures }} (<strong>{{ audio_database_instance.get_stats().failures_percent }}</strong> %)</td>
-            <td>{{ audio_database_instance.get_stats().total }}</td>
-        </tr>
+            <tr>
+                <td><a href="{{ audio_database_instance.get_website() }}">{{ audio_database_instance.get_name() }}</a></td>
+                <td>{{ audio_database_instance.get_stats().successes }} (<strong>{{ audio_database_instance.get_stats().successes_percent }}</strong> %)</td>
+                <td>{{ audio_database_instance.get_stats().failures }} (<strong>{{ audio_database_instance.get_stats().failures_percent }}</strong> %)</td>
+                <td>{{ audio_database_instance.get_stats().total }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4"><div class="alert-info">No audio database found.</div></td>
+            </tr>
         {% endfor %}
         </tbody>
         <tfoot>

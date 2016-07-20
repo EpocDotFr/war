@@ -231,7 +231,11 @@ def stats():
 # News list
 @app.route('/news')
 def news():
-    return render_template('news.html')
+    db = get_database()
+
+    news_list = db.news.find()  # TODO order by date
+
+    return render_template('news.html', news_list=news_list)
 
 
 # RSS of the news
