@@ -39,7 +39,7 @@ def get_push():
 
 
 def get_latest_news(db):
-    latest_news = db.news.find().limit(1).sort('date', 1)  # TODO SALE
+    latest_news = db.news.find().limit(1).sort('date', 1)  # TODO crappy, make sure tall docs aren't returned
 
     latest_news = list(latest_news)
 

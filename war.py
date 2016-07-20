@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, abort, json
+from flask import Flask, Response, render_template, jsonify, request, abort, json, url_for
 from flask_httpauth import HTTPBasicAuth
 from logging.handlers import RotatingFileHandler
 from bson.objectid import ObjectId
@@ -6,6 +6,7 @@ from urllib.parse import quote_plus
 import os
 import logging
 import mistune
+import PyRSS2Gen
 
 # -----------------------------------------------------------
 # Boot
@@ -227,6 +228,35 @@ def stats():
 @app.route('/news')
 def news():
     return render_template('news.html')
+
+
+# RSS of the news
+@app.route('/news/rss')
+def news_rss():
+    db = get_database()
+
+    news = db.news.find().limit(10) # TODO order by date
+
+    rss_items = []
+
+    for the_news in news:
+        rss_items.append(PyRSS2Gen.RSSItem(
+            title = the_news['title'],
+            link = url_for('one_news', slug=the_news['slug'], _external=True),
+            description = mistune.markdown(the_news['content']),
+            guid = PyRSS2Gen.Guid(url_for('one_news', slug=the_news['slug'], _external=True)),
+            pubDate = arrow.get(the_news['date']).datetime
+        ))
+
+    rss = PyRSS2Gen.RSS2(
+        title = 'Latest news from WAR (Web Audio Recognizer)',
+        link = url_for('home', _external=True),
+        description = 'Latest news from WAR (Web Audio Recognizer)',
+        lastBuildDate = arrow.now().datetime,
+        items = rss_items
+    )
+
+    return Response(rss.to_xml(encoding='utf-8'),  mimetype='application/rss+xml')
 
 
 # One news

@@ -5,3 +5,4 @@ pusher
 arrow
 mistune
 flask_httpauth
+PyRSS2Gen
