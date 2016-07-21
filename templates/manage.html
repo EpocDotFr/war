@@ -3,7 +3,7 @@
 {% block title %}Manage{% endblock %}
 
 {% block content %}
-    <h2>Visits</h2>
+    <h2>Visits <small>— <a href="https://secure.gaug.es/dashboard#/gauges/577f8924c88d900296007007/overview">Admin</a></small></h2>
 
     <ul>
         <li><strong>All time:</strong> {{ visits.all_time.views }} views, {{ visits.all_time.people }} people</li>
@@ -14,8 +14,8 @@
     <h2>Server</h2>
 
     <ul>
-        <li><strong>CPU:</strong></li>
-        <li><strong>Disk:</strong></li>
-        <li><strong>Memory:</strong></li>
+        <li><strong>CPU:</strong> {{ server.cpu }} %</li>
+        <li><strong>RAM:</strong> {{ server.ram }} %</li>
+        <li><strong>HDD:</strong> {{ server.hdd }} %</li>
     </ul>
 {% endblock %}

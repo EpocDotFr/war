@@ -8,6 +8,7 @@ import os
 import logging
 import mistune
 import PyRSS2Gen
+import psutil
 
 # -----------------------------------------------------------
 # Boot
@@ -301,7 +302,13 @@ def manage():
 
     visits = gauges.get_gauge(app.config['GAUGES_SITE_ID'])
 
-    return render_template('manage.html', visits=visits)
+    server = {
+        'cpu': psutil.cpu_percent(interval=1),
+        'ram': psutil.virtual_memory().percent,
+        'hdd': psutil.disk_usage('/').percent
+    }
+
+    return render_template('manage.html', visits=visits, server=server)
 
 
 # Sample recognization handling
