@@ -233,7 +233,16 @@ def stats():
 def news():
     db = get_database()
 
-    news_list = db.news.find()  # TODO order by date
+    news_list_db = db.news.find()  # TODO order by date
+    news_list = []
+
+    for the_news in news_list_db:
+        the_news = dict(the_news)
+
+        the_news['date'] = arrow.get(the_news['date'])
+        the_news['content'] = mistune.markdown(the_news['content'])
+
+        news_list.append(the_news)
 
     return render_template('news.html', news_list=news_list)
 
