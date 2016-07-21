@@ -243,7 +243,7 @@ def news():
 def news_rss():
     db = get_database()
 
-    news_list = db.news.find().limit(10)  # TODO order by date
+    news_list = db.news.find().limit(5)  # TODO order by date
 
     rss_items = []
 
