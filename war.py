@@ -6,7 +6,6 @@ from urllib.parse import quote_plus
 import gauges
 import os
 import logging
-import mistune
 import PyRSS2Gen
 import psutil
 
@@ -234,16 +233,7 @@ def stats():
 def news():
     db = get_database()
 
-    news_list_db = db.news.find()  # TODO order by date
-    news_list = []
-
-    for the_news in news_list_db:
-        the_news = dict(the_news)
-
-        the_news['date'] = arrow.get(the_news['date'])
-        the_news['content'] = mistune.markdown(the_news['content'])
-
-        news_list.append(the_news)
+    news_list = get_news_list(db)
 
     return render_template('news.html', news_list=news_list)
 
@@ -253,7 +243,7 @@ def news():
 def news_rss():
     db = get_database()
 
-    news_list = db.news.find().limit(5)  # TODO order by date
+    news_list = get_news_list(db, limit=5)
 
     rss_items = []
 
@@ -261,15 +251,17 @@ def news_rss():
         rss_items.append(PyRSS2Gen.RSSItem(
             title=the_news['title'],
             link=url_for('one_news', slug=the_news['slug'], _external=True),
-            description=mistune.markdown(the_news['content']),
+            description=the_news['content'],
             guid=PyRSS2Gen.Guid(url_for('one_news', slug=the_news['slug'], _external=True)),
-            pubDate=arrow.get(the_news['date']).datetime
+            pubDate=the_news['date'].datetime
         ))
 
     rss = PyRSS2Gen.RSS2(
         title='Latest news from WAR (Web Audio Recognizer)',
         link=url_for('home', _external=True),
         description='Latest news from WAR (Web Audio Recognizer)',
+        language='en',
+        image=PyRSS2Gen.Image(url_for('static', filename='images/logo_128.png'), 'Logo of WAR', url_for('home', _external=True)),
         lastBuildDate=arrow.now().datetime,
         items=rss_items
     )
@@ -282,13 +274,10 @@ def news_rss():
 def one_news(slug):
     db = get_database()
 
-    the_news = db.news.find_one({'slug': slug})
+    the_news = get_one_news(db, slug)
 
     if the_news is None:
         abort(404)
-
-    the_news['date'] = arrow.get(the_news['date'])
-    the_news['content'] = mistune.markdown(the_news['content'])
 
     return render_template('one_news.html', the_news=the_news)
 
@@ -297,6 +286,8 @@ def one_news(slug):
 @app.route('/manage')
 @auth.login_required
 def manage():
+    db = get_database()
+
     app.config['INCLUDE_WEB_ANALYTICS'] = False
     app.config['NO_INDEX'] = True
 
@@ -308,7 +299,9 @@ def manage():
         'hdd': psutil.disk_usage('/').percent
     }
 
-    return render_template('manage.html', visits=visits, server=server)
+    news_list = get_news_list(db)
+
+    return render_template('manage.html', visits=visits, server=server, news_list=news_list)
 
 
 # Sample recognization handling

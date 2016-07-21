@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
 
-    <link rel="alternate" type="application/rss+xml" title="RSS feed of the articles" href="{{ url_for('news_rss', _external=True) }}" />
+    <link rel="alternate" type="application/rss+xml" title="Latest news from WAR (Web Audio Recognizer)" href="{{ url_for('news_rss', _external=True) }}" />
 
     {% if config['NO_INDEX'] %}<meta name="robots" content="noindex,nofollow,noarchive" />{% endif %}
 

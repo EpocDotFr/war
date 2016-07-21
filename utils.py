@@ -6,6 +6,7 @@ import os
 import pusher
 import wave
 import arrow
+import mistune
 
 
 def get_database():
@@ -39,7 +40,7 @@ def get_push():
 
 
 def get_latest_news(db):
-    latest_news = db.news.find().limit(1).sort('date', 1)  # TODO crappy, make sure tall docs aren't returned
+    latest_news = db.news.find().limit(1).sort('date', -1)  # TODO crappy, make sure tall docs aren't returned
 
     latest_news = list(latest_news)
 
@@ -52,6 +53,40 @@ def get_latest_news(db):
     else:
         return None
 
+
+def get_news_list(db, limit=None):
+    news_list_db = db.news.find()
+
+    if limit is not None:
+        news_list_db = news_list_db.limit(limit)
+
+    news_list_db = news_list_db.sort('date', -1)  # TODO crappy, make sure tall docs aren't returned
+
+    news_list = []
+
+    for the_news in news_list_db:
+        the_news = dict(the_news)
+
+        the_news['date'] = arrow.get(the_news['date'])
+        the_news['content'] = mistune.markdown(the_news['content'])
+
+        news_list.append(the_news)
+
+    return news_list
+
+
+def get_one_news(db, slug):
+    the_news = db.news.find_one({'slug': slug})
+
+    if the_news is None:
+        return None
+
+    the_news = dict(the_news)
+
+    the_news['date'] = arrow.get(the_news['date'])
+    the_news['content'] = mistune.markdown(the_news['content'])
+
+    return the_news
 
 def get_global_stats(db):
     global_stats = db.stats.aggregate([
