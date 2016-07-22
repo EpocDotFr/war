@@ -435,11 +435,11 @@ def news_delete(slug):
     db = get_database()
 
     if (delete_news(db, slug)):
-        flash('News deleted.', 'success')
-        return redirect(url_for('manage'))
+        flash('News deleted successfuly.', 'success')
     else:
         flash('Error deleting this news.', 'error')
-        return redirect(url_for('manage'))
+    
+    return redirect(url_for('manage'))
 
 # ----- Error routes -------
 
