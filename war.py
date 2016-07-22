@@ -1,4 +1,4 @@
-from flask import Flask, Response, render_template, jsonify, request, abort, json, url_for
+from flask import Flask, Response, render_template, jsonify, request, abort, json, url_for, flash, redirect
 from flask_httpauth import HTTPBasicAuth
 from logging.handlers import RotatingFileHandler
 from bson.objectid import ObjectId
@@ -303,6 +303,19 @@ def manage():
 
     return render_template('manage.html', visits=visits, server=server, news_list=news_list)
 
+
+# Delete a news
+@app.route('/manage/news/delete/<slug>')
+@auth.login_required
+def news_delete(slug):
+    db = get_database()
+
+    if (delete_news(db, slug)):
+        flash('News deleted.', 'success')
+        return redirect(url_for('manage'))
+    else:
+        flash('Error deleting this news.', 'error')
+        return redirect(url_for('manage'))
 
 # Sample recognization handling
 @app.route('/recognize', methods=['POST'])

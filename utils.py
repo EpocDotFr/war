@@ -88,6 +88,10 @@ def get_one_news(db, slug):
 
     return the_news
 
+
+def delete_news(db, slug):
+    return db.news.delete_one({'slug': slug}).deleted_count > 0
+
 def get_global_stats(db):
     global_stats = db.stats.aggregate([
         {'$group': {
