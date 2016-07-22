@@ -4,6 +4,6 @@
 
 {% block content %}
     <form method="post" action="{{ url_for('news_edit', slug=the_news.slug) }}">
-    {% include 'manage/news_form.html' %}
+    {% include 'manage/news/form.html' %}
     </form>
 {% endblock %}

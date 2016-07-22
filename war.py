@@ -236,7 +236,7 @@ def news():
 
     news_list = get_news_list(db)
 
-    return render_template('news.html', news_list=news_list)
+    return render_template('news/list.html', news_list=news_list)
 
 
 # RSS of the news
@@ -280,7 +280,7 @@ def one_news(slug):
     if the_news is None:
         abort(404)
 
-    return render_template('one_news.html', the_news=the_news)
+    return render_template('news/one.html', the_news=the_news)
 
 
 # Sample recognization handling
@@ -411,7 +411,7 @@ def manage():
 def news_create():
     db = get_database()
     
-    return render_template('manage/create_news.html')
+    return render_template('manage/news/create.html')
 
 
 # Edit a news
@@ -425,7 +425,7 @@ def news_edit(slug):
     if the_news is None:
         abort(404)
 
-    return render_template('manage/edit_news.html', the_news=the_news)
+    return render_template('manage/news/edit.html', the_news=the_news)
 
 
 # Delete a news
