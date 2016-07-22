@@ -3,7 +3,7 @@
 {% block title %}News › {{ the_news.title }}{% endblock %}
 
 {% block content %}
-	<p><small>Published {{ the_news.date.humanize() }}</small></p>
+	<p><em>Published {{ the_news.date.humanize() }}</em></p>
 
     {{ the_news.content|safe }}
 {% endblock %}

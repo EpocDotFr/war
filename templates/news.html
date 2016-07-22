@@ -4,15 +4,7 @@
 
 {% block content %}
     {% for the_news in news_list %}
-        {% if loop.first %}
-            <h2>Latest: <a href="{{ url_for('one_news', slug=the_news.slug) }}">{{ the_news.title }}</a> <small>— published {{ the_news.date.humanize() }}</small></h2>
-            {{ the_news.content|safe }}
-
-            <hr>
-            <h2>Older news</h2>
-        {% else %}
-            <p><a href="{{ url_for('one_news', slug=the_news.slug) }}">{{ the_news.title }}</a> <small>— published {{ the_news.date.humanize() }}</small></p>
-        {% endif %}
+        <p><a href="{{ url_for('one_news', slug=the_news.slug) }}">{{ the_news.title }}</a> <small>— published {{ the_news.date.humanize() }}</small></p>
     {% else %}
         <div class="alert-info">No news found.</div>
     {% endfor %}
