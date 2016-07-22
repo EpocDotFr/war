@@ -1,0 +1,9 @@
+{% extends 'layout.html' %}
+
+{% block title %}Manage › Create a news{% endblock %}
+
+{% block content %}
+    <form method="post" action="{{ url_for('news_create') }}">
+    {% include 'manage/news_form.html' %}
+    </form>
+{% endblock %}

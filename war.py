@@ -183,6 +183,7 @@ def auth_error():
 # -----------------------------------------------------------
 # Routes
 
+# ----- Public routes -------
 
 # Home page
 @app.route('/')
@@ -282,41 +283,6 @@ def one_news(slug):
     return render_template('one_news.html', the_news=the_news)
 
 
-# Managing dashboard
-@app.route('/manage')
-@auth.login_required
-def manage():
-    db = get_database()
-
-    app.config['INCLUDE_WEB_ANALYTICS'] = False
-    app.config['NO_INDEX'] = True
-
-    visits = gauges.get_gauge(app.config['GAUGES_SITE_ID'])
-
-    server = {
-        'cpu': psutil.cpu_percent(interval=1),
-        'ram': psutil.virtual_memory().percent,
-        'hdd': psutil.disk_usage('/').percent
-    }
-
-    news_list = get_news_list(db)
-
-    return render_template('manage.html', visits=visits, server=server, news_list=news_list)
-
-
-# Delete a news
-@app.route('/manage/news/delete/<slug>')
-@auth.login_required
-def news_delete(slug):
-    db = get_database()
-
-    if (delete_news(db, slug)):
-        flash('News deleted.', 'success')
-        return redirect(url_for('manage'))
-    else:
-        flash('Error deleting this news.', 'error')
-        return redirect(url_for('manage'))
-
 # Sample recognization handling
 @app.route('/recognize', methods=['POST'])
 def recognize():
@@ -415,33 +381,94 @@ def results(sample_id):
 
     return render_template('results.html', sample=sample, results=res)
 
+# ----- Private routes -------
+
+# Managing dashboard
+@app.route('/manage')
+@auth.login_required
+def manage():
+    db = get_database()
+
+    app.config['INCLUDE_WEB_ANALYTICS'] = False
+    app.config['NO_INDEX'] = True
+
+    visits = gauges.get_gauge(app.config['GAUGES_SITE_ID'])
+
+    server = {
+        'cpu': psutil.cpu_percent(interval=1),
+        'ram': psutil.virtual_memory().percent,
+        'hdd': psutil.disk_usage('/').percent
+    }
+
+    news_list = get_news_list(db)
+
+    return render_template('manage/home.html', visits=visits, server=server, news_list=news_list)
+
+
+# Create a news
+@app.route('/manage/news/create')
+@auth.login_required
+def news_create():
+    db = get_database()
+    
+    return render_template('manage/create_news.html')
+
+
+# Edit a news
+@app.route('/manage/news/edit/<slug>')
+@auth.login_required
+def news_edit(slug):
+    db = get_database()
+
+    the_news = get_one_news(db, slug)
+
+    if the_news is None:
+        abort(404)
+
+    return render_template('manage/edit_news.html', the_news=the_news)
+
+
+# Delete a news
+@app.route('/manage/news/delete/<slug>')
+@auth.login_required
+def news_delete(slug):
+    db = get_database()
+
+    if (delete_news(db, slug)):
+        flash('News deleted.', 'success')
+        return redirect(url_for('manage'))
+    else:
+        flash('Error deleting this news.', 'error')
+        return redirect(url_for('manage'))
+
+# ----- Error routes -------
+
+# Unauthorized
+@app.errorhandler(401)
+def error_401(error):
+    return render_template('errors/401.html'), 401
+
+
+# Forbidden
+@app.errorhandler(403)
+def error_403(error):
+    return render_template('errors/403.html'), 403
+
 
 # Not Found
 @app.errorhandler(404)
 def error_404(error):
-    return render_template('404.html'), 404
+    return render_template('errors/404.html'), 404
 
 
 # Internal Server Error
 @app.errorhandler(500)
 def error_500(error):
     app.logger.error(str(error))
-    return render_template('500.html'), 500
+    return render_template('errors/500.html'), 500
 
 
 # Service Unavailable
 @app.errorhandler(503)
 def error_503(error):
-    return render_template('503.html'), 503
-
-
-# Unauthorized
-@app.errorhandler(401)
-def error_401(error):
-    return render_template('401.html'), 401
-
-
-# Forbidden
-@app.errorhandler(403)
-def error_403(error):
-    return render_template('403.html'), 403
+    return render_template('errors/503.html'), 503

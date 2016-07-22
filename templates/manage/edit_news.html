@@ -1,0 +1,9 @@
+{% extends 'layout.html' %}
+
+{% block title %}Manage › Edit a news › {{ the_news.title }}{% endblock %}
+
+{% block content %}
+    <form method="post" action="{{ url_for('news_edit', slug=the_news.slug) }}">
+    {% include 'manage/news_form.html' %}
+    </form>
+{% endblock %}
