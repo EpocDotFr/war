@@ -30,11 +30,11 @@ app.logger.addHandler(logging_handler)
 from utils import *
 
 # -----------------------------------------------------------
-# Configuration parameters that cannot be customized via
-# the config.py file
+# Global per-request config parameters
 
-app.config['INCLUDE_WEB_ANALYTICS'] = not app.config['DEBUG']
-app.config['NO_INDEX'] = False
+with app.app_context():
+    g.INCLUDE_WEB_ANALYTICS = not app.config['DEBUG']
+    g.NO_INDEX = False
 
 
 # -----------------------------------------------------------
@@ -177,7 +177,7 @@ def get_password(username):
 
 @auth.error_handler
 def auth_error():
-    return render_template('403.html')
+    return render_template('errors/403.html')
 
 
 # -----------------------------------------------------------
@@ -343,7 +343,7 @@ def recognize():
 # Sample results
 @app.route('/r/<sample_id>')
 def results(sample_id):
-    app.config['NO_INDEX'] = True
+    g.NO_INDEX = True
 
     db = get_database()
 
@@ -389,8 +389,8 @@ def results(sample_id):
 def manage():
     db = get_database()
 
-    app.config['INCLUDE_WEB_ANALYTICS'] = False
-    app.config['NO_INDEX'] = True
+    g.INCLUDE_WEB_ANALYTICS = False
+    g.NO_INDEX = True
 
     visits = gauges.get_gauge(app.config['GAUGES_SITE_ID'])
 
@@ -434,7 +434,7 @@ def news_edit(slug):
 def news_delete(slug):
     db = get_database()
 
-    if (delete_news(db, slug)):
+    if delete_news(db, slug):
         flash('News deleted successfuly.', 'success')
     else:
         flash('Error deleting this news.', 'error')
@@ -442,6 +442,7 @@ def news_delete(slug):
     return redirect(url_for('manage'))
 
 # ----- Error routes -------
+
 
 # Unauthorized
 @app.errorhandler(401)

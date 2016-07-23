@@ -21,7 +21,7 @@
 
     <link rel="alternate" type="application/rss+xml" title="Latest news from WAR (Web Audio Recognizer)" href="{{ url_for('news_rss', _external=True) }}" />
 
-    {% if config['NO_INDEX'] %}<meta name="robots" content="noindex,nofollow,noarchive" />{% endif %}
+    {% if g.NO_INDEX %}<meta name="robots" content="noindex,nofollow,noarchive" />{% endif %}
 
     <meta name="google-site-verification" content="TCvS4J7s1J_4HY3BF5tqeGMM45VZgKANeBDPY8k2ins">
 </head>
@@ -56,7 +56,7 @@
         <p>thisiswar.online © 2016 Epoc • Logo courtesy of <a href="http://www.webalys.com/">Webalys</a></p>
     </footer>
     
-    {% if config['INCLUDE_WEB_ANALYTICS'] %}
+    {% if g.INCLUDE_WEB_ANALYTICS %}
     <script type="text/javascript">
       var _gauges = _gauges || [];
       (function() {
