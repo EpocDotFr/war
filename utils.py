@@ -2,6 +2,8 @@ from flask import g
 from war import app
 from pymongo import MongoClient
 from pystalkd import Beanstalkd
+from bson.objectid import ObjectId
+from slugify import slugify
 import os
 import pusher
 import wave
@@ -75,9 +77,7 @@ def get_news_list(db, limit=None):
     return news_list
 
 
-def get_one_news(db, slug, markdown=False):
-    the_news = db.news.find_one({'slug': slug})
-
+def _get_one_news(the_news=None, markdown=False):
     if the_news is None:
         return None
 
@@ -91,8 +91,32 @@ def get_one_news(db, slug, markdown=False):
     return the_news
 
 
-def delete_news(db, slug):
-    return db.news.delete_one({'slug': slug}).deleted_count > 0
+def get_one_news_by_slug(db, slug, markdown=False):
+    the_news = db.news.find_one({'slug': slug})
+
+    return _get_one_news(the_news, markdown)
+
+
+def get_one_news_by_id(db, id, markdown=False):
+    the_news = db.news.find_one({'_id': ObjectId(id)})
+
+    return _get_one_news(the_news, markdown)
+
+
+def update_one_news(db, id, title, content):
+    return db.news.update_one(
+        {'_id': ObjectId(id)},
+        {'$set': {
+            'title': title,
+            'slug': slugify(title),
+            'content': content
+        }}
+    ).modified_count > 0
+
+
+def delete_news(db, id):
+    return db.news.delete_one({'_id': ObjectId(id)}).deleted_count > 0
+
 
 def get_global_stats(db):
     global_stats = db.stats.aggregate([

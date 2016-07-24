@@ -275,7 +275,7 @@ def news_rss():
 def one_news(slug):
     db = get_database()
 
-    the_news = get_one_news(db, slug)
+    the_news = get_one_news_by_slug(db, slug)
 
     if the_news is None:
         abort(404)
@@ -418,29 +418,34 @@ def news_create():
 
 
 # Edit a news
-@app.route('/manage/news/edit/<slug>', methods=['GET', 'POST'])
+@app.route('/manage/news/edit/<id>', methods=['GET', 'POST'])
 @auth.login_required
-def news_edit(slug):
+def news_edit(id):
     db = get_database()
 
-    the_news = get_one_news(db, slug, markdown=True)
+    the_news = get_one_news_by_id(db, id, markdown=True)
 
     if the_news is None:
         abort(404)
 
     if request.method == 'POST':
-        pass
+        if update_one_news(db, id, request.form['title'], request.form['content']):
+            flash('News edited successfuly.', 'success')
+        else:
+            flash('Error editing this news.', 'error')
+
+        return redirect(url_for('news_edit', id=the_news['_id']))
 
     return render_template('manage/news/edit.html', the_news=the_news)
 
 
 # Delete a news
-@app.route('/manage/news/delete/<slug>')
+@app.route('/manage/news/delete/<id>')
 @auth.login_required
-def news_delete(slug):
+def news_delete(id):
     db = get_database()
 
-    if delete_news(db, slug):
+    if delete_news(db, id):
         flash('News deleted successfuly.', 'success')
     else:
         flash('Error deleting this news.', 'error')

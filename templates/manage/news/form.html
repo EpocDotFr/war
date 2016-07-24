@@ -4,13 +4,25 @@
 
 <div>
     <label for="title">Title</label>
-    <input type="text" name="title" id="title" value="{{ the_news.title }}">
+    <input type="text" name="title" id="title" value="{{ the_news.title if the_news }}">
 </div>
 
 <div>
     <label for="content">Content</label>
-    <textarea name="content" id="content">{{ the_news.content }}</textarea>
+    <textarea name="content" id="content">{{ the_news.content if the_news }}</textarea>
 </div>
+
+{% if the_news %}
+<div>
+    <label for="content">Date</label>
+    <div>{{ the_news.date.format('D, MMMM YYYY HH:mm') if the_news.date else 'None' }} {{ '('+the_news.date.humanize()+')' if the_news.date }}</div>
+</div>
+
+<div>
+    <label for="content">Slug</label>
+    <div><code>{{ the_news.slug if the_news.slug else 'None' }}</code></div>
+</div>
+{% endif %}
 
 <p>
     <button type="submit">Save</button>

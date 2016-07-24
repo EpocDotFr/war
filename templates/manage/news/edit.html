@@ -3,7 +3,7 @@
 {% block title %}Manage › News › Edit › {{ the_news.title }}{% endblock %}
 
 {% block content %}
-    <form method="post" action="{{ url_for('news_edit', slug=the_news.slug) }}">
+    <form method="post" action="{{ url_for('news_edit', id=the_news._id) }}">
     {% include 'manage/news/form.html' %}
     </form>
 {% endblock %}

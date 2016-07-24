@@ -8,3 +8,4 @@ flask_httpauth
 PyRSS2Gen
 requests
 psutil
+python-slugify

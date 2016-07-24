@@ -96,8 +96,7 @@ header .subtitle {
 }
 
 .content h1 {
-    margin: 0;
-    margin-bottom: 15px;
+    margin: 0 0 15px;
     text-shadow: 1px 1px 1px #000;
     border-bottom: 1px dotted #099886;
 }
@@ -129,6 +128,7 @@ button {
     color: #fff;
     position: relative;
     outline: 0;
+    padding: 5px 7px;
 }
 
 button:hover,
@@ -157,8 +157,7 @@ button:disabled {
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 15px;
-    border-width: 2px;
-    border-style: solid;
+    border: 2px solid;
 }
 
 .alert-success {
@@ -234,14 +233,24 @@ form > div > textarea {
     width: 100%;
 }
 
+form > div > div {
+    width: 100%;
+}
+
 input,
 select,
 textarea {
-    background-color: #0F695E;
+    background-color: #505050;
     padding: 6px 10px;
-    border: 1px solid #94eae3;
+    border: 1px solid #2c2c2c;
     border-radius: 5px;
     color: #94eae3;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #facb1b;
 }
 
 /************************************************************************
@@ -292,4 +301,20 @@ footer {
     font-size: 18px;
     width: 420px;
     text-align: center;
+}
+
+/************************************************************************
+ * Manage section */
+
+.editor-statusbar {
+    color: inherit !important;
+}
+
+.editor-toolbar {
+    background-color: #fff;
+}
+
+.editor-toolbar,
+.CodeMirror {
+    border-color: #2c2c2c !important;
 }
