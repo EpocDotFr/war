@@ -23,7 +23,7 @@
 
     <ul>
         {% for the_news in news_list %}
-        <li>{{ the_news.title }} (published {{ the_news.date.humanize() }}) — <a href="{{ url_for('one_news', slug=the_news.slug) }}">Read</a> <a href="{{ url_for('news_edit', slug=the_news.slug) }}">Edit</a> <a href="{{ url_for('news_delete', slug=the_news.slug) }}">Delete</a></li>
+        <li>{{ the_news.title }} (published {{ the_news.date.humanize() }}) — <a href="{{ url_for('one_news', slug=the_news.slug) }}">Read</a> <a href="{{ url_for('news_edit', slug=the_news.slug) }}">Edit</a> <a href="{{ url_for('news_delete', slug=the_news.slug) }}" onclick="return confirm('Are you sure?')">Delete</a></li>
         {% else %}
         <li>No news to display.</li>
         {% endfor %}

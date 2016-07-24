@@ -75,7 +75,7 @@ def get_news_list(db, limit=None):
     return news_list
 
 
-def get_one_news(db, slug):
+def get_one_news(db, slug, markdown=False):
     the_news = db.news.find_one({'slug': slug})
 
     if the_news is None:
@@ -84,7 +84,9 @@ def get_one_news(db, slug):
     the_news = dict(the_news)
 
     the_news['date'] = arrow.get(the_news['date'])
-    the_news['content'] = mistune.markdown(the_news['content'])
+
+    if not markdown:
+        the_news['content'] = mistune.markdown(the_news['content'])
 
     return the_news
 

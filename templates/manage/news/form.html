@@ -1,9 +1,32 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.7/zepto.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+
 <div>
-    <label for="title">Title</label> <input type="text" name="title">
+    <label for="title">Title</label>
+    <input type="text" name="title" id="title" value="{{ the_news.title }}">
 </div>
 
 <div>
-    <div><label for="content">Content</label></div>
-
-    <textarea name="content"></textarea>
+    <label for="content">Content</label>
+    <textarea name="content" id="content">{{ the_news.content }}</textarea>
 </div>
+
+<p>
+    <button type="submit">Save</button>
+    <a class="btn" href="{{ url_for('manage') }}">Cancel</a>
+</p>
+
+<script>
+Zepto(function () {
+    var simplemde = new SimpleMDE({
+        element: $('textarea#content').get(0),
+        autosave: {
+            enabled: true
+        },
+        indentWithTabs: false,
+        tabSize: 4,
+        forceSync: true
+    });
+});
+</script>

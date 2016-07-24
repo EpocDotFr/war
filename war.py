@@ -62,7 +62,7 @@ def emptydb():
 
 @app.cli.command()
 def resetdb():
-    """Drop then create the MongoDB database."""
+    """Drop the MongoDB database."""
     db = get_database()
 
     db.samples.drop()
@@ -406,24 +406,30 @@ def manage():
 
 
 # Create a news
-@app.route('/manage/news/create')
+@app.route('/manage/news/create', methods=['GET', 'POST'])
 @auth.login_required
 def news_create():
     db = get_database()
+
+    if request.method == 'POST':
+        pass
     
     return render_template('manage/news/create.html')
 
 
 # Edit a news
-@app.route('/manage/news/edit/<slug>')
+@app.route('/manage/news/edit/<slug>', methods=['GET', 'POST'])
 @auth.login_required
 def news_edit(slug):
     db = get_database()
 
-    the_news = get_one_news(db, slug)
+    the_news = get_one_news(db, slug, markdown=True)
 
     if the_news is None:
         abort(404)
+
+    if request.method == 'POST':
+        pass
 
     return render_template('manage/news/edit.html', the_news=the_news)
 
