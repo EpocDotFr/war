@@ -26,7 +26,8 @@
 
 <p>
     <button type="submit">Save</button>
-    <a class="btn" href="{{ url_for('manage') }}">Cancel</a>
+    {% if the_news %}<a class="btn" href="{{ url_for('one_news', slug=the_news.slug) }}">Read</a>{% endif %}
+    <a href="{{ url_for('manage') }}">Cancel</a>
 </p>
 
 <script>
@@ -34,11 +35,13 @@ Zepto(function () {
     var simplemde = new SimpleMDE({
         element: $('textarea#content').get(0),
         autosave: {
-            enabled: true
+            enabled: true,
+            uniqueId: 'news_content{{ the_news._id if the_news }}'
         },
         indentWithTabs: false,
         tabSize: 4,
-        forceSync: true
+        forceSync: true,
+        promptURLs: true
     });
 });
 </script>

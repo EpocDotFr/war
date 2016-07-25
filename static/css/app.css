@@ -225,6 +225,7 @@ form > div {
 form > div > label {
     display: block;
     width: 100%;
+    font-weight: bold;
 }
 
 form > div > input,
