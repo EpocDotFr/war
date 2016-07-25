@@ -4,12 +4,12 @@
 
 <div>
     <label for="title">Title</label>
-    <input type="text" name="title" id="title" value="{{ the_news.title if the_news }}">
+    <input type="text" name="title" id="title" value="{{ the_news.title if the_news }}" required>
 </div>
 
 <div>
     <label for="content">Content</label>
-    <textarea name="content" id="content">{{ the_news.content if the_news }}</textarea>
+    <textarea name="content" id="content" required>{{ the_news.content if the_news }}</textarea>
 </div>
 
 {% if the_news %}

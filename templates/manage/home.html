@@ -37,6 +37,12 @@
     <div class="alert-info">No news to display.</div>
     {% endif %}
 
+    <h2>Samples</h2>
+
+    <form id="search-sample">
+        <p><label for="sample-id">Sample ID:</label> <input type="text" id="sample-id" name="sample-id" maxlength="24" size="24" minlength="24" required> <button type="submit">Search</button></p>
+    </form>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.7/zepto.min.js"></script>
     <script>
     Zepto(function () {
@@ -59,6 +65,21 @@
             }
             return toReturn;
         };
+
+        var form_sample_search = $('form#search-sample');
+        var input_sample_id_to_search = $('input#sample-id');
+
+        form_sample_search.on('submit', function(e) {
+            e.preventDefault();
+
+            var sample_id = input_sample_id_to_search.val();
+
+            if (sample_id.length != 24) {
+                return false;
+            }
+
+            location.replace('/manage/samples/'+sample_id);
+        });
 
         $('.manage-data').text('...');
 

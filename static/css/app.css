@@ -126,6 +126,7 @@ button:focus {
 button:active {
     border-color: #8C720D;
     outline: 0;
+    background-color: #058879;
 }
 
 button:disabled {
@@ -201,6 +202,26 @@ table tfoot th {
 }
 
 /************************************************************************
+ * Inputs */
+
+input,
+select,
+textarea {
+    background-color: #505050;
+    padding: 5px 10px;
+    border: 1px solid #2c2c2c;
+    border-radius: 5px;
+    color: #94eae3;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #facb1b;
+    outline: none;
+}
+
+/************************************************************************
  * Forms */
 
 form > div {
@@ -222,23 +243,6 @@ form > div > textarea {
 
 form > div > div {
     width: 100%;
-}
-
-input,
-select,
-textarea {
-    background-color: #505050;
-    padding: 6px 10px;
-    border: 1px solid #2c2c2c;
-    border-radius: 5px;
-    color: #94eae3;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-    border-color: #facb1b;
-    outline: none;
 }
 
 /************************************************************************

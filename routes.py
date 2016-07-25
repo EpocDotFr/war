@@ -311,6 +311,20 @@ def news_delete(news_id):
     return redirect(url_for('manage'))
 
 
+# Manage a sample
+@app.route('/manage/samples/<sample_id>')
+@auth.login_required
+def sample_manage(sample_id):
+    db = get_database()
+
+    sample = db.samples.find_one({'_id': ObjectId(sample_id)})
+
+    if sample is None:
+        flash('This sample doesn\'t exists.', 'error')
+
+        return redirect(url_for('manage'))
+
+
 # ----- Error routes -------
 
 
