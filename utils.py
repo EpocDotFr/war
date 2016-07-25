@@ -114,6 +114,15 @@ def update_one_news(db, id, title, content):
     ).modified_count > 0
 
 
+def create_one_news(db, title, content):
+    return db.news.insert_one({
+        'title': title,
+        'slug': slugify(title),
+        'content': content,
+        'date': arrow.now().datetime
+    })
+
+
 def delete_news(db, id):
     return db.news.delete_one({'_id': ObjectId(id)}).deleted_count > 0
 

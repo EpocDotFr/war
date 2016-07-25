@@ -438,40 +438,47 @@ def news_create():
     db = get_database()
 
     if request.method == 'POST':
-        pass
+        create_one_news_result = create_one_news(db, request.form['title'], request.form['content'])
+
+        if create_one_news_result.inserted_id:
+            flash('News created successfuly.', 'success')
+
+            return redirect(url_for('news_edit', news_id=str(create_one_news_result.inserted_id)))
+        else:
+            flash('Error creating this news.', 'error')
     
     return render_template('manage/news/create.html')
 
 
 # Edit a news
-@app.route('/manage/news/edit/<id>', methods=['GET', 'POST'])
+@app.route('/manage/news/edit/<news_id>', methods=['GET', 'POST'])
 @auth.login_required
-def news_edit(id):
+def news_edit(news_id):
     db = get_database()
 
-    the_news = get_one_news_by_id(db, id, markdown=True)
+    the_news = get_one_news_by_id(db, news_id, markdown=True)
 
     if the_news is None:
         abort(404)
 
     if request.method == 'POST':
-        if update_one_news(db, id, request.form['title'], request.form['content']):
+        if update_one_news(db, news_id, request.form['title'], request.form['content']):
             flash('News edited successfuly.', 'success')
+
+            return redirect(url_for('news_edit', news_id=the_news['_id']))
         else:
             flash('Error editing this news.', 'error')
-
-        return redirect(url_for('news_edit', id=the_news['_id']))
 
     return render_template('manage/news/edit.html', the_news=the_news)
 
 
 # Delete a news
-@app.route('/manage/news/delete/<id>')
+@app.route('/manage/news/delete/<news_id>')
 @auth.login_required
-def news_delete(id):
+def news_delete(news_id):
     db = get_database()
 
-    if delete_news(db, id):
+    if delete_news(db, news_id):
         flash('News deleted successfuly.', 'success')
     else:
         flash('Error deleting this news.', 'error')
