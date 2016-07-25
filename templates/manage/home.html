@@ -19,6 +19,12 @@
         <li><strong>HDD:</strong> <span id="server.hdd" class="manage-data"></span> %</li>
     </ul>
 
+    <h2>Live results <small>— <a href="https://dashboard.pusher.com/apps/{{ config['PUSHER_APP_ID'] }}">Pusher dashboard</a></small></h2>
+
+    <ul>
+        <li><strong># of channels:</strong> <span id="live_results.channels" class="manage-data"></span></li>
+    </ul>
+
     <h2>News <small>— <a href="{{ url_for('news_create') }}">Create</a></small></h2>
 
     {% if news_list %}

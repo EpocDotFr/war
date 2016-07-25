@@ -428,6 +428,15 @@ def manage_get_data():
     except Exception as e:
         pass
 
+    try:
+        push = get_push()
+
+        ajax_response['data']['live_results'] = {
+            'channels': len(push.channels_info('results-')['channels'])
+        }
+    except Exception as e:
+        print(e)
+
     return jsonify(ajax_response), status
 
 
