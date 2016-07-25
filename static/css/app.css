@@ -38,43 +38,21 @@ p {
  * Header */
 
 header {
-    display: table;
     width: 100%;
+    text-align: center;
+    padding-top: 10px;
 }
 
 header a,
 header a:hover,
 header a:focus,
 header a:visited {
-    border-bottom: none;
+    border: none;
 }
 
-header .left,
-header .right {
-    display: table-cell;
-    width: 50%;
-    padding-top: 15px;
-    padding-left: 15px;
-    padding-right: 15px;
-    vertical-align: middle;
-}
-
-header .left img {
-    border-radius: 50%;
-    background-color: #fff;
-}
-
-header .left {
-    text-align: right;
-}
-
-header .right .title {
-    font-size: 42px;
-    text-shadow: 1px 1px 1px #000;
-}
-
-header .subtitle {
-    font-size: 18px;
+header a img {
+    max-width: 100%;
+    height: auto;
 }
 
 /************************************************************************
