@@ -155,6 +155,13 @@ def check_under_maintenance():
         abort(503)
 
 
+@app.before_request
+def manage_area():
+    if request.path.startswith('/manage'):
+        g.INCLUDE_WEB_ANALYTICS = False
+        g.NO_INDEX = True
+
+
 @app.teardown_appcontext
 def close_database(error):
     if hasattr(g, 'database'):
@@ -287,13 +294,16 @@ def one_news(slug):
 @app.route('/recognize', methods=['POST'])
 def recognize():
     ajax_response = {
-        'result': 'failure',
+        'result': 'success',
         'data': {}
     }
+
+    status = 202
 
     if not request.is_xhr or 'sample' not in request.files:
         app.logger.warning('Invalid request')
         status = 400
+        ajax_response['result'] = 'failure'
         ajax_response['data']['message'] = 'Invalid request'
     else:
         sample_file = request.files['sample']
@@ -301,6 +311,7 @@ def recognize():
         if not is_sample_valid(sample_file):
             app.logger.warning('Invalid sample file')
             status = 400
+            ajax_response['result'] = 'failure'
             ajax_response['data']['message'] = 'Invalid sample file'
         else:
             try:
@@ -328,13 +339,11 @@ def recognize():
                 sample_file_path = get_sample_file_path(sample_id)
                 sample_file.save(sample_file_path)
 
-                ajax_response['result'] = 'success'
                 ajax_response['data']['sample_id'] = sample_id
-
-                status = 202
             except Exception as e:
                 app.logger.error(str(e))
                 status = 500
+                ajax_response['result'] = 'failure'
                 ajax_response['data']['message'] = 'Sorry, there were a server error. We have been informed about this.'
 
     return jsonify(ajax_response), status
@@ -389,20 +398,37 @@ def results(sample_id):
 def manage():
     db = get_database()
 
-    g.INCLUDE_WEB_ANALYTICS = False
-    g.NO_INDEX = True
-
-    visits = gauges.get_gauge(app.config['GAUGES_SITE_ID'])
-
-    server = {
-        'cpu': psutil.cpu_percent(interval=1),
-        'ram': psutil.virtual_memory().percent,
-        'hdd': psutil.disk_usage('/').percent
-    }
-
     news_list = get_news_list(db)
 
-    return render_template('manage/home.html', visits=visits, server=server, news_list=news_list)
+    return render_template('manage/home.html', news_list=news_list)
+
+
+# Managing dashboard data
+@app.route('/manage/data')
+@auth.login_required
+def manage_get_data():
+    ajax_response = {
+        'result': 'success',
+        'data': {}
+    }
+
+    status = 200
+
+    try:
+        ajax_response['data']['visits'] = gauges.get_gauge(app.config['GAUGES_SITE_ID'])
+    except Exception as e:
+        pass
+
+    try:
+        ajax_response['data']['server'] = {
+            'cpu': psutil.cpu_percent(interval=1),
+            'ram': psutil.virtual_memory().percent,
+            'hdd': psutil.disk_usage('/').percent
+        }
+    except Exception as e:
+        pass
+
+    return jsonify(ajax_response), status
 
 
 # Create a news

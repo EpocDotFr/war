@@ -3,36 +3,81 @@
 {% block title %}Manage{% endblock %}
 
 {% block content %}
-    <h2>Visits <small>— <a href="https://secure.gaug.es/dashboard#/gauges/577f8924c88d900296007007/overview">Dashboard</a></small></h2>
+    <h2>Visits <small>— <a href="https://secure.gaug.es/dashboard#/gauges/{{ config['GAUGES_SITE_ID'] }}/overview">Gauges dashboard</a></small></h2>
 
     <ul>
-        <li><strong>All time:</strong> {{ visits.all_time.views }} views, {{ visits.all_time.people }} people</li>
-        <li><strong>Today:</strong> {{ visits.today.views }} views, {{ visits.today.people }} people</li>
-        <li><strong>Yesterday:</strong> {{ visits.yesterday.views }} views, {{ visits.yesterday.people }} people</li>
+        <li><strong>All time:</strong> <span id="visits.all_time.views" class="manage-data"></span> views, <span id="visits.all_time.people" class="manage-data"></span> people</li>
+        <li><strong>Today:</strong> <span id="visits.today.views" class="manage-data"></span> views, <span id="visits.today.people" class="manage-data"></span> people</li>
+        <li><strong>Yesterday:</strong> <span id="visits.yesterday.views" class="manage-data"></span> views, <span id="visits.yesterday.people" class="manage-data"></span> people</li>
     </ul>
 
     <h2>Server</h2>
 
     <ul>
-        <li><strong>CPU:</strong> {{ server.cpu }} %</li>
-        <li><strong>RAM:</strong> {{ server.ram }} %</li>
-        <li><strong>HDD:</strong> {{ server.hdd }} %</li>
+        <li><strong>CPU:</strong> <span id="server.cpu" class="manage-data"></span> %</li>
+        <li><strong>RAM:</strong> <span id="server.ram" class="manage-data"></span> %</li>
+        <li><strong>HDD:</strong> <span id="server.hdd" class="manage-data"></span> %</li>
     </ul>
 
     <h2>News <small>— <a href="{{ url_for('news_create') }}">Create</a></small></h2>
 
+    {% if news_list %}
     <ul>
         {% for the_news in news_list %}
         <li>{{ the_news.title }} (published {{ the_news.date.humanize() }}) — <a href="{{ url_for('one_news', slug=the_news.slug) }}">Read</a> <a href="{{ url_for('news_edit', id=the_news._id) }}">Edit</a> <a href="{{ url_for('news_delete', id=the_news._id) }}" onclick="return confirm('Are you sure?')">Delete</a></li>
-        {% else %}
-        <li>No news to display.</li>
         {% endfor %}
     </ul>
+    {% else %}
+    <div class="alert-info">No news to display.</div>
+    {% endif %}
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.7/zepto.min.js"></script>
     <script>
     Zepto(function () {
+        var flattenObject = function(ob) {
+            var toReturn = {};
+            
+            for (var i in ob) {
+                if (!ob.hasOwnProperty(i)) continue;
+                
+                if ((typeof ob[i]) == 'object') {
+                    var flatObject = flattenObject(ob[i]);
+                    for (var x in flatObject) {
+                        if (!flatObject.hasOwnProperty(x)) continue;
+                        
+                        toReturn[i + '\\.' + x] = flatObject[x];
+                    }
+                } else {
+                    toReturn[i] = ob[i];
+                }
+            }
+            return toReturn;
+        };
 
+        $('.manage-data').text('...');
+
+        $.ajax({
+            type: 'GET',
+            url: '{{ url_for('manage_get_data') }}',
+            success: function(response, status, xhr) {
+                if (response.result == 'success') {
+                    var data = flattenObject(response.data);
+
+                    for (var key in data) {
+                        var value = data[key];
+
+                        $('#'+key).text(value);
+                    }
+                } else {
+                    alert(response.data.message);
+                }
+            },
+            error: function(xhr, errorType, error) {
+                var response = JSON.parse(xhr.responseText);
+
+                alert(response.data.message);
+            }
+        });
     });
     </script>
 {% endblock %}
