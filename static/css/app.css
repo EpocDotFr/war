@@ -3,7 +3,7 @@
  * Global styles */
 
 body {
-    background: #0c7367 url("/images/bg.png");
+    background: #505050 url("/images/bg.png");
     color: #94EAE3;
     font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
     line-height: 1.42857143;
@@ -34,6 +34,12 @@ p {
     text-align: center !important;
 }
 
+.page-wrapper {
+    border-top: 1px solid #12b2a0;
+    background: #0c7367 url("/images/bg.png");
+    border-bottom: 1px solid #12b2a0;
+}
+
 /************************************************************************
  * Header */
 
@@ -41,6 +47,7 @@ header {
     width: 100%;
     text-align: center;
     padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 header a,
@@ -238,9 +245,6 @@ textarea:focus {
  * Footer */
 
 footer {
-    border-top: 1px solid #2C2C2C;
-    border-bottom: 1px solid #12b2a0;
-    background-color: #505050;
     text-align: center;
     color: #ccc;
     font-size: 14px;

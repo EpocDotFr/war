@@ -30,18 +30,20 @@
         <a href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='images/header_logo.png') }}" alt="WAR (Web Audio Recognizer) logo"></a>
     </header>
 
-    <div class="content">
-        {% if self.title() | trim %}<h1>{{ self.title() }}</h1>{% endif %}
+    <div class="page-wrapper">
+        <div class="content">
+            {% if self.title() | trim %}<h1>{{ self.title() }}</h1>{% endif %}
 
-        {% with flash_messages = get_flashed_messages(with_categories=true) %}
-          {% if flash_messages %}
-            {% for category, message in flash_messages %}
-              <div class="alert-{{ category }}">{{ message }}</div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
+            {% with flash_messages = get_flashed_messages(with_categories=true) %}
+              {% if flash_messages %}
+                {% for category, message in flash_messages %}
+                  <div class="alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
 
-        {% block content %} {% endblock %}
+            {% block content %} {% endblock %}
+        </div>
     </div>
 
     <footer>
