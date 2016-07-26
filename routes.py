@@ -15,8 +15,7 @@ def home():
 
     latest_news = None
 
-    if app.config['DEBUG']:
-        latest_news = get_latest_news(db)
+    latest_news = get_latest_news(db)
 
     return render_template('home.html', global_stats=global_stats, latest_news=latest_news)
 
