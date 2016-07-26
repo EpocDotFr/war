@@ -45,6 +45,7 @@ p {
 
 header {
     width: 100%;
+    box-sizing: border-box;
     text-align: center;
     padding: 10px;
 }
@@ -58,6 +59,7 @@ header a:visited {
 
 header a img {
     max-width: 100%;
+    box-sizing: border-box;
     height: auto;
 }
 
@@ -170,6 +172,7 @@ button:disabled {
 table {
     width: 100%;
     border-collapse: collapse;
+    box-sizing: border-box;
 }
 
 table,
@@ -230,6 +233,7 @@ form > div {
 form > div > label {
     display: block;
     width: 100%;
+    box-sizing: border-box;
     font-weight: bold;
 }
 
@@ -238,10 +242,12 @@ form > div > select,
 form > div > textarea {
     display: block;
     width: 100%;
+    box-sizing: border-box;
 }
 
 form > div > div {
     width: 100%;
+    box-sizing: border-box;
 }
 
 /************************************************************************
@@ -251,6 +257,11 @@ footer {
     text-align: center;
     color: #ccc;
     font-size: 14px;
+    padding: 10px;
+}
+
+footer p {
+    margin-top: 0;
 }
 
 /************************************************************************
