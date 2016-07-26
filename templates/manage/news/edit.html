@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 
-{% block title %}Manage › News › Edit › {{ the_news.title }}{% endblock %}
+{% block title %}Manage › News › {{ the_news.title }}{% endblock %}
 
 {% block content %}
     <form method="post" action="{{ url_for('news_edit', news_id=the_news._id) }}">

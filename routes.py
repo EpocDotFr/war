@@ -1,5 +1,6 @@
 from flask import Response, jsonify, url_for, flash, redirect
 from war import *
+import bson
 import PyRSS2Gen
 import psutil
 
@@ -168,9 +169,14 @@ def recognize():
 def results(sample_id):
     g.NO_INDEX = True
 
+    try:
+        sample_id_object = ObjectId(sample_id)
+    except bson.errors.InvalidId as bei:
+        abort(404)
+
     db = get_database()
 
-    sample = db.samples.find_one({'_id': ObjectId(sample_id)})
+    sample = db.samples.find_one({'_id': sample_id_object})
 
     if sample is None:
         abort(404)
@@ -316,14 +322,23 @@ def news_delete(news_id):
 @app.route('/manage/samples/<sample_id>')
 @auth.login_required
 def sample_manage(sample_id):
+    try:
+        sample_id_object = ObjectId(sample_id)
+    except bson.errors.InvalidId as bei:
+        flash('The provided sample ID is invalid.', 'error')
+
+        return redirect(url_for('manage'))
+
     db = get_database()
 
-    sample = db.samples.find_one({'_id': ObjectId(sample_id)})
+    sample = db.samples.find_one({'_id': sample_id_object})
 
     if sample is None:
         flash('This sample doesn\'t exists.', 'error')
 
         return redirect(url_for('manage'))
+
+    return render_template('manage/sample.html', sample=sample)
 
 
 # ----- Error routes -------

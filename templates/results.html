@@ -4,7 +4,7 @@
 
 {% block content %}
     <div id="processing" {% if sample['done'] %}style="display: none"{% endif %}>
-        <p class="alert-info">Your sample is now being processed. The results are displayed in realtime below (no need to refresh this page!).</p>
+        <p class="alert-info">Your sample is now being processed! The results are displayed in realtime below (no need to refresh this page!).</p>
         <p>You can close this page and access it at any given time using this link:</p>
         <p class="text-center"><input type="text" readonly value="{{ url_for('results', sample_id=sample['_id'], _external=True) }}" onClick="this.setSelectionRange(0, this.value.length)"></p>
     </div>
@@ -18,8 +18,6 @@
             {% else %}
                 <p>It is <strong>{{ result.track.artist }}</strong> with <strong>{{ result.track.title }}</strong> from the album <strong>{{ result.track.album }}</strong>. Search on <a href="https://www.youtube.com/results?search_query={{ result.search_terms }}">Youtube</a>, <a href="https://www.deezer.com/search/{{ result.search_terms }}">Deezer</a> or <a href="https://open.spotify.com/search/{{ result.search_terms }}">Spotify</a></p>
             {% endif %}
-        {% else %}
-            <div class="alert-info">No results at this moment.</div>
         {% endfor %}
     </div>
 
