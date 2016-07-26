@@ -104,7 +104,7 @@ def one_news(slug):
     return render_template('news/one.html', the_news=the_news)
 
 
-# Sample recognization handling
+# Sample recognization
 @app.route('/recognize', methods=['POST'])
 def recognize():
     ajax_response = {
@@ -215,8 +215,9 @@ def manage():
     db = get_database()
 
     news_list = get_news_list(db)
+    global_stats = get_global_stats(db)
 
-    return render_template('manage/home.html', news_list=news_list)
+    return render_template('manage/home.html', news_list=news_list, global_stats=global_stats)
 
 
 # Managing dashboard data

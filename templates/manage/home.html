@@ -37,10 +37,16 @@
     <div class="alert-info">No news to display.</div>
     {% endif %}
 
-    <h2>Samples</h2>
+    <h2>Recognization requests and samples</h2>
+
+    <ul>
+        <li><strong>Total:</strong> {{ global_stats.total_successes_and_failures }}</li>
+        <li><strong>Success:</strong> {{ global_stats.total_successes }} ({{ global_stats.total_successes_percent }} %)</li>
+        <li><strong>Failures:</strong> {{ global_stats.total_failures }} ({{ global_stats.total_failures_percent }} %)</li>
+    </ul>
 
     <form id="search-sample">
-        <p><label for="sample-id">Sample ID:</label> <input type="text" id="sample-id" name="sample-id" maxlength="24" size="24" minlength="24" required> <button type="submit">Search</button></p>
+        <p><input type="text" id="sample-id" name="sample-id" maxlength="24" size="24" minlength="24" required placeholder="Enter a sample ID"> <button type="submit">Search</button></p>
     </form>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.7/zepto.min.js"></script>
