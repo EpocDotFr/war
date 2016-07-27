@@ -30,4 +30,11 @@
         <changefreq>monthly</changefreq>
         <priority>0.4</priority>
     </url>
+    {% for route in routes %}
+    <url>
+        <loc>{{ route }}</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.4</priority>
+    </url>
+    {% endfor %}
 </urlset>

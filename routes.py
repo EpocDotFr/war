@@ -210,6 +210,21 @@ def results(sample_id):
     return render_template('results.html', sample=sample, results=res)
 
 
+# Sitemap XML
+@app.route('/sitemap.xml')
+def sitemap_xml():
+    routes = []
+
+    db = get_database()
+
+    news_list = get_news_list(db)
+
+    for news in news_list:
+        routes.append(url_for('one_news', slug=news['slug'], _external=True))
+
+    return Response(render_template('sitemap.xml', routes=routes), mimetype='application/xml')
+
+
 # ----- Private routes -------
 
 
