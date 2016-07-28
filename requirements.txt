@@ -9,3 +9,5 @@ PyRSS2Gen
 requests
 psutil
 python-slugify
+blinker
+bugsnag

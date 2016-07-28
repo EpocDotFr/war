@@ -1,28 +1,24 @@
 from flask import Flask,  render_template, request, abort, json
 from flask_httpauth import HTTPBasicAuth
-from logging.handlers import RotatingFileHandler
 from urllib.parse import quote_plus
 import gauges
 import os
-import logging
+import bugsnag
+from bugsnag.flask import handle_exceptions
 
 # -----------------------------------------------------------
 # Boot
 
 app = Flask(__name__, static_url_path='')
+handle_exceptions(app)
 app.config.from_pyfile('config.py')
 auth = HTTPBasicAuth()
 
 gauges.TOKEN = app.config['GAUGES_API_TOKEN']
 
-# -----------------------------------------------------------
-# Logging configuration
-
-logging_handler = RotatingFileHandler(os.path.join(app.config['LOGS_PATH'], 'war.log'), maxBytes=10000, backupCount=2)
-logging_handler.setLevel(logging.INFO)
-logging_handler.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s - %(message)s"))
-
-app.logger.addHandler(logging_handler)
+bugsnag.configure(
+  api_key = app.config['BUGSNAG_API_KEY']
+)
 
 from utils import *
 
