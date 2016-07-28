@@ -9,8 +9,6 @@ from bugsnag.flask import handle_exceptions
 # -----------------------------------------------------------
 # Boot
 
-gauges.TOKEN = app.config['GAUGES_API_TOKEN']
-
 app = Flask(__name__, static_url_path='')
 app.config.from_pyfile('config.py')
 
@@ -20,6 +18,8 @@ if not app.config['DEBUG']:
     )
 
     handle_exceptions(app)
+
+gauges.TOKEN = app.config['GAUGES_API_TOKEN']
 
 auth = HTTPBasicAuth()
 
