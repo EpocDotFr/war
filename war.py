@@ -9,16 +9,19 @@ from bugsnag.flask import handle_exceptions
 # -----------------------------------------------------------
 # Boot
 
-app = Flask(__name__, static_url_path='')
-handle_exceptions(app)
-app.config.from_pyfile('config.py')
-auth = HTTPBasicAuth()
-
 gauges.TOKEN = app.config['GAUGES_API_TOKEN']
 
-bugsnag.configure(
-  api_key = app.config['BUGSNAG_API_KEY']
-)
+app = Flask(__name__, static_url_path='')
+app.config.from_pyfile('config.py')
+
+if not app.config['DEBUG']:
+    bugsnag.configure(
+      api_key = app.config['BUGSNAG_API_KEY']
+    )
+
+    handle_exceptions(app)
+
+auth = HTTPBasicAuth()
 
 from utils import *
 
