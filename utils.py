@@ -6,7 +6,6 @@ from bson.objectid import ObjectId
 from slugify import slugify
 import os
 import pusher
-import wave
 import arrow
 import mistune
 
@@ -183,11 +182,3 @@ def get_enabled_audio_databases(db):
         ret[audio_database_classname] = audio_database_instance
 
     return ret
-
-
-def is_sample_valid(sample_file):
-    try:
-        with wave.open(sample_file, mode='rb') as f:
-            return True
-    except:
-        return False
