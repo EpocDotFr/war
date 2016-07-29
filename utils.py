@@ -1,3 +1,4 @@
+from bson import SON
 from flask import g
 from war import app
 from pymongo import MongoClient
@@ -41,7 +42,7 @@ def get_push():
 
 
 def get_latest_news(db):
-    latest_news = db.news.find().limit(1).sort('date', -1)  # TODO crappy, make sure tall docs aren't returned
+    latest_news = db.news.find({'date': {'$ne': None}}).limit(1).sort('date', -1)
 
     latest_news = list(latest_news)
 
@@ -55,20 +56,25 @@ def get_latest_news(db):
         return None
 
 
-def get_news_list(db, limit=None):
-    news_list_db = db.news.find()
+def get_news_list(db, limit=None, admin=False):
+    params = {}
+
+    if not admin:
+        params = {'date': {'$ne': None}}
+
+    news_list_db = db.news.find(params).sort('date', -1)
 
     if limit is not None:
         news_list_db = news_list_db.limit(limit)
-
-    news_list_db = news_list_db.sort('date', -1)  # TODO crappy, make sure tall docs aren't returned
 
     news_list = []
 
     for the_news in news_list_db:
         the_news = dict(the_news)
 
-        the_news['date'] = arrow.get(the_news['date'])
+        if the_news['date'] is not None:
+            the_news['date'] = arrow.get(the_news['date'])
+
         the_news['content'] = mistune.markdown(the_news['content'])
 
         news_list.append(the_news)
@@ -82,7 +88,8 @@ def _get_one_news(the_news=None, markdown=False):
 
     the_news = dict(the_news)
 
-    the_news['date'] = arrow.get(the_news['date'])
+    if the_news['date'] is not None:
+        the_news['date'] = arrow.get(the_news['date'])
 
     if not markdown:
         the_news['content'] = mistune.markdown(the_news['content'])
@@ -102,27 +109,36 @@ def get_one_news_by_id(db, id, markdown=False):
     return _get_one_news(the_news, markdown)
 
 
-def update_one_news(db, id, title, content):
+def update_one_news(db, id, title, content, date=None):
+    data = {
+        'title': title,
+        'slug': slugify(title),
+        'content': content
+    }
+
+    if date is not None:
+        data['date'] = arrow.get(date).datetime
+
     return db.news.update_one(
         {'_id': ObjectId(id)},
-        {'$set': {
-            'title': title,
-            'slug': slugify(title),
-            'content': content
-        }}
+        {'$set': data}
     ).modified_count > 0
 
 
-def create_one_news(db, title, content):
-    return db.news.insert_one({
+def create_one_news(db, title, content, date=None):
+    data = {
         'title': title,
         'slug': slugify(title),
-        'content': content,
-        'date': arrow.now().datetime
-    })
+        'content': content
+    }
+
+    if date is not None:
+        data['date'] = arrow.get(date).datetime
+
+    return db.news.insert_one()
 
 
-def delete_news(db, id):
+def delete_one_news(db, id):
     return db.news.delete_one({'_id': ObjectId(id)}).deleted_count > 0
 
 

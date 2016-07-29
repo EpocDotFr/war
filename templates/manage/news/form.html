@@ -12,14 +12,14 @@
     <textarea name="content" id="content" required>{{ the_news.content if the_news }}</textarea>
 </div>
 
-{% if the_news %}
 <div>
-    <label for="content">Date</label>
-    <div>{{ the_news.date.format('D, MMMM YYYY HH:mm') if the_news.date else 'None' }} {{ '('+the_news.date.humanize()+')' if the_news.date }}</div>
+    <label for="date">Date</label>
+    <input type="datetime" name="date" id="date" value="{{ the_news.date.format('YYYY-MM-DD HH:mm') if the_news and the_news.date }}">
 </div>
 
+{% if the_news %}
 <div>
-    <label for="content">Slug</label>
+    <label>Slug</label>
     <div><code>{{ the_news.slug if the_news.slug else 'None' }}</code></div>
 </div>
 {% endif %}

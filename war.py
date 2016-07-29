@@ -1,8 +1,7 @@
-from flask import Flask,  render_template, request, abort, json
+from flask import Flask, render_template, request, abort, json
 from flask_httpauth import HTTPBasicAuth
 from urllib.parse import quote_plus
 import gauges
-import os
 import bugsnag
 from bugsnag.flask import handle_exceptions
 
@@ -14,7 +13,7 @@ app.config.from_pyfile('config.py')
 
 if not app.config['DEBUG']:
     bugsnag.configure(
-      api_key = app.config['BUGSNAG_API_KEY']
+        api_key=app.config['BUGSNAG_API_KEY']
     )
 
     handle_exceptions(app)
@@ -181,5 +180,6 @@ def get_password(username):
 @auth.error_handler
 def auth_error():
     return render_template('errors/403.html')
+
 
 import routes

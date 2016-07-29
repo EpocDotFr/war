@@ -4,6 +4,7 @@ import bson
 import PyRSS2Gen
 import psutil
 
+
 # ----- Public routes -------
 
 # Home page
@@ -228,7 +229,7 @@ def sitemap_xml():
 def manage():
     db = get_database()
 
-    news_list = get_news_list(db)
+    news_list = get_news_list(db, admin=True)
     global_stats = get_global_stats(db)
 
     return render_template('manage/home.html', news_list=news_list, global_stats=global_stats)
@@ -318,7 +319,7 @@ def news_edit(news_id):
 def news_delete(news_id):
     db = get_database()
 
-    if delete_news(db, news_id):
+    if delete_one_news(db, news_id):
         flash('News deleted successfuly.', 'success')
     else:
         flash('Error deleting this news.', 'error')
