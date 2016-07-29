@@ -19,61 +19,53 @@
     {% endif %}
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.7/zepto.min.js"></script>
-    <script src="{{ url_for('static', filename='js/recorder.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/MediaStreamRecorder.min.js') }}"></script>
     <script>
     Zepto(function () {
         navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
-        window.AudioContext = (window.AudioContext || window.webkitAudioContext);
-
-        var audio_context = new window.AudioContext();
-        var recorder;
 
         var div_progress = $('div#progress');
         var button_recognize = $('button#recognize');
 
         function onStreamConnected(stream) {
-            window.audio_input = audio_context.createMediaStreamSource(stream);
+            var mediaRecorder = new MediaStreamRecorder(stream);
 
-            recorder = new Recorder(window.audio_input);
-            recorder.record();
+            mediaRecorder.mimeType = 'audio/wav';
+
+            mediaRecorder.ondataavailable = function (sample) {
+                displayStatus('info', 'Sending sample...');
+
+                var sfd = new FormData();
+                sfd.append('sample', sample);
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ url_for('recognize') }}',
+                    data: sfd,
+                    processData: false,
+                    contentType: false,
+                    success: function(response, status, xhr) {
+                        if (response.result == 'success') {
+                            location.replace('/r/'+response.data.sample_id);
+                        } else {
+                            displayStatus('error', response.data.message);
+                        }
+                    },
+                    error: function(xhr, errorType, error) {
+                        var response = JSON.parse(xhr.responseText);
+
+                        displayStatus('error', response.data.message);
+                    },
+                    complete: function(xhr, status) {
+                        mediaRecorder.stop();
+                        button_recognize.attr('disabled', false);
+                    }
+                });
+            };
+
+            mediaRecorder.start({{ config['SAMPLE_DURATION'] * 1000 }});
 
             displayStatus('info', 'Recording... Please wait {{ config['SAMPLE_DURATION'] }} seconds.');
-
-            window.setTimeout(function() {
-                recorder.stop();
-
-                recorder.exportWAV(function(sample) {
-                    displayStatus('info', 'Sending sample...');
-
-                    var fd = new FormData();
-                    fd.append('sample', sample);
-
-                    $.ajax({
-                        type: 'POST',
-                        url: '{{ url_for('recognize') }}',
-                        data: fd,
-                        processData: false,
-                        contentType: false,
-                        success: function(response, status, xhr) {
-                            if (response.result == 'success') {
-                                location.replace('/r/'+response.data.sample_id);
-                            } else {
-                                displayStatus('error', response.data.message);
-                            }
-
-                            recorder.clear();
-                        },
-                        error: function(xhr, errorType, error) {
-                            var response = JSON.parse(xhr.responseText);
-
-                            displayStatus('error', response.data.message);
-                        },
-                        complete: function(xhr, status) {
-                            button_recognize.attr('disabled', false);
-                        }
-                    });
-                });
-            }, {{ config['SAMPLE_DURATION'] * 1000 }});
         }
 
         function onStreamError(err) {
@@ -89,10 +81,11 @@
         }
 
         button_recognize.on('click', function() {
-            displayStatus('info', 'Waiting for your permission...');
             button_recognize.attr('disabled', true);
 
-            navigator.getUserMedia({audio: true}, onStreamConnected, onStreamError);
+            displayStatus('info', 'Waiting for your permission...');
+            
+            navigator.getUserMedia({audio: true, video: false}, onStreamConnected, onStreamError);
         });
     });
     </script>
