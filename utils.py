@@ -42,7 +42,7 @@ def get_push():
 
 
 def get_latest_news(db):
-    latest_news = db.news.find({'date': {'$ne': None}}).limit(1).sort('date', -1)
+    latest_news = db.news.find({'date': {'$ne': None, '$lte': arrow.now().datetime}}).limit(1).sort('date', -1)
 
     latest_news = list(latest_news)
 
@@ -60,7 +60,7 @@ def get_news_list(db, limit=None, admin=False):
     params = {}
 
     if not admin:
-        params = {'date': {'$ne': None}}
+        params = {'date': {'$ne': None, '$lte': arrow.now().datetime}}
 
     news_list_db = db.news.find(params).sort('date', -1)
 
