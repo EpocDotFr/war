@@ -26,5 +26,5 @@ def _call(resource, method='GET'):
     return response_json
 
 
-def get_project_errors(project_id):
+def get_project_errors(project_id, status=None):
     return _call('projects/{}/errors'.format(project_id))

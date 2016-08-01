@@ -25,9 +25,9 @@
         <li><strong># of opened channels in the app:</strong> <span id="live_results.channels" class="manage-data"></span></li>
     </ul>
 
-    <h2>Errors</h2>
+    <h2>Errors <small>— <a href="https://app.bugsnag.com/war/war/errors">Bugsnag dashboard</a></small></h2>
 
-    <div id="errors" class="manage-data"></div>
+    <div id="errors"><ul><li><a href="https://app.bugsnag.com/errors/518031bcd775355c48a1cd4e"><code>NoMethodError</code></a> — undefined method `name' for nil:NilClass (12 times)</li></ul></div>
 
     <h2>News <small>— <a href="{{ url_for('news_create') }}">Create</a></small></h2>
 
