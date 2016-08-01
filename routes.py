@@ -284,7 +284,7 @@ def manage_get_data():
         print(e)
 
     try:
-        ajax_response['data']['errors'] = bugsnag_client.get_project_errors(app.config['BUGSNAG_PROJECT_ID'])
+        ajax_response['data']['errors'] = bugsnag_client.get_project_errors(app.config['BUGSNAG_PROJECT_ID'], status='open')
     except Exception as e:
         print(e)
 

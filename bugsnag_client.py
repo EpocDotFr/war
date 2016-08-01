@@ -4,7 +4,7 @@ _ENDPOINT = 'https://api.bugsnag.com/'
 API_KEY = None
 
 
-def _call(resource, method='GET'):
+def _call(resource, method='GET', params={}):
     url = _ENDPOINT + resource
 
     if API_KEY is None:
@@ -14,7 +14,7 @@ def _call(resource, method='GET'):
         'Authorization': 'token '+API_KEY
     }
 
-    response = requests.request(method, url, headers=headers)
+    response = requests.request(method, url, headers=headers, params=params)
 
     response_json = response.json()
 
@@ -22,9 +22,14 @@ def _call(resource, method='GET'):
         message = response_json['error'] if 'error' in response_json else 'Unknow error'
 
         raise Exception(message)
-
+    
     return response_json
 
 
 def get_project_errors(project_id, status=None):
-    return _call('projects/{}/errors'.format(project_id))
+    params = {}
+
+    if status is not None:
+        params['status'] = status
+
+    return _call('projects/{}/errors'.format(project_id), params=params)
