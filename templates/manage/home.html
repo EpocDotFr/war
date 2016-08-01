@@ -22,15 +22,19 @@
     <h2>Live results <small>— <a href="https://dashboard.pusher.com/apps/{{ config['PUSHER_APP_ID'] }}">Pusher dashboard</a></small></h2>
 
     <ul>
-        <li><strong># of channels:</strong> <span id="live_results.channels" class="manage-data"></span></li>
+        <li><strong># of opened channels in the app:</strong> <span id="live_results.channels" class="manage-data"></span></li>
     </ul>
+
+    <h2>Errors</h2>
+
+    <div id="errors" class="manage-data"></div>
 
     <h2>News <small>— <a href="{{ url_for('news_create') }}">Create</a></small></h2>
 
     {% if news_list %}
     <ul>
         {% for the_news in news_list %}
-        <li>{{ the_news.title }} ({% if the_news.date %}published {{ the_news.date.humanize() }}{% else %}draft{% endif %}) — <a href="{{ url_for('one_news', slug=the_news.slug) }}">Read</a> <a href="{{ url_for('news_edit', news_id=the_news._id) }}">Edit</a> <a href="{{ url_for('news_delete', news_id=the_news._id) }}" onclick="return confirm('Are you sure?')">Delete</a></li>
+        <li>{{ the_news.title }} ({% if the_news.date %}published {{ the_news.date.humanize() }}{% else %}<strong>draft</strong>{% endif %}) — <a href="{{ url_for('one_news', slug=the_news.slug) }}">Read</a> — <a href="{{ url_for('news_edit', news_id=the_news._id) }}">Edit</a> — <a href="{{ url_for('news_delete', news_id=the_news._id) }}" onclick="return confirm('Are you sure?')">Delete</a></li>
         {% endfor %}
     </ul>
     {% else %}
@@ -74,6 +78,7 @@
 
         var form_sample_search = $('form#search-sample');
         var input_sample_id_to_search = $('input#sample-id');
+        var div_errors = $('div#errors');
 
         form_sample_search.on('submit', function(e) {
             e.preventDefault();

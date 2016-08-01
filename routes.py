@@ -3,6 +3,7 @@ from war import *
 import bson
 import PyRSS2Gen
 import psutil
+import bugsnag_client
 
 
 # ----- Public routes -------
@@ -246,6 +247,21 @@ def manage_get_data():
 
     try:
         ajax_response['data']['visits'] = gauges.get_gauge(app.config['GAUGES_SITE_ID'])
+
+        ajax_response['data']['visits'].pop('allowed_hosts', None)
+        ajax_response['data']['visits'].pop('created_at', None)
+        ajax_response['data']['visits'].pop('creator_id', None)
+        ajax_response['data']['visits'].pop('now_in_zone', None)
+        ajax_response['data']['visits'].pop('enabled', None)
+        ajax_response['data']['visits'].pop('id', None)
+        ajax_response['data']['visits'].pop('allowed_hosts', None)
+        ajax_response['data']['visits'].pop('recent_days', None)
+        ajax_response['data']['visits'].pop('recent_hours', None)
+        ajax_response['data']['visits'].pop('recent_months', None)
+        ajax_response['data']['visits'].pop('recent_years', None)
+        ajax_response['data']['visits'].pop('title', None)
+        ajax_response['data']['visits'].pop('tz', None)
+        ajax_response['data']['visits'].pop('urls', None)
     except Exception as e:
         pass
 
@@ -264,6 +280,11 @@ def manage_get_data():
         ajax_response['data']['live_results'] = {
             'channels': len(push.channels_info('results-')['channels'])
         }
+    except Exception as e:
+        print(e)
+
+    try:
+        ajax_response['data']['errors'] = bugsnag_client.get_project_errors(app.config['BUGSNAG_PROJECT_ID'])
     except Exception as e:
         print(e)
 
