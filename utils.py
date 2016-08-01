@@ -118,6 +118,8 @@ def update_one_news(db, id, title, content, date=None):
 
     if date is not None:
         data['date'] = arrow.get(date).datetime
+    else:
+        data['date'] = None
 
     return db.news.update_one(
         {'_id': ObjectId(id)},
@@ -134,8 +136,10 @@ def create_one_news(db, title, content, date=None):
 
     if date is not None:
         data['date'] = arrow.get(date).datetime
+    else:
+        data['date'] = None
 
-    return db.news.insert_one()
+    return db.news.insert_one(data)
 
 
 def delete_one_news(db, id):
