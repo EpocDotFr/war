@@ -14,7 +14,7 @@
 
 <div>
     <label for="date">Date</label>
-    <input type="datetime" name="date" id="date" value="{{ the_news.date.format('YYYY-MM-DD HH:mm') if the_news and the_news.date }}">
+    <input type="datetime" name="date" id="date" value="{{ the_news.date.format('YYYY-MM-DD HH:mm') if the_news and the_news.date }}" placeholder="YYYY-MM-DD HH:mm (leave blank to set as draft)">
 </div>
 
 {% if the_news %}

@@ -83,7 +83,7 @@ def news_rss():
         link=url_for('home', _external=True),
         description='Latest news from WAR (Web Audio Recognizer)',
         language='en',
-        image=PyRSS2Gen.Image(url_for('static', filename='images/logo_128.png'), 'Logo of WAR',
+        image=PyRSS2Gen.Image(url_for('static', filename='images/logo_128.png', _external=True), 'Latest news from WAR (Web Audio Recognizer)',
                               url_for('home', _external=True)),
         lastBuildDate=arrow.now().datetime,
         items=rss_items
@@ -161,8 +161,6 @@ def recognize():
 # Sample results
 @app.route('/r/<sample_id>')
 def results(sample_id):
-    g.NO_INDEX = True
-
     try:
         sample_id_object = ObjectId(sample_id)
     except bson.errors.InvalidId as bei:
