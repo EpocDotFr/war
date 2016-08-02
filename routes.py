@@ -181,15 +181,27 @@ def results(sample_id):
 
     for audio_database_id, audio_database_instance in audio_databases.items():
         if audio_database_id in sample and sample[audio_database_id] is not None:
+            recognization = dict(sample[audio_database_id])
+
+            if recognization['status'] == 'success':
+                search_terms = []
+
+                if 'artist' in recognization['data']:
+                    search_terms.append(recognization['data']['artist'])
+
+                if 'title' in recognization['data']:
+                    search_terms.append(recognization['data']['title'])
+
+                recognization['data']['search_terms'] = quote_plus(' '.join(search_terms))
 
             res.append({
                 **{
                     'audio_database_id': audio_database_id,
                     'audio_database_name': audio_database_instance.get_name(),
                 },
-                **dict(sample[audio_database_id])
+                **recognization
             })
-    
+
     return render_template('results.html', sample=sample, results=res)
 
 
