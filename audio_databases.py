@@ -79,30 +79,35 @@ class ACRCloud(AudioDatabaseInterface):
 
         json_response = json.loads(acrcloud.recognize_by_file(sample_file_path, 0))
 
-        if 'status' not in json_response:
-            raise Exception('The ACRCloud response is not valid')
+        results = {
+            'status': 'success',
+            'data': {}
+        }
 
-        if json_response['status']['code'] == 1001:  # No result
-            return False
+        if 'status' not in json_response:
+            results['status'] = 'error'
+            results['data']['message'] = 'The ACRCloud response is not valid'
+
+        if json_response['status']['code'] == 1001:  # No results
+            results['status'] = 'failure'
 
         if json_response['status']['code'] != 0:
-            raise Exception(json_response['status']['msg'])
+            results['status'] = 'error'
+            results['data']['message'] = json_response['status']['msg']
 
         if 'music' not in json_response['metadata']:
-            return False
+            results['status'] = 'failure'
 
         track = json_response['metadata']['music'][0]
 
-        results = {}
-
         if 'album' in track:
-            results['album'] = track['album']['name']
+            results['data']['album'] = track['album']['name']
 
         if 'artists' in track:
-            results['artist'] = track['artists'][0]['name']
+            results['data']['artist'] = track['artists'][0]['name']
 
         if 'title' in track:
-            results['title'] = track['title']
+            results['data']['title'] = track['title']
 
         return results
 

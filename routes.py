@@ -1,5 +1,6 @@
 from flask import Response, jsonify, url_for, flash, redirect
 from war import *
+from urllib.parse import quote_plus
 import bson
 import PyRSS2Gen
 import psutil
@@ -180,27 +181,15 @@ def results(sample_id):
 
     for audio_database_id, audio_database_instance in audio_databases.items():
         if audio_database_id in sample and sample[audio_database_id] is not None:
-            if sample[audio_database_id] is False:
-                res.append({
+
+            res.append({
+                **{
                     'audio_database_id': audio_database_id,
-                    'audio_database_name': audio_database_instance.get_name()
-                })
-            else:
-                search_terms = []
-
-                if 'artist' in sample[audio_database_id]:
-                    search_terms.append(sample[audio_database_id]['artist'])
-
-                if 'title' in sample[audio_database_id]:
-                    search_terms.append(sample[audio_database_id]['title'])
-
-                    res.append({
-                        'audio_database_id': audio_database_id,
-                        'audio_database_name': audio_database_instance.get_name(),
-                        'track': sample[audio_database_id],
-                        'search_terms': quote_plus(' '.join(search_terms))
-                    })
-
+                    'audio_database_name': audio_database_instance.get_name(),
+                },
+                **dict(sample[audio_database_id])
+            })
+    
     return render_template('results.html', sample=sample, results=res)
 
 

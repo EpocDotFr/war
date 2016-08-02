@@ -12,11 +12,13 @@
 
     <div id="results">
         {% for result in results %}
-            <h2>{{ result.audio_database_name }} said...</h2>
-            {% if not 'track' in result %}
+            <h2 id="{{ result.audio_database_id }}">{{ result.audio_database_name }} said...</h2>
+            {% if result.status == 'failure' %}
                 <p>Sorry, I don't know :/</p>
-            {% else %}
-                <p>It is <strong>{{ result.track.artist }}</strong> with <strong>{{ result.track.title }}</strong> from the album <strong>{{ result.track.album }}</strong>. Search on <a href="https://www.youtube.com/results?search_query={{ result.search_terms }}">Youtube</a>, <a href="https://www.deezer.com/search/{{ result.search_terms }}">Deezer</a> or <a href="https://open.spotify.com/search/{{ result.search_terms }}">Spotify</a></p>
+            {% elif result.status == 'error' %}
+                <p>Sorry, an error occured :/ We have been informed about it.</p>
+            {% elif result.status == 'success' %}
+                <p>It is <strong>{{ result.data.artist }}</strong> with <strong>{{ result.data.title }}</strong> from the album <strong>{{ result.data.album }}</strong>. Search on <a href="https://www.youtube.com/results?search_query={{ result.data.search_terms }}">Youtube</a>, <a href="https://www.deezer.com/search/{{ result.data.search_terms }}">Deezer</a> or <a href="https://open.spotify.com/search/{{ result.data.search_terms }}">Spotify</a></p>
             {% endif %}
         {% endfor %}
     </div>
@@ -39,19 +41,19 @@
 
             var channel = pusher.subscribe('results-{{ sample['_id'] }}');
 
-            channel.bind('error', function(data) {
-                div_results.append('<h2>'+data.audio_database_name+' said...</h2><p>Sorry, an error occured :/</p>');
+            channel.bind('error', function(message) {
+                div_results.append('<h2 id="'+message.audio_database_id+'">'+message.audio_database_name+' said...</h2><p>Sorry, an error occured :/ We have been informed about it.</p>');
             });
 
-            channel.bind('failure', function(data) {
-                div_results.append('<h2>'+data.audio_database_name+' said...</h2><p>Sorry, I don\'t know :/</p>');
+            channel.bind('failure', function(message) {
+                div_results.append('<h2 id="'+message.audio_database_id+'">'+message.audio_database_name+' said...</h2><p>Sorry, I don\'t know :/</p>');
             });
 
-            channel.bind('success', function(data) {
-                div_results.append('<h2>'+data.audio_database_name+' said...</h2><p>It is <strong>'+data.track.artist+'</strong> with <strong>'+data.track.title+'</strong> from the album <strong>'+data.track.album+'</strong>. Search on <a href="https://www.youtube.com/results?search_query='+data.search_terms+'">Youtube</a>, <a href="https://www.deezer.com/search/'+data.search_terms+'">Deezer</a> or <a href="https://open.spotify.com/search/'+data.search_terms+'">Spotify</a></p>');
+            channel.bind('success', function(message) {
+                div_results.append('<h2 id="'+message.audio_database_id+'">'+message.audio_database_name+' said...</h2><p>It is <strong>'+message.data.artist+'</strong> with <strong>'+message.data.title+'</strong> from the album <strong>'+message.data.album+'</strong>. Search on <a href="https://www.youtube.com/results?search_query='+message.data.search_terms+'">Youtube</a>, <a href="https://www.deezer.com/search/'+message.data.search_terms+'">Deezer</a> or <a href="https://open.spotify.com/search/'+message.data.search_terms+'">Spotify</a></p>');
             });
 
-            channel.bind('done', function(data) {
+            channel.bind('done', function(message) {
                 div_processing.remove();
                 div_done.show();
             });

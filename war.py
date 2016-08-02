@@ -74,69 +74,76 @@ def worker():
 
     push = get_push()
 
-    try:
-        db = get_database()
+    db = get_database()
 
-        job_data = json.loads(job.body)
-        sample_id = job_data['sample_id']
-        sample_object_id = ObjectId(sample_id)
+    job_data = json.loads(job.body)
+    sample_id = job_data['sample_id']
+    sample_object_id = ObjectId(sample_id)
 
-        sample = db.samples.find_one({'_id': sample_object_id})
+    sample = db.samples.find_one({'_id': sample_object_id})
 
-        if sample is None:
-            raise Exception('The sample {} does not exists in the database'.format(sample_id))
+    if sample is None:
+        raise Exception('The sample {} does not exists in the database'.format(sample_id))
 
-        push_channel = 'results-{}'.format(sample_id)
+    push_channel = 'results-{}'.format(sample_id)
 
-        audio_databases = get_enabled_audio_databases(db)
+    audio_databases = get_enabled_audio_databases(db)
 
-        for audio_database_id, audio_database_instance in audio_databases.items():
-            if audio_database_id in sample and sample[audio_database_id] is not None:
-                continue
+    for audio_database_id, audio_database_instance in audio_databases.items():
+        if audio_database_id in sample and sample[audio_database_id] is not None:
+            continue
 
-            try:
-                recognization_results = audio_database_instance.recognize(sample_id)
+        try:
+            recognization = audio_database_instance.recognize(sample_id)
 
-                db.samples.update_one({'_id': sample_object_id}, {'$set': {audio_database_id: recognization_results}})
+            db.samples.update_one({'_id': sample_object_id}, {'$set': {audio_database_id: recognization}})
 
-                if not recognization_results:
-                    db.stats.update_one({'audio_database': audio_database_id}, {'$inc': {'failures': 1}})
+            if recognization['status'] == 'success':
+                db.stats.update_one({'audio_database': audio_database_id}, {'$inc': {'successes': 1}})
 
-                    push.trigger(push_channel, 'failure', {
-                        'audio_database_id': audio_database_id,
-                        'audio_database_name': audio_database_instance.get_name()
-                    })
-                else:
-                    db.stats.update_one({'audio_database': audio_database_id}, {'$inc': {'successes': 1}})
+                search_terms = []
 
-                    search_terms = []
+                if 'artist' in recognization['data']:
+                    search_terms.append(recognization['data']['artist'])
 
-                    if 'artist' in recognization_results:
-                        search_terms.append(recognization_results['artist'])
+                if 'title' in recognization['data']:
+                    search_terms.append(recognization['data']['title'])
 
-                    if 'title' in recognization_results:
-                        search_terms.append(recognization_results['title'])
+                recognization['data']['search_terms'] = quote_plus(' '.join(search_terms))
 
-                    push.trigger(push_channel, 'success', {
-                        'audio_database_id': audio_database_id,
-                        'audio_database_name': audio_database_instance.get_name(),
-                        'track': recognization_results,
-                        'search_terms': quote_plus(' '.join(search_terms))
-                    })
-            except Exception as e:
-                push.trigger(push_channel, 'error', {
+                push.trigger(push_channel, 'success', {
+                    'audio_database_id': audio_database_id,
+                    'audio_database_name': audio_database_instance.get_name(),
+                    'data': recognization['data']
+                })
+            elif recognization['status'] == 'failure':
+                db.stats.update_one({'audio_database': audio_database_id}, {'$inc': {'failures': 1}})
+
+                push.trigger(push_channel, 'failure', {
                     'audio_database_id': audio_database_id,
                     'audio_database_name': audio_database_instance.get_name()
                 })
+            elif recognization['status'] == 'error':
+                push.trigger(push_channel, 'error', {
+                    'audio_database_id': audio_database_id,
+                    'audio_database_name': audio_database_instance.get_name(),
+                    'data': recognization['data']
+                })
 
-                app.logger.error(str(e))
+                app.logger.error(recognization['data']['message'])
 
-        db.samples.update_one({'_id': sample_object_id}, {'$set': {'done': True}})
-        push.trigger(push_channel, 'done', {})
-        job.delete()
-    except Exception as e:
-        app.logger.error(str(e))
-        job.bury()
+        except Exception as e:
+            push.trigger(push_channel, 'error', {
+                'audio_database_id': audio_database_id,
+                'audio_database_name': audio_database_instance.get_name(),
+                'data': {'message': str(e)}
+            })
+
+            app.logger.error(str(e))
+
+    db.samples.update_one({'_id': sample_object_id}, {'$set': {'done': True}})
+    push.trigger(push_channel, 'done', {})
+    job.delete()
 
 
 # -----------------------------------------------------------
