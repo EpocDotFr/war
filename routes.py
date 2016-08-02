@@ -16,8 +16,6 @@ def home():
 
     global_stats = get_global_stats(db)
 
-    latest_news = None
-
     latest_news = get_latest_news(db)
 
     return render_template('home.html', global_stats=global_stats, latest_news=latest_news)
@@ -85,7 +83,8 @@ def news_rss():
         link=url_for('home', _external=True),
         description='Latest news from WAR (Web Audio Recognizer)',
         language='en',
-        image=PyRSS2Gen.Image(url_for('static', filename='images/logo_128.png', _external=True), 'Latest news from WAR (Web Audio Recognizer)',
+        image=PyRSS2Gen.Image(url_for('static', filename='images/logo_128.png', _external=True),
+                              'Latest news from WAR (Web Audio Recognizer)',
                               url_for('home', _external=True)),
         lastBuildDate=arrow.now().datetime,
         items=rss_items
@@ -208,16 +207,16 @@ def results(sample_id):
 # Sitemap XML
 @app.route('/sitemap.xml')
 def sitemap_xml():
-    routes = []
+    app_routes = []
 
     db = get_database()
 
     news_list = get_news_list(db)
 
-    for news in news_list:
-        routes.append(url_for('one_news', slug=news['slug'], _external=True))
+    for one_news in news_list:
+        app_routes.append(url_for('one_news', slug=one_news['slug'], _external=True))
 
-    return Response(render_template('sitemap.xml', routes=routes), mimetype='application/xml')
+    return Response(render_template('sitemap.xml', routes=app_routes), mimetype='application/xml')
 
 
 # ----- Private routes -------
@@ -285,7 +284,8 @@ def manage_get_data():
         print(e)
 
     try:
-        ajax_response['data']['errors'] = bugsnag_client.get_project_errors(app.config['BUGSNAG_PROJECT_ID'], status='open')
+        ajax_response['data']['errors'] = bugsnag_client.get_project_errors(app.config['BUGSNAG_PROJECT_ID'],
+                                                                            status='open')
     except Exception as e:
         print(e)
 
@@ -299,7 +299,8 @@ def news_create():
     db = get_database()
 
     if request.method == 'POST':
-        create_one_news_result = create_one_news(db, request.form['title'], request.form['content'], request.form['date'] if request.form['date'] != '' else None)
+        create_one_news_result = create_one_news(db, request.form['title'], request.form['content'],
+                                                 request.form['date'] if request.form['date'] != '' else None)
 
         if create_one_news_result.inserted_id:
             flash('News created successfuly.', 'success')
@@ -323,7 +324,8 @@ def news_edit(news_id):
         abort(404)
 
     if request.method == 'POST':
-        if update_one_news(db, news_id, request.form['title'], request.form['content'], request.form['date'] if request.form['date'] != '' else None):
+        if update_one_news(db, news_id, request.form['title'], request.form['content'],
+                           request.form['date'] if request.form['date'] != '' else None):
             flash('News edited successfuly.', 'success')
 
             return redirect(url_for('news_edit', news_id=the_news['_id']))

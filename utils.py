@@ -1,4 +1,3 @@
-from bson import SON
 from flask import g
 from war import app
 from pymongo import MongoClient
@@ -103,13 +102,13 @@ def get_one_news_by_slug(db, slug, markdown=False):
     return _get_one_news(the_news, markdown)
 
 
-def get_one_news_by_id(db, id, markdown=False):
-    the_news = db.news.find_one({'_id': ObjectId(id)})
+def get_one_news_by_id(db, news_id, markdown=False):
+    the_news = db.news.find_one({'_id': ObjectId(news_id)})
 
     return _get_one_news(the_news, markdown)
 
 
-def update_one_news(db, id, title, content, date=None):
+def update_one_news(db, news_id, title, content, date=None):
     data = {
         'title': title,
         'slug': slugify(title),
@@ -122,7 +121,7 @@ def update_one_news(db, id, title, content, date=None):
         data['date'] = None
 
     return db.news.update_one(
-        {'_id': ObjectId(id)},
+        {'_id': ObjectId(news_id)},
         {'$set': data}
     ).modified_count > 0
 
@@ -142,8 +141,8 @@ def create_one_news(db, title, content, date=None):
     return db.news.insert_one(data)
 
 
-def delete_one_news(db, id):
-    return db.news.delete_one({'_id': ObjectId(id)}).deleted_count > 0
+def delete_one_news(db, news_id):
+    return db.news.delete_one({'_id': ObjectId(news_id)}).deleted_count > 0
 
 
 def get_global_stats(db):
