@@ -3,9 +3,16 @@
 {% block title %}Terms of service{% endblock %}
 
 {% block content %}
-    <p>We use <a href="http://get.gaug.es/">Gauges</a> as our website analytics. It is privacy-friendly (read: it doesn't sell or give your informations to third-party), even if it creates several cookies on your computer.</p>
+    <h2>Web analytics</h2>
 
-    <p><strong>WAR</strong> itself doesn't create any cookies on your computer.</p>
+    <p>We use <a href="http://get.gaug.es/">Gauges</a> as our website analytics. It is privacy-friendly (read: it doesn't sell or give your informations to third-parties).</p>
 
-    <p>The audio samples you submit to <strong>WAR</strong> aren't kept. Once a sample has been analyzed by the audio databases we request, they are deleted. We then update some <a href="{{ url_for('stats') }}">statistics</a>.</p>
+    <h2>Cookies</h2>
+
+    <p><strong>WAR</strong> itself doesn't create any cookies on your computer, but our aforementioned web analytics create several ones.</p>
+
+    <h2>Samples</h2>
+
+    <p>By clicking on the <strong>Recognize</strong> button on the home page, you understand and agree that some audio will be recorded from your device and then will be sent to our service for analysis.</p>
+    <p>The audio samples you submit to <strong>WAR</strong> aren't kept. Once a sample has been analyzed by the audio databases we request, it is deleted. We only store the audio metadata, if the track is found, for statistics purposes.</p>
 {% endblock %}
