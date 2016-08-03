@@ -3,7 +3,7 @@
 {% block title %}Manage{% endblock %}
 
 {% block content %}
-    <h2>Visits <small>— <a href="https://secure.gaug.es/dashboard#/gauges/{{ config['GAUGES_SITE_ID'] }}/overview">Gauges dashboard</a></small></h2>
+    <h2>Visits <small>— <a href="https://secure.gaug.es/dashboard#/gauges/{{ config['GAUGES']['SITE_ID'] }}/overview">Gauges dashboard</a></small></h2>
 
     <ul>
         <li><strong>All time:</strong> <span id="visits.all_time.views" class="manage-data"></span> views, <span id="visits.all_time.people" class="manage-data"></span> people</li>
@@ -19,7 +19,7 @@
         <li><strong>HDD:</strong> <span id="server.hdd" class="manage-data"></span> %</li>
     </ul>
 
-    <h2>Live results <small>— <a href="https://dashboard.pusher.com/apps/{{ config['PUSHER_APP_ID'] }}">Pusher dashboard</a></small></h2>
+    <h2>Live results <small>— <a href="https://dashboard.pusher.com/apps/{{ config['PUSHER']['APP_ID'] }}">Pusher dashboard</a></small></h2>
 
     <ul>
         <li><strong># of opened channels:</strong> <span id="live_results.channels" class="manage-data"></span></li>

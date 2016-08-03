@@ -34,8 +34,8 @@
             var div_done = $('div#done');
             var div_results = $('div#results');
 
-            var pusher = new Pusher('{{ config['PUSHER_KEY'] }}', {
-                cluster: '{{ config['PUSHER_CLUSTER'] }}',
+            var pusher = new Pusher('{{ config['PUSHER']['KEY'] }}', {
+                cluster: '{{ config['PUSHER']['CLUSTER'] }}',
                 encrypted: true
             });
 

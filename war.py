@@ -13,11 +13,11 @@ app = Flask(__name__, static_url_path='')
 app.config.from_pyfile('config.py')
 
 if not app.config['DEBUG']:
-    bugsnag.configure(api_key=app.config['BUGSNAG_NOTIFIER_API_KEY'])
+    bugsnag.configure(api_key=app.config['BUGSNAG']['NOTIFIER_API_KEY'])
     handle_exceptions(app)
 
-gauges.TOKEN = app.config['GAUGES_API_TOKEN']
-bugsnag_client.API_KEY = app.config['BUGSNAG_ORG_API_KEY']
+gauges.TOKEN = app.config['GAUGES']['API_TOKEN']
+bugsnag_client.API_KEY = app.config['BUGSNAG']['ORG_API_KEY']
 
 auth = HTTPBasicAuth()
 

@@ -12,7 +12,7 @@ import mistune
 
 def get_database():
     if not hasattr(g, 'database'):
-        mongodb_client = MongoClient('mongodb://{}:{}'.format(app.config['MONGODB_HOST'], app.config['MONGODB_PORT']),
+        mongodb_client = MongoClient('mongodb://{}:{}'.format(app.config['MONGODB']['HOST'], app.config['MONGODB']['PORT']),
                                      connectTimeoutMS=3000, serverSelectionTimeoutMS=3000)
 
         g.database = mongodb_client.war
@@ -22,7 +22,7 @@ def get_database():
 
 def get_queue():
     if not hasattr(g, 'queue'):
-        g.queue = Beanstalkd.Connection(app.config['BEANSTALKD_HOST'], app.config['BEANSTALKD_PORT'])
+        g.queue = Beanstalkd.Connection(app.config['BEANSTALKD']['HOST'], app.config['BEANSTALKD']['PORT'])
 
     return g.queue
 
@@ -30,10 +30,10 @@ def get_queue():
 def get_push():
     if not hasattr(g, 'push'):
         g.push = pusher.Pusher(
-            app_id=app.config['PUSHER_APP_ID'],
-            key=app.config['PUSHER_KEY'],
-            secret=app.config['PUSHER_SECRET'],
-            cluster=app.config['PUSHER_CLUSTER'],
+            app_id=app.config['PUSHER']['APP_ID'],
+            key=app.config['PUSHER']['KEY'],
+            secret=app.config['PUSHER']['SECRET'],
+            cluster=app.config['PUSHER']['CLUSTER'],
             ssl=True
         )
 

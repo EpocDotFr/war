@@ -246,7 +246,7 @@ def manage_get_data():
     status = 200
 
     try:
-        ajax_response['data']['visits'] = gauges.get_gauge(app.config['GAUGES_SITE_ID'])
+        ajax_response['data']['visits'] = gauges.get_gauge(app.config['GAUGES']['SITE_ID'])
 
         ajax_response['data']['visits'].pop('allowed_hosts', None)
         ajax_response['data']['visits'].pop('created_at', None)
@@ -284,7 +284,7 @@ def manage_get_data():
         print(e)
 
     try:
-        ajax_response['data']['errors'] = bugsnag_client.get_project_errors(app.config['BUGSNAG_PROJECT_ID'],
+        ajax_response['data']['errors'] = bugsnag_client.get_project_errors(app.config['BUGSNAG']['PROJECT_ID'],
                                                                             status='open')
     except Exception as e:
         print(e)

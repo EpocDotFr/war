@@ -68,9 +68,9 @@ class ACRCloud(AudioDatabaseInterface):
         sample_file_path = get_sample_file_path(sample_id, check_if_exists=True)
 
         config = {
-            'host': app.config['ACRCLOUD_HOST'],
-            'access_key': app.config['ACRCLOUD_ACCESS_KEY'],
-            'access_secret': app.config['ACRCLOUD_ACCESS_SECRET'],
+            'host': app.config['ACRCLOUD']['HOST'],
+            'access_key': app.config['ACRCLOUD']['ACCESS_KEY'],
+            'access_secret': app.config['ACRCLOUD']['ACCESS_SECRET'],
             'debug': app.config['DEBUG'],
             'timeout': 10
         }
@@ -87,16 +87,24 @@ class ACRCloud(AudioDatabaseInterface):
         if 'status' not in json_response:
             results['status'] = 'error'
             results['data']['message'] = 'The ACRCloud response is not valid'
+            
+            return results
 
         if json_response['status']['code'] == 1001:  # No results
             results['status'] = 'failure'
+
+            return results
 
         if json_response['status']['code'] != 0:
             results['status'] = 'error'
             results['data']['message'] = json_response['status']['msg']
 
+            return results
+
         if 'music' not in json_response['metadata']:
             results['status'] = 'failure'
+
+            return results
 
         track = json_response['metadata']['music'][0]
 
