@@ -33,6 +33,8 @@
             mediaRecorder.mimeType = 'audio/wav';
 
             mediaRecorder.ondataavailable = function (sample) {
+                mediaRecorder.stop();
+
                 displayStatus('info', 'Sending sample...');
 
                 var sfd = new FormData();
@@ -57,7 +59,6 @@
                         displayStatus('error', response.data.message);
                     },
                     complete: function(xhr, status) {
-                        mediaRecorder.stop();
                         button_recognize.prop('disabled', false);
                     }
                 });

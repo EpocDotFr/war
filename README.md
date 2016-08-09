@@ -1,3 +1,23 @@
-# This is WAR! (Web Audio Recognizer)
+# WAR (Web Audio Recognizer)
 
-  - Project : https://taches.epoc.fr/board/21
+The **WAR** (Web Audio Recognizer) website (https://thisiswar.online/).
+
+## Prerequisites
+
+  - Python 3
+  - Nginx
+  - Beanstalkd
+  - Supervisord
+  - MongoDB
+  - A Pusher account
+  - A Bugsnag account
+  - An ACRCloud account
+  - A Gauges account
+
+## Installation
+
+## Configuration
+
+## Usage
+
+## How it works
