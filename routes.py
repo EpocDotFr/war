@@ -151,7 +151,7 @@ def recognize():
 
             ajax_response['data']['sample_id'] = sample_id
         except Exception as e:
-            app.logger.error(str(e))
+            app.logger.error(e)
             status = 500
             ajax_response['result'] = 'failure'
             ajax_response['data']['message'] = 'Sorry, there were a server error. We have been informed about this.'
@@ -281,13 +281,13 @@ def manage_get_data():
             'channels': len(push.channels_info('results-')['channels'])
         }
     except Exception as e:
-        print(e)
+        pass
 
     try:
         ajax_response['data']['errors'] = bugsnag_client.get_project_errors(app.config['BUGSNAG']['PROJECT_ID'],
                                                                             status='open')
     except Exception as e:
-        print(e)
+        pass
 
     return jsonify(ajax_response), status
 

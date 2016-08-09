@@ -182,7 +182,7 @@ def get_sample_file_path(sample_id, check_if_exists=False):
     sample_file_path = os.path.join(sample_file_destination, sample_file_name)
 
     if check_if_exists and not os.path.exists(sample_file_path):
-        raise Exception('The sample {} does not exists on the file system'.format(sample_id))
+        raise Exception('The sample file "{}" does not exists on the file system'.format(sample_file_path))
 
     return sample_file_path
 
