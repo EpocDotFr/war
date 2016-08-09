@@ -177,7 +177,7 @@ def get_global_stats(db):
 
 
 def get_sample_file_path(sample_id, check_if_exists=False):
-    sample_file_destination = os.path.realpath(app.config['SAMPLES_PATH'])
+    sample_file_destination = os.path.abspath(app.config['SAMPLES_PATH'])
     sample_file_name = '{}.wav'.format(sample_id)
     sample_file_path = os.path.join(sample_file_destination, sample_file_name)
 
