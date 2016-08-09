@@ -4,6 +4,7 @@ from urllib.parse import quote_plus
 import gauges
 import bugsnag
 import bugsnag_client
+import os
 from bugsnag.flask import handle_exceptions
 
 # -----------------------------------------------------------
@@ -70,80 +71,102 @@ def worker():
     queue = get_queue()
     queue.watch('samples')
 
-    job = queue.reserve()
-
     push = get_push()
 
     db = get_database()
 
-    job_data = json.loads(job.body)
-    sample_id = job_data['sample_id']
-    sample_object_id = ObjectId(sample_id)
+    app.logger.info('Initialized')
 
-    sample = db.samples.find_one({'_id': sample_object_id})
+    while True:
+        job = queue.reserve()
 
-    if sample is None:
-        raise Exception('The sample {} does not exists in the database'.format(sample_id))
+        app.logger.info('Incomming job')
 
-    push_channel = 'results-{}'.format(sample_id)
+        job_data = json.loads(job.body)
+        sample_id = job_data['sample_id']
+        sample_object_id = ObjectId(sample_id)
 
-    audio_databases = get_enabled_audio_databases(db)
+        sample = db.samples.find_one({'_id': sample_object_id})
 
-    for audio_database_id, audio_database_instance in audio_databases.items():
-        if audio_database_id in sample and sample[audio_database_id] is not None:
-            continue
+        if sample is None:
+            raise Exception('The sample {} does not exists in the database'.format(sample_id))
 
-        try:
-            recognization = audio_database_instance.recognize(sample_id)
+        push_channel = 'results-{}'.format(sample_id)
 
-            db.samples.update_one({'_id': sample_object_id}, {'$set': {audio_database_id: recognization}})
+        audio_databases = get_enabled_audio_databases(db)
 
-            if recognization['status'] == 'success':
-                db.stats.update_one({'audio_database': audio_database_id}, {'$inc': {'successes': 1}})
+        there_were_errors = False
 
-                search_terms = []
+        for audio_database_id, audio_database_instance in audio_databases.items():
+            if audio_database_id in sample and sample[audio_database_id] is not None:
+                continue
 
-                if 'artist' in recognization['data']:
-                    search_terms.append(recognization['data']['artist'])
+            try:
+                recognization = audio_database_instance.recognize(sample_id)
 
-                if 'title' in recognization['data']:
-                    search_terms.append(recognization['data']['title'])
+                db.samples.update_one({'_id': sample_object_id}, {'$set': {audio_database_id: recognization}})
 
-                recognization['data']['search_terms'] = quote_plus(' '.join(search_terms))
+                if recognization['status'] == 'success':
+                    db.stats.update_one({'audio_database': audio_database_id}, {'$inc': {'successes': 1}})
 
-                push.trigger(push_channel, 'success', {
-                    'audio_database_id': audio_database_id,
-                    'audio_database_name': audio_database_instance.get_name(),
-                    'data': recognization['data']
-                })
-            elif recognization['status'] == 'failure':
-                db.stats.update_one({'audio_database': audio_database_id}, {'$inc': {'failures': 1}})
+                    search_terms = []
 
-                push.trigger(push_channel, 'failure', {
-                    'audio_database_id': audio_database_id,
-                    'audio_database_name': audio_database_instance.get_name()
-                })
-            elif recognization['status'] == 'error':
+                    if 'artist' in recognization['data']:
+                        search_terms.append(recognization['data']['artist'])
+
+                    if 'title' in recognization['data']:
+                        search_terms.append(recognization['data']['title'])
+
+                    recognization['data']['search_terms'] = quote_plus(' '.join(search_terms))
+
+                    push.trigger(push_channel, 'success', {
+                        'audio_database_id': audio_database_id,
+                        'audio_database_name': audio_database_instance.get_name(),
+                        'data': recognization['data']
+                    })
+                elif recognization['status'] == 'failure':
+                    db.stats.update_one({'audio_database': audio_database_id}, {'$inc': {'failures': 1}})
+
+                    push.trigger(push_channel, 'failure', {
+                        'audio_database_id': audio_database_id,
+                        'audio_database_name': audio_database_instance.get_name()
+                    })
+                elif recognization['status'] == 'error':
+                    there_were_errors = True
+
+                    push.trigger(push_channel, 'error', {
+                        'audio_database_id': audio_database_id,
+                        'audio_database_name': audio_database_instance.get_name(),
+                        'data': recognization['data']
+                    })
+
+                    app.logger.error(recognization['data']['message'])
+
+            except Exception as e:
+                there_were_errors = True
+
+                db.samples.update_one({'_id': sample_object_id}, {'$set': {audio_database_id: {
+                    'status': 'error',
+                    'data': {'message': str(e)}
+                }}})
+
                 push.trigger(push_channel, 'error', {
                     'audio_database_id': audio_database_id,
                     'audio_database_name': audio_database_instance.get_name(),
-                    'data': recognization['data']
+                    'data': {'message': str(e)}
                 })
 
-                app.logger.error(recognization['data']['message'])
+                app.logger.error(str(e))
 
-        except Exception as e:
-            push.trigger(push_channel, 'error', {
-                'audio_database_id': audio_database_id,
-                'audio_database_name': audio_database_instance.get_name(),
-                'data': {'message': str(e)}
-            })
-
-            app.logger.error(str(e))
-
-    db.samples.update_one({'_id': sample_object_id}, {'$set': {'done': True}})
-    push.trigger(push_channel, 'done', {})
-    job.delete()
+        if not there_were_errors:
+            app.logger.info('No errors')
+            db.samples.update_one({'_id': sample_object_id}, {'$set': {'done': True}})
+            push.trigger(push_channel, 'done', {})
+            os.remove(get_sample_file_path(sample_id))
+            job.delete()
+        else:
+            app.logger.info('There were errors')
+            job.bury()
 
 
 # -----------------------------------------------------------

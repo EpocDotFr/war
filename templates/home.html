@@ -58,7 +58,7 @@
                     },
                     complete: function(xhr, status) {
                         mediaRecorder.stop();
-                        button_recognize.attr('disabled', false);
+                        button_recognize.prop('disabled', false);
                     }
                 });
             };
@@ -69,8 +69,8 @@
         }
 
         function onStreamError(err) {
-            displayStatus('error', 'Error while getting the recording device: '+err);
-            button_recognize.attr('disabled', false);
+            button_recognize.prop('disabled', false);
+            displayStatus('error', 'Error while getting the recording device: '+err.name);
         }
 
         function displayStatus(type, message) {
@@ -81,7 +81,7 @@
         }
 
         button_recognize.on('click', function() {
-            button_recognize.attr('disabled', true);
+            button_recognize.prop('disabled', true);
 
             displayStatus('info', 'Waiting for your permission...');
             
