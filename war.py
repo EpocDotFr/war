@@ -159,7 +159,7 @@ def worker():
                     'data': {'message': str(e)}
                 })
 
-                app.logger.error(str(e))
+                app.logger.error(e)
 
         if not there_were_errors:
             app.logger.info('No errors')

@@ -396,7 +396,7 @@ def error_404(error):
 # Internal Server Error
 @app.errorhandler(500)
 def error_500(error):
-    app.logger.error(str(error))
+    app.logger.error(error)
     return render_template('errors/500.html'), 500
 
 
