@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, abort, json
 from flask_httpauth import HTTPBasicAuth
 from urllib.parse import quote_plus
+from bugsnag.handlers import BugsnagHandler
 import gauges
 import bugsnag
 import bugsnag_client
@@ -12,6 +13,8 @@ from bugsnag.flask import handle_exceptions
 
 app = Flask(__name__, static_url_path='')
 app.config.from_pyfile('config.py')
+
+app.logger.addHandler(BugsnagHandler())
 
 if not app.config['DEBUG']:
     bugsnag.configure(api_key=app.config['BUGSNAG']['NOTIFIER_API_KEY'])
