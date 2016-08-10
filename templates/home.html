@@ -22,7 +22,7 @@
     <script src="{{ url_for('static', filename='js/MediaStreamRecorder.min.js') }}"></script>
     <script>
     Zepto(function () {
-        navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 
         var div_progress = $('div#progress');
         var button_recognize = $('button#recognize');
@@ -88,13 +88,18 @@
             div_progress.show();
         }
 
-        button_recognize.on('click', function() {
-            button_recognize.prop('disabled', true);
+        if (!navigator.getUserMedia) {
+            button_recognize.parent().remove();
+            displayStatus('error', 'Oh no, your web browser doesn\'t seem to support audio recording :/');
+        } else {
+            button_recognize.on('click', function() {
+                button_recognize.prop('disabled', true);
 
-            displayStatus('info', 'Waiting for your permission...');
-            
-            navigator.getUserMedia({audio: true, video: false}, onStreamConnected, onStreamError);
-        });
+                displayStatus('info', 'Waiting for your permission...');
+                
+                navigator.getUserMedia({audio: true, video: false}, onStreamConnected, onStreamError);
+            });
+        }
     });
     </script>
 {% endblock %}
