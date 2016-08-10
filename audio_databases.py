@@ -108,7 +108,7 @@ class ACRCloud(AudioDatabaseInterface):
 
         track = json_response['metadata']['music'][0]
 
-        if 'album' in track:
+        if 'album' in track and track['album']['name'] != track['title']:
             results['data']['album'] = track['album']['name']
 
         if 'artists' in track:
