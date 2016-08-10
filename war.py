@@ -6,10 +6,13 @@ import gauges
 import bugsnag
 import bugsnag_client
 import os
+from werkzeug.exceptions import HTTPException
 from bugsnag.flask import handle_exceptions
+
 
 # -----------------------------------------------------------
 # Boot
+
 
 app = Flask(__name__, static_url_path='')
 app.config.from_pyfile('config.py')
@@ -27,8 +30,10 @@ auth = HTTPBasicAuth()
 
 from utils import *
 
+
 # -----------------------------------------------------------
 # Global per-request config parameters
+
 
 with app.app_context():
     g.INCLUDE_WEB_ANALYTICS = not app.config['DEBUG']
@@ -211,7 +216,35 @@ def get_password(username):
 
 @auth.error_handler
 def auth_error():
-    return render_template('errors/403.html')
+    return http_error_handler(403, without_code=True)
+
+
+# -----------------------------------------------------------
+# HTTP errors handler
+
+
+@app.errorhandler(401)
+@app.errorhandler(403)
+@app.errorhandler(404)
+@app.errorhandler(500)
+@app.errorhandler(503)
+def http_error_handler(error, without_code=False):
+    if isinstance(error, HTTPException):
+        error = error.code
+
+    g.INCLUDE_WEB_ANALYTICS = False
+    g.NO_INDEX = True
+
+    ret = (render_template('errors/{}.html'.format(error)),)
+
+    if not without_code:
+        ret = ret + (error,)
+
+    return ret
+
+
+# -----------------------------------------------------------
+# Routes
 
 
 import routes

@@ -372,35 +372,31 @@ def sample_manage(sample_id):
     return render_template('manage/sample.html', sample=sample)
 
 
-# ----- Error routes -------
+# Unauthorized page
+@app.route('/401')
+def error_401():
+    return http_error_handler(401)
 
 
-# Unauthorized
-@app.errorhandler(401)
-def error_401(error):
-    return render_template('errors/401.html'), 401
+# Forbidden page
+@app.route('/403')
+def error_403():
+    return http_error_handler(403)
 
 
-# Forbidden
-@app.errorhandler(403)
-def error_403(error):
-    return render_template('errors/403.html'), 403
+# Not Found page
+@app.route('/404')
+def error_404():
+    return http_error_handler(404)
 
 
-# Not Found
-@app.errorhandler(404)
-def error_404(error):
-    return render_template('errors/404.html'), 404
+# Internal Server Error page
+@app.route('/500')
+def error_500():
+    return http_error_handler(500)
 
 
-# Internal Server Error
-@app.errorhandler(500)
-def error_500(error):
-    app.logger.error(error)
-    return render_template('errors/500.html'), 500
-
-
-# Service Unavailable
-@app.errorhandler(503)
-def error_503(error):
-    return render_template('errors/503.html'), 503
+# Service Unavailable page
+@app.route('/503')
+def error_503():
+    return http_error_handler(503)
