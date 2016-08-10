@@ -17,11 +17,10 @@ from bugsnag.flask import handle_exceptions
 app = Flask(__name__, static_url_path='')
 app.config.from_pyfile('config.py')
 
-app.logger.addHandler(BugsnagHandler())
-
 if not app.config['DEBUG']:
     bugsnag.configure(api_key=app.config['BUGSNAG']['NOTIFIER_API_KEY'])
     handle_exceptions(app)
+    app.logger.addHandler(BugsnagHandler())
 
 gauges.TOKEN = app.config['GAUGES']['API_TOKEN']
 bugsnag_client.API_KEY = app.config['BUGSNAG']['ORG_API_KEY']
