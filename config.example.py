@@ -11,6 +11,7 @@ GAUGES = {'API_TOKEN': 'blablah', 'SITE_ID': 'ahah'}
 BUGSNAG = {'NOTIFIER_API_KEY': 'ahah', 'ORG_API_KEY': 'ahah', 'PROJECT_ID': 'ahah'}
 MONGODB = {'HOST': '127.0.0.1', 'PORT': 27666}
 BEANSTALKD = {'HOST': '127.0.0.1', 'PORT': 11666}
+SUPERVISORD = {'HOST': '127.0.0.1', 'PORT': 9666}
 PUSHER = {'APP_ID': 'ahah', 'KEY': 'ahah', 'SECRET': 'ahah', 'CLUSTER': 'eu'}
 ENABLED_AUDIO_DATABASES = ('ACRCloud', 'Gracenote', 'AudibleMagic', 'MufinAudioID', 'AcoustID')
 ACRCLOUD = {'HOST': 'eu-west-1.api.acrcloud.com', 'ACCESS_KEY': 'ahah', 'ACCESS_SECRET': 'ahah'}

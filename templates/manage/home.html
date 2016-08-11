@@ -3,34 +3,78 @@
 {% block title %}Manage{% endblock %}
 
 {% block content %}
-    <h2>Visits <small>— <a href="https://secure.gaug.es/dashboard#/gauges/{{ config['GAUGES']['SITE_ID'] }}/overview">Gauges dashboard</a></small></h2>
+    <div class="row manage">
+        <div style="width:33%">
+            <h2>Queues</h2>
 
-    <ul>
-        <li><strong>All time:</strong> <span id="visits.all_time.views" class="manage-data"></span> views, <span id="visits.all_time.people" class="manage-data"></span> people</li>
-        <li><strong>Today:</strong> <span id="visits.today.views" class="manage-data"></span> views, <span id="visits.today.people" class="manage-data"></span> people</li>
-        <li><strong>Yesterday:</strong> <span id="visits.yesterday.views" class="manage-data"></span> views, <span id="visits.yesterday.people" class="manage-data"></span> people</li>
-    </ul>
+            <div>
+                <div class="alert info" style="display: none">No queues to display.</div>
+                <ul id="queues"><li>...</li></ul>
+            </div>
+        </div>
+        <div style="width:33%">
+            <h2>Server</h2>
 
-    <h2>Server</h2>
+            <ul>
+                <li><strong>CPU:</strong> <span id="server.cpu" class="manage-data"></span> %</li>
+                <li><strong>RAM:</strong> <span id="server.ram" class="manage-data"></span> %</li>
+                <li><strong>HDD:</strong> <span id="server.hdd" class="manage-data"></span> %</li>
+            </ul>
+        </div>
+        <div style="width:33%">
+            <h2>Processes</h2>
 
-    <ul>
-        <li><strong>CPU:</strong> <span id="server.cpu" class="manage-data"></span> %</li>
-        <li><strong>RAM:</strong> <span id="server.ram" class="manage-data"></span> %</li>
-        <li><strong>HDD:</strong> <span id="server.hdd" class="manage-data"></span> %</li>
-    </ul>
+            <div>
+                <div class="alert info" style="display: none">No process to display.</div>
+                <ul id="processes"><li>...</li></ul>
+            </div>
+        </div>
+    </div>
 
-    <h2>Live results <small>— <a href="https://dashboard.pusher.com/apps/{{ config['PUSHER']['APP_ID'] }}">Pusher dashboard</a></small></h2>
+    <hr>
 
-    <ul>
-        <li><strong># of opened channels:</strong> <span id="live_results.channels" class="manage-data"></span></li>
-    </ul>
+    <div class="row manage">
+        <div style="width:33%">
+            <h2>Samples</h2>
+
+            <ul>
+                <li><strong>Total:</strong> {{ global_stats.total_successes_and_failures }}</li>
+                <li><strong>Success:</strong> {{ global_stats.total_successes }} ({{ global_stats.total_successes_percent }} %)</li>
+                <li><strong>Failures:</strong> {{ global_stats.total_failures }} ({{ global_stats.total_failures_percent }} %)</li>
+            </ul>
+
+            <form id="search-sample">
+                <p><input type="text" id="sample-id" name="sample-id" maxlength="24" size="24" minlength="24" required placeholder="Enter a sample ID"> <button type="submit">Search</button></p>
+            </form>
+        </div>
+        <div style="width:33%">
+            <h2>Live results <small>— <a href="https://dashboard.pusher.com/apps/{{ config['PUSHER']['APP_ID'] }}">Pusher dashboard</a></small></h2>
+
+            <ul>
+                <li><strong># of opened channels:</strong> <span id="live_results.channels" class="manage-data"></span></li>
+            </ul>
+        </div>
+        <div style="width:33%">
+            <h2>Visits <small>— <a href="https://secure.gaug.es/dashboard#/gauges/{{ config['GAUGES']['SITE_ID'] }}/overview">Gauges dashboard</a></small></h2>
+
+            <ul>
+                <li><strong>All time:</strong> <span id="visits.all_time.views" class="manage-data"></span> views, <span id="visits.all_time.people" class="manage-data"></span> people</li>
+                <li><strong>Today:</strong> <span id="visits.today.views" class="manage-data"></span> views, <span id="visits.today.people" class="manage-data"></span> people</li>
+                <li><strong>Yesterday:</strong> <span id="visits.yesterday.views" class="manage-data"></span> views, <span id="visits.yesterday.people" class="manage-data"></span> people</li>
+            </ul>
+        </div>
+    </div>
+
+    <hr>
 
     <h2>Errors <small>— <a href="https://app.bugsnag.com/war/war/errors">Bugsnag dashboard</a></small></h2>
 
     <div>
-        <div class="alert-info" style="display: none">No errors to display.</div>
+        <div class="alert info" style="display: none">No errors to display.</div>
         <ul id="errors"><li>...</li></ul>
     </div>
+
+    <hr>
 
     <h2>News <small>— <a href="{{ url_for('news_create') }}">Create</a></small></h2>
 
@@ -41,20 +85,8 @@
         {% endfor %}
     </ul>
     {% else %}
-    <div class="alert-info">No news to display.</div>
+    <div class="alert info">No news to display.</div>
     {% endif %}
-
-    <h2>Recognization requests and samples</h2>
-
-    <ul>
-        <li><strong>Total:</strong> {{ global_stats.total_successes_and_failures }}</li>
-        <li><strong>Success:</strong> {{ global_stats.total_successes }} ({{ global_stats.total_successes_percent }} %)</li>
-        <li><strong>Failures:</strong> {{ global_stats.total_failures }} ({{ global_stats.total_failures_percent }} %)</li>
-    </ul>
-
-    <form id="search-sample">
-        <p><input type="text" id="sample-id" name="sample-id" maxlength="24" size="24" minlength="24" required placeholder="Enter a sample ID"> <button type="submit">Search</button></p>
-    </form>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.7/zepto.min.js"></script>
     <script>
@@ -122,6 +154,7 @@
                                     ul_errors.siblings('div').show();
                                     ul_errors.remove();
                                 } else {
+                                    ul_errors.empty();
                                     ul_errors.siblings('div').remove();
 
                                     for (var key in data_values) {

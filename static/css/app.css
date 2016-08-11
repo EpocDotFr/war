@@ -139,28 +139,33 @@ button:disabled {
 /************************************************************************
  * Alerts */
 
-.alert-success,
-.alert-error,
-.alert-info {
+.alert {
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 15px;
     border: 2px solid;
 }
 
-.alert-success {
+.alert a,
+.alert a:visited,
+.alert a:hover,
+.alert a:focus {
+    color: inherit;
+}
+
+.alert.success {
     background-color: #83bc66;
     color: #FFF;
     border-color: #89DA69;
 }
 
-.alert-error {
+.alert.error {
     background-color: #facb1b;
     color: #333;
     border-color: #333;
 }
 
-.alert-info {
+.alert.info {
     background-color: #287492;
     color: #FFF;
     border-color: #00679f;
@@ -265,6 +270,29 @@ footer p {
 }
 
 /************************************************************************
+ * Rows */
+
+.row {
+    display: table;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.row > div {
+    display: table-cell;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.row > div:first-child {
+    padding-left: 0;
+}
+
+.row > div:last-child {
+    padding-right: 0;
+}
+
+/************************************************************************
  * Home page */
 
 .recognize-block,
@@ -316,4 +344,16 @@ footer p {
 .editor-toolbar,
 .CodeMirror {
     border-color: #2c2c2c !important;
+}
+
+.row.manage > div {
+    border-right: 1px dotted #099886;
+}
+
+.row.manage > div:first-child {
+    border-left: none;
+}
+
+.row.manage > div:last-child {
+    border-right: none;
 }

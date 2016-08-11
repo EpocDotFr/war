@@ -1,6 +1,7 @@
 from flask import Response, jsonify, url_for, flash, redirect
 from war import *
 from urllib.parse import quote_plus
+import xmlrpc.client
 import bson
 import PyRSS2Gen
 import psutil
@@ -247,21 +248,6 @@ def manage_get_data():
 
     try:
         ajax_response['data']['visits'] = gauges.get_gauge(app.config['GAUGES']['SITE_ID'])
-
-        ajax_response['data']['visits'].pop('allowed_hosts', None)
-        ajax_response['data']['visits'].pop('created_at', None)
-        ajax_response['data']['visits'].pop('creator_id', None)
-        ajax_response['data']['visits'].pop('now_in_zone', None)
-        ajax_response['data']['visits'].pop('enabled', None)
-        ajax_response['data']['visits'].pop('id', None)
-        ajax_response['data']['visits'].pop('allowed_hosts', None)
-        ajax_response['data']['visits'].pop('recent_days', None)
-        ajax_response['data']['visits'].pop('recent_hours', None)
-        ajax_response['data']['visits'].pop('recent_months', None)
-        ajax_response['data']['visits'].pop('recent_years', None)
-        ajax_response['data']['visits'].pop('title', None)
-        ajax_response['data']['visits'].pop('tz', None)
-        ajax_response['data']['visits'].pop('urls', None)
     except Exception as e:
         pass
 
@@ -286,6 +272,13 @@ def manage_get_data():
     try:
         ajax_response['data']['errors'] = bugsnag_client.get_project_errors(app.config['BUGSNAG']['PROJECT_ID'],
                                                                             status='open')
+    except Exception as e:
+        pass
+
+    try:
+        xmlrpc_proxy = xmlrpc.client.ServerProxy('http://{}:{}/RPC2'.format(app.config['SUPERVISORD']['HOST'], app.config['SUPERVISORD']['PORT']))
+
+        ajax_response['data']['processes'] = xmlrpc_proxy.getAllProcessInfo()
     except Exception as e:
         pass
 
