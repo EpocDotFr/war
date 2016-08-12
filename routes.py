@@ -150,7 +150,7 @@ def recognize():
 
             queue = get_queue()
             queue.use('samples')
-            queue.put(json.dumps(recognization_job_data))
+            queue.put(json.dumps(recognization_job_data), delay=1)
 
             ajax_response['data']['sample_id'] = sample_id
         except Exception as e:
