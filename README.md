@@ -2,6 +2,10 @@
 
 The **WAR** (Web Audio Recognizer) website (https://thisiswar.online/).
 
+  - Twitter: [@WebAudioReco](https://twitter.com/WebAudioReco)
+  - Facebook: [WebAudioReco](https://www.facebook.com/WebAudioReco)
+  - Email: [hello[at]thisiswar.online](mailto:hello[at]thisiswar.online)
+
 ## Prerequisites
 
   - Python 3
@@ -35,4 +39,8 @@ TODO
 
 ## Usage
 
+TODO
+
 ## How it works
+
+TODO

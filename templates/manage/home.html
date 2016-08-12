@@ -5,7 +5,7 @@
 {% block content %}
     <div class="row manage">
         <div style="width:33%">
-            <h2>Queues</h2>
+            <h2>Beanstalk queues</h2>
 
             <div>
                 <div class="alert info" style="display: none">No queues to display.</div>
@@ -13,7 +13,7 @@
             </div>
         </div>
         <div style="width:33%">
-            <h2>Server</h2>
+            <h2>Server health</h2>
 
             <ul>
                 <li><strong>CPU:</strong> <span id="server.cpu" class="manage-data"></span> %</li>
@@ -22,7 +22,7 @@
             </ul>
         </div>
         <div style="width:33%">
-            <h2>Processes</h2>
+            <h2>Supervisor processes</h2>
 
             <div>
                 <div class="alert info" style="display: none">No process to display.</div>
@@ -67,7 +67,7 @@
 
     <hr>
 
-    <h2>Errors <small>— <a href="https://app.bugsnag.com/war/war/errors">Bugsnag dashboard</a></small></h2>
+    <h2>Unfixed errors <small>— <a href="https://app.bugsnag.com/war/war/errors">Bugsnag dashboard</a></small></h2>
 
     <div>
         <div class="alert info" style="display: none">No errors to display.</div>
@@ -76,7 +76,7 @@
 
     <hr>
 
-    <h2>News <small>— <a href="{{ url_for('news_create') }}">Create</a></small></h2>
+    <h2>News management <small>— <a href="{{ url_for('news_create') }}">Create</a></small></h2>
 
     {% if news_list %}
     <ul>
