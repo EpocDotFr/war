@@ -6,6 +6,7 @@ import bson
 import PyRSS2Gen
 import psutil
 import bugsnag_client
+import arrow
 
 
 # ----- Public routes -------
@@ -131,7 +132,8 @@ def recognize():
             enabled_audio_databases = app.config['ENABLED_AUDIO_DATABASES']
 
             db_data = {
-                'done': False
+                'done': False,
+                'submitted_at': arrow.now().datetime
             }
 
             for audio_database_classname in enabled_audio_databases:
