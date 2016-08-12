@@ -17,9 +17,21 @@ The **WAR** (Web Audio Recognizer) website (https://thisiswar.online/).
 
 ## Installation
 
-Clone this repo, create a virtualenv in the `venv` directory at the root, and then the usual `pip install -r requirements.txt`.
+### Codebase
+
+  1. Clone this repo
+  2. Create a virtualenv in the `venv` directory (at the root of the cloned repo)
+  3. Then the usual `source venv/bin/activate` and `pip install -r requirements.txt`
+
+### uWSGI
+
+TODO
 
 ## Configuration
+
+### uWSGI
+
+TODO
 
 ## Usage
 
