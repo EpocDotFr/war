@@ -165,15 +165,15 @@ def worker():
 
                 app.logger.error(e)
 
+        db.samples.update_one({'_id': sample_object_id}, {'$set': {'done': True}})
+        push.trigger(push_channel, 'done', {})
+        job.delete()
+
         if not there_were_errors:
             app.logger.info('No errors')
-            db.samples.update_one({'_id': sample_object_id}, {'$set': {'done': True}})
-            push.trigger(push_channel, 'done', {})
             os.remove(get_sample_file_path(sample_id))
-            job.delete()
         else:
             app.logger.info('There were errors')
-            job.bury()
 
 
 # -----------------------------------------------------------
