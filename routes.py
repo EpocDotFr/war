@@ -142,15 +142,15 @@ def recognize():
             sample = db.samples.insert_one(db_data)
 
             sample_id = str(sample.inserted_id)
+            
+            sample_file_path = get_sample_file_path(sample_id)
+            sample_file.save(sample_file_path)
 
             recognization_job_data = {'sample_id': sample_id}
 
             queue = get_queue()
             queue.use('samples')
             queue.put(json.dumps(recognization_job_data))
-
-            sample_file_path = get_sample_file_path(sample_id)
-            sample_file.save(sample_file_path)
 
             ajax_response['data']['sample_id'] = sample_id
         except Exception as e:
