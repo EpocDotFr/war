@@ -16,9 +16,9 @@
             <h2>Server health</h2>
 
             <ul>
-                <li><strong>CPU:</strong> <span id="server.cpu" class="manage-data"></span> %</li>
-                <li><strong>RAM:</strong> <span id="server.ram" class="manage-data"></span> %</li>
-                <li><strong>HDD:</strong> <span id="server.hdd" class="manage-data"></span> %</li>
+                <li><strong>CPU:</strong> <span id="server.cpu" class="manage-data"></span> % used</li>
+                <li><strong>RAM:</strong> <span id="server.ram" class="manage-data"></span> % used</li>
+                <li><strong>HDD:</strong> <span id="server.hdd" class="manage-data"></span> % used</li>
             </ul>
         </div>
         <div style="width:33%">
@@ -114,6 +114,7 @@
         var form_sample_search = $('form#search-sample');
         var input_sample_id_to_search = $('input#sample-id');
         var ul_errors = $('ul#errors');
+        var ul_processes = $('ul#processes');
 
         form_sample_search.on('submit', function(e) {
             e.preventDefault();
@@ -160,7 +161,22 @@
                                     for (var key in data_values) {
                                         var error = data_values[key];
 
-                                        ul_errors.append('<li><code>'+error.class+'</code> — '+error.last_message+' ('+error.occurrences+' times) — <a href="'+error.html_url+'">View</a></li>');
+                                        ul_errors.append('<li><code>'+error.class+'</code>: '+error.last_message+' — '+error.occurrences+' times — <a href="'+error.html_url+'">View</a></li>');
+                                    }
+                                }
+                            break;
+                            case 'processes':
+                                if (data_values.length == 0) {
+                                    ul_processes.siblings('div').show();
+                                    ul_processes.remove();
+                                } else {
+                                    ul_processes.empty();
+                                    ul_processes.siblings('div').remove();
+
+                                    for (var key in data_values) {
+                                        var process = data_values[key];
+
+                                        ul_processes.append('<li><code>'+process.name+'</code>: '+process.statename+' — '+process.description+'</li>');
                                     }
                                 }
                             break;

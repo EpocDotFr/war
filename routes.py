@@ -280,7 +280,7 @@ def manage_get_data():
     try:
         xmlrpc_proxy = xmlrpc.client.ServerProxy('http://{}:{}/RPC2'.format(app.config['SUPERVISORD']['HOST'], app.config['SUPERVISORD']['PORT']))
 
-        ajax_response['data']['processes'] = xmlrpc_proxy.getAllProcessInfo()
+        ajax_response['data']['processes'] = xmlrpc_proxy.supervisor.getAllProcessInfo()
     except Exception as e:
         pass
 
