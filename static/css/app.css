@@ -231,26 +231,26 @@ textarea:focus {
 /************************************************************************
  * Forms */
 
-form > div {
+form .group {
     margin-bottom: 15px;
 }
 
-form > div > label {
+form .group > label {
     display: block;
     width: 100%;
     box-sizing: border-box;
     font-weight: bold;
 }
 
-form > div > input,
-form > div > select,
-form > div > textarea {
+form .group > input,
+form .group > select,
+form .group > textarea {
     display: block;
     width: 100%;
     box-sizing: border-box;
 }
 
-form > div > div {
+form .group div {
     width: 100%;
     box-sizing: border-box;
 }
@@ -344,6 +344,10 @@ footer p {
 .editor-toolbar,
 .CodeMirror {
     border-color: #2c2c2c !important;
+}
+
+.CodeMirror {
+    height: 450px !important;
 }
 
 .row.manage > div {
