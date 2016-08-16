@@ -18,7 +18,7 @@
             {% elif result.status == 'error' %}
                 <p>Sorry, an error occured :/ We have been informed about it.</p>
             {% elif result.status == 'success' %}
-                <p>It is <strong>{{ result.data.artist }}</strong> with <strong>{{ result.data.title }}</strong> from the album <strong>{{ result.data.album }}</strong>. Search on <a href="https://www.youtube.com/results?search_query={{ result.data.search_terms }}">Youtube</a>, <a href="https://www.deezer.com/search/{{ result.data.search_terms }}">Deezer</a> or <a href="https://open.spotify.com/search/{{ result.data.search_terms }}">Spotify</a></p>
+                <p>It is <strong>{{ result.data.artist }}</strong> with <strong>{{ result.data.title }}</strong>{% if result.data.album %} from the album <strong>{{ result.data.album }}</strong>{% endif %}. Search on <a href="https://www.youtube.com/results?search_query={{ result.data.search_terms }}">Youtube</a>, <a href="https://www.deezer.com/search/{{ result.data.search_terms }}">Deezer</a> or <a href="https://open.spotify.com/search/{{ result.data.search_terms }}">Spotify</a>?</p>
             {% endif %}
         {% endfor %}
     </div>
@@ -50,7 +50,13 @@
             });
 
             channel.bind('success', function(message) {
-                div_results.append('<h2 id="'+message.audio_database_id+'">'+message.audio_database_name+' said...</h2><p>It is <strong>'+message.data.artist+'</strong> with <strong>'+message.data.title+'</strong> from the album <strong>'+message.data.album+'</strong>. Search on <a href="https://www.youtube.com/results?search_query='+message.data.search_terms+'">Youtube</a>, <a href="https://www.deezer.com/search/'+message.data.search_terms+'">Deezer</a> or <a href="https://open.spotify.com/search/'+message.data.search_terms+'">Spotify</a></p>');
+                var album_string = '';
+
+                if (message.data.album) {
+                    album_string = ' from the album <strong>'+message.data.album+'</strong>';
+                }
+
+                div_results.append('<h2 id="'+message.audio_database_id+'">'+message.audio_database_name+' said...</h2><p>It is <strong>'+message.data.artist+'</strong> with <strong>'+message.data.title+'</strong>'+album_string+'. Search on <a href="https://www.youtube.com/results?search_query='+message.data.search_terms+'">Youtube</a>, <a href="https://www.deezer.com/search/'+message.data.search_terms+'">Deezer</a> or <a href="https://open.spotify.com/search/'+message.data.search_terms+'">Spotify</a></p>');
             });
 
             channel.bind('done', function(message) {
