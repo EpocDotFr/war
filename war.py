@@ -1,13 +1,14 @@
 from flask import Flask, render_template, request, abort, json
 from flask_httpauth import HTTPBasicAuth
+from flask_debugtoolbar import DebugToolbarExtension
 from urllib.parse import quote_plus
 from bugsnag.handlers import BugsnagHandler
+from werkzeug.exceptions import HTTPException
+from bugsnag.flask import handle_exceptions
 import gauges
 import bugsnag
 import bugsnag_client
 import os
-from werkzeug.exceptions import HTTPException
-from bugsnag.flask import handle_exceptions
 
 
 # -----------------------------------------------------------
@@ -17,15 +18,18 @@ from bugsnag.flask import handle_exceptions
 app = Flask(__name__, static_url_path='')
 app.config.from_pyfile('config.py')
 
+gauges.TOKEN = app.config['GAUGES']['API_TOKEN']
+bugsnag_client.API_KEY = app.config['BUGSNAG']['ORG_API_KEY']
+
 if not app.config['DEBUG']:
     bugsnag.configure(api_key=app.config['BUGSNAG']['NOTIFIER_API_KEY'])
     handle_exceptions(app)
     app.logger.addHandler(BugsnagHandler())
 
-gauges.TOKEN = app.config['GAUGES']['API_TOKEN']
-bugsnag_client.API_KEY = app.config['BUGSNAG']['ORG_API_KEY']
-
 auth = HTTPBasicAuth()
+
+debug_toolbar = DebugToolbarExtension(app)
+
 
 from utils import *
 

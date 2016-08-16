@@ -1,12 +1,13 @@
 flask
+flask_httpauth
+flask-debugtoolbar
+requests
+arrow
 pystalkd
 pymongo
 pusher
-arrow
 mistune
-flask_httpauth
 PyRSS2Gen
-requests
 psutil
 python-slugify
 blinker
