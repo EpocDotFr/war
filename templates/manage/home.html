@@ -115,6 +115,7 @@
         var input_sample_id_to_search = $('input#sample-id');
         var ul_errors = $('ul#errors');
         var ul_processes = $('ul#processes');
+        var ul_queues = $('ul#queues');
 
         form_sample_search.on('submit', function(e) {
             e.preventDefault();
@@ -177,6 +178,21 @@
                                         var process = data_values[key];
 
                                         ul_processes.append('<li><code>'+process.name+'</code>: '+process.statename+' — '+process.description+'</li>');
+                                    }
+                                }
+                            break;
+                            case 'queues':
+                                if (data_values.length == 0) {
+                                    ul_queues.siblings('div').show();
+                                    ul_queues.remove();
+                                } else {
+                                    ul_queues.empty();
+                                    ul_queues.siblings('div').remove();
+
+                                    for (var key in data_values) {
+                                        var queue = data_values[key];
+
+                                        ul_queues.append('<li><code>'+queue.name+'</code>: '+queue['total-jobs']+' total — '+queue['current-jobs-ready']+' ready — '+queue['current-jobs-reserved']+' reserved — '+queue['current-jobs-buried']+' buried — '+queue['current-using']+' using</li>');
                                     }
                                 }
                             break;

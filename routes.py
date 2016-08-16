@@ -284,6 +284,19 @@ def manage_get_data():
     except Exception as e:
         pass
 
+    try:
+        ajax_response['data']['queues'] = []
+
+        queue = get_queue()
+
+        for tube in queue.tubes():
+            if tube == 'default':
+                continue
+
+            ajax_response['data']['queues'].append(queue.stats_tube(tube))
+    except Exception as e:
+        pass
+
     return jsonify(ajax_response), status
 
 
