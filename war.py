@@ -30,6 +30,7 @@ auth = HTTPBasicAuth()
 
 debug_toolbar = DebugToolbarExtension(app)
 
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 from utils import *
 
