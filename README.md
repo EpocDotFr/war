@@ -16,15 +16,15 @@ The **WAR** (Web Audio Recognizer) website (https://thisiswar.online/).
   - MongoDB
   - A Pusher account
   - A Bugsnag account
-  - An ACRCloud account
   - A Gauges account
+  - An ACRCloud account
 
 ## Installation
 
 ### Codebase
 
   1. Clone this repo
-  2. Create a virtualenv in the `venv` directory (at the root of the cloned repo)
+  2. Create a Python 3 virtualenv in the `venv` directory (at the root of the cloned repo)
   3. Then the usual `source venv/bin/activate` and `pip install -r requirements.txt`
 
 ### uWSGI
