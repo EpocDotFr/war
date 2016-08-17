@@ -3,40 +3,64 @@
 {% block title %}FAQ{% endblock %}
 
 {% block content %}
-    <p>Please check here if your question has already been answered. There's nothing more frustrating than having to answer the same question again and again, trust me.</p>
-    <p>If you are sure that your question isn't listed here, shoot me a message on <a href="https://twitter.com/WebAudioReco">Twitter</a> or <a href="https://www.facebook.com/WebAudioReco">Facebook</a>.</p>
+    <p>If your question isn't listed here, shoot us a message on our <a href="https://twitter.com/WebAudioReco">Twitter</a> or <a href="https://www.facebook.com/WebAudioReco">Facebook</a>.</p>
 
     <ul>
         <li><a href="#need-install-crap">Do I need to install some crap to make it working?</a></li>
+        <li><a href="#supported-browsers">What are the supported web browsers?</a></li>
         <li><a href="#how-to-capture-speakers">How to capture the output from my speakers?</a></li>
         <li><a href="#open-source">It is open-source?</a></li>
-        <li><a href="#works-mobile-devices">Is WAR working on mobile devices?</a></li>
         <li><a href="#why-use-war">Why would I use WAR instead of other services?</a></li>
         <li><a href="#privacy-data-sent">What about my privacy and the data I send to WAR?</a></li>
     </ul>
 
     <h2 id="need-install-crap">Do I need to install some crap to make it working?</h2>
 
-    <p>No. The only requirement is a modern web browser.</p>
-    <p>If you're still on Internet Explorer 7 or similar and you're experiencing issues, please either use a real web browser or go back to your middle of nowhere :)</p>
+    <p>No. The only requirement is a modern web browser. See below for a list of supported web browsers.</p>
+
+    <h2 id="need-install-crap">What are the supported web browsers?</h2>
+
+    <h3>Desktop</h3>
+
+    <ul>
+        <li>Firefox (version 17 or above)</li>
+        <li>Chrome (version 21 or above)</li>
+        <li>Opera (version 18 or above)</li>
+        <li>Microsoft Edge</li>
+    </ul>
+
+    <h3>Mobile</h3>
+
+    <ul>
+        <li>Android Browser (Android 5 or above)</li>
+        <li>Chrome for Android</li>
+        <li>Firefox for Android</li>
+        <li>Opera Mobile</li>
+        <li>Blackberry Browser (version 10 or above)</li>
+    </ul>
 
     <h2 id="how-to-capture-speakers">How to capture the output from my speakers?</h2>
 
-    <p>You have to create a fake recording peripheral (usually called "stereo mix") that will be accessed by <strong>WAR</strong> as if it were a microphone.</p>
+    <p>You have to create a fake recording peripheral (usually called "stereo mix") that captures all sounds from your computer to it. This way, it will be accessed by <strong>WAR</strong> seamlessly as if it were a microphone.</p>
+
+    <p>Here's a list of tutorials for each operating system to enable such a fake peripheral:</p>
+
+    <ul>
+        <li><a href="http://www.howtogeek.com/howto/39532/how-to-enable-stereo-mix-in-windows-7-to-record-audio/">Windows Vista or above</a></li>
+        <li><a href="http://ccm.net/faq/6316-windows-enabling-stereo-mix#windows-xp">Windows XP</a></li>
+        <li><a href="http://whatnwhat.blogspot.fr/2012/02/stereo-mix-on-mac-os.html">Mac OS</a></li>
+        <li><a href="http://www.ubuntugeek.com/how-to-recording-internal-audio-in-ubuntu.html">Ubuntu</a></li>
+    </ul>
 
     <h2 id="open-source">It is open-source?</h2>
 
-    <p>Nope. I don't think I will open-source it because it doesn't provide any technically meaningful matter to the community.</p>
+    <p>Nope. Maybe in the future. But we use a huge number of open-source software and libraries (see on the <a href="{{ url_for('about') }}#technologies">About</a> page).</p>
 
-    <h2 id="works-mobile-devices">Is WAR working on mobile devices?</h2>
-
-    <p>Yes. Again, any modern mobile web browser will be OK.</p>
-    
     <h2 id="why-use-war">Why would I use WAR instead of other services?</h2>
     
-    <p>The <strong>WAR</strong> final goal isn't different from other services (getting the track name of and audio sample), but the way it's achieved is. The <a href="{{ url_for('about') }}#author-genesis">About</a> page has more informations about how <strong>WAR</strong> works.</p>
+    <p>The final goal of <strong>WAR</strong> isn't different from other services (getting the track name of an audio sample), but the way it's achieved is. The <a href="{{ url_for('about') }}#author-genesis">About</a> page has more information about how <strong>WAR</strong> works and why it has been created.</p>
 
-    <h2 id="privacy-data-sent">What about my privacy and the data I send to WAR?</h2>
+    <h2 id="privacy-data-sent">What about my privacy and the data sent to WAR?</h2>
 
-    <p>See on the <a href="{{ url_for('tos') }}">terms of service</a> page. Don't worry, there isn't any incomprehensible bullshit written on this page.</p>
+    <p>See on the <a href="{{ url_for('tos') }}">Terms of service</a> page. Don't worry, there is no incomprehensible bullshit written on it.</p>
 {% endblock %}
