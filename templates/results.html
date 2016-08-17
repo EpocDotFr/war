@@ -56,7 +56,7 @@
                     album_string = ' from the album <strong>'+message.data.album+'</strong>';
                 }
 
-                div_results.append('<h2 id="'+message.audio_database_id+'">'+message.audio_database_name+' said...</h2><p>It is <strong>'+message.data.artist+'</strong> with <strong>'+message.data.title+'</strong>'+album_string+'. Search on <a href="https://www.youtube.com/results?search_query='+message.data.search_terms+'">Youtube</a>, <a href="https://www.deezer.com/search/'+message.data.search_terms+'">Deezer</a> or <a href="https://open.spotify.com/search/'+message.data.search_terms+'">Spotify</a></p>');
+                div_results.append('<h2 id="'+message.audio_database_id+'">'+message.audio_database_name+' said...</h2><p>It is <strong>'+message.data.artist+'</strong> with <strong>'+message.data.title+'</strong>'+album_string+'. Search on <a href="https://www.youtube.com/results?search_query='+message.data.search_terms+'">Youtube</a>, <a href="https://www.deezer.com/search/'+message.data.search_terms+'">Deezer</a> or <a href="https://open.spotify.com/search/'+message.data.search_terms+'">Spotify</a>?</p>');
             });
 
             channel.bind('done', function(message) {
