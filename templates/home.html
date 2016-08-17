@@ -73,7 +73,21 @@
 
             mediaRecorder.start({{ config['SAMPLE_DURATION'] * 1000 }});
 
-            displayStatus('info', 'Recording... Please wait {{ config['SAMPLE_DURATION'] }} seconds.');
+            var countdown = {{ config['SAMPLE_DURATION'] }};
+            var message = function() { return 'Recording... Please wait '+countdown+' seconds.'; };
+
+            displayStatus('info', message);
+
+            var countdown_interval = window.setInterval(function() {
+                countdown = countdown - 1;
+                
+                if (countdown == 0) {
+                    clearInterval(countdown_interval);
+                    return;
+                }
+
+                displayStatus('info', message);
+            }, 1000);
         }
 
         function onStreamError(err) {
