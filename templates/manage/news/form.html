@@ -30,9 +30,7 @@
 {% endif %}
 
 <p>
-    <button type="submit">Save</button>
-    {% if the_news %}<a class="btn" href="{{ url_for('one_news', slug=the_news.slug) }}">Read</a>{% endif %}
-    <a href="{{ url_for('manage') }}">Back</a>
+    <a href="{{ url_for('manage') }}" class="button">« Back</a> <button type="submit">Save</button> {% if the_news %}<a class="button" href="{{ url_for('one_news', slug=the_news.slug) }}">Read</a>{% endif %}
 </p>
 
 <script>

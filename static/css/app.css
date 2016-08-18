@@ -10,15 +10,15 @@ body {
     font-size: 16px;
 }
 
-a,
-a:visited {
+a:not(.button),
+a:not(.button):visited {
     text-decoration: none;
     border-bottom: 1px dotted;
     color: inherit;
 }
 
-a:hover,
-a:focus {
+a:not(.button):hover,
+a:not(.button):focus {
     text-decoration: none;
     border-bottom: 1px solid;
     color: #FACB1B;
@@ -54,7 +54,7 @@ header a,
 header a:hover,
 header a:focus,
 header a:visited {
-    border: none;
+    border: none !important;
 }
 
 header a img {
@@ -107,24 +107,24 @@ header a img {
 /************************************************************************
  * Buttons */
 
-button {
+button, .button {
     border-radius: 5px;
     cursor: pointer;
     background-color: #099686;
     border: 1px solid #0CBDA9;
     color: #fff;
-    position: relative;
     outline: 0;
     padding: 5px 7px;
+    text-decoration: none;
 }
 
-button:hover,
-button:focus {
-    border-color: #FACB1B;
+button:hover, .button:hover,
+button:focus, .button:focus {
+    border-color: #FACB1B !important;
     outline: 0;
 }
 
-button:active {
+button:active, .button:active {
     border-color: #8C720D;
     outline: 0;
     background-color: #058879;
@@ -306,6 +306,7 @@ footer p {
     padding: 8px 10px;
     font-size: 20px;
     box-shadow: 0 5px 2px #07564d;
+    position: relative;
 }
 
 .recognize-block button:active {
