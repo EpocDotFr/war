@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, abort, json
+from flask import Flask, render_template, request, abort, json, g
 from flask_httpauth import HTTPBasicAuth
 from flask_debugtoolbar import DebugToolbarExtension
 from urllib.parse import quote_plus
