@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, abort, json, g
+from flask import Flask, render_template, request, abort, json
 from flask_httpauth import HTTPBasicAuth
 from flask_debugtoolbar import DebugToolbarExtension
 from urllib.parse import quote_plus
@@ -33,16 +33,6 @@ debug_toolbar = DebugToolbarExtension(app)
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 from utils import *
-
-
-# -----------------------------------------------------------
-# Global per-request config parameters
-
-
-with app.app_context():
-    g.INCLUDE_WEB_ANALYTICS = not app.config['DEBUG']
-    g.NO_INDEX = False
-
 
 # -----------------------------------------------------------
 # CLI commands
@@ -183,6 +173,11 @@ def worker():
 
 # -----------------------------------------------------------
 # Hooks
+
+@app.before_request
+def define_globals():
+    g.INCLUDE_WEB_ANALYTICS = not app.config['DEBUG']
+    g.NO_INDEX = False
 
 
 @app.before_request
