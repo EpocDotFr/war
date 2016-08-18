@@ -8,7 +8,9 @@
         <p>You can close this page and access it at any given time using this link:</p>
         <p class="text-center"><input type="text" readonly value="{{ url_for('results', sample_id=sample['_id'], _external=True) }}" onClick="this.setSelectionRange(0, this.value.length)"></p>
     </div>
-    <div id="done" class="alert success" {% if not sample['done'] %}style="display: none"{% endif %}>Your sample finished being processed! Here are the final results.</div>
+    <div id="done" {% if not sample['done'] %}style="display: none"{% endif %}>
+        <p class="alert success">Your sample finished being processed! Here are the final results.</p>
+    </div>
 
     <div id="results">
         {% for result in results %}
@@ -22,6 +24,8 @@
             {% endif %}
         {% endfor %}
     </div>
+
+    <p><a href="{{ url_for('home') }}">« Back</a></p>
 
     {% if not sample['done'] %}
         <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.7/zepto.min.js"></script>
