@@ -284,6 +284,7 @@ footer p {
     display: table-cell;
     box-sizing: border-box;
     padding: 10px;
+    vertical-align: top;
 }
 
 .row > div:first-child {

@@ -186,6 +186,9 @@ def get_sample_file_path(sample_id, check_if_exists=False):
 
     return sample_file_path
 
+def get_public_sample_file_url(sample_id):
+    return '/samples/{}.wav'.format(sample_id)
+
 
 def get_enabled_audio_databases(db):
     ret = {}

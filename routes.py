@@ -1,4 +1,4 @@
-from flask import Response, jsonify, url_for, flash, redirect
+from flask import Response, jsonify, url_for, flash, redirect, send_from_directory
 from war import *
 from urllib.parse import quote_plus
 import xmlrpc.client
@@ -222,6 +222,12 @@ def sitemap_xml():
     return Response(render_template('sitemap.xml', routes=app_routes), mimetype='application/xml')
 
 
+# Serve sample files only in debug mode, otherwise they have to be served by the web server
+if app.config['DEBUG']:
+    @app.route('/samples/<path:filename>')
+    def sample_file(filename):
+        return send_from_directory(os.path.abspath(app.config['SAMPLES_PATH']), filename)
+
 # ----- Private routes -------
 
 
@@ -377,7 +383,18 @@ def sample_manage(sample_id):
 
         return redirect(url_for('manage'))
 
-    return render_template('manage/sample.html', sample=sample)
+    sample = dict(sample)
+
+    if 'submitted_at' in sample and sample['submitted_at'] is not None:
+        sample['submitted_at'] = arrow.get(sample['submitted_at'])
+
+    try:
+        get_sample_file_path(sample_id, check_if_exists=True)
+        sample_file = get_public_sample_file_url(sample_id)
+    except Exception as e:
+        sample_file = False
+
+    return render_template('manage/sample.html', sample=sample, sample_file=sample_file)
 
 
 # Unauthorized page

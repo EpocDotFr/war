@@ -3,9 +3,20 @@
 {% block title %}Manage › Samples › {{ sample._id }}{% endblock %}
 
 {% block content %}
-    <ul>
-        <li>Does the sample file exists? <strong>Yes</strong> <a href="">Delete</a></li>
-    </ul>
+    <div class="row manage">
+        <div style="width:50%">
+            <h2>General informations</h2>
 
-    <p><a href="{{ url_for('manage') }}" class="button">« Back</a> <a href="" class="button">Restart</a> <a href="" class="button">Delete</a></p>
+            <ul>
+                <li>Submitted <strong>{{ sample.submitted_at.humanize() }}</strong></li>
+            </ul>
+        </div>
+        <div style="width:50%">
+            <h2>Sample file</h2>
+
+            {% if sample_file %}<audio controls src="{{ sample_file }}"></audio>{% else %}<div class="alert info">Doesn't exists.</div>{% endif %}
+        </div>
+   </div>
+
+    <p><a href="{{ url_for('manage') }}" class="button">« Back</a> {% if sample_file %}<a href="" class="button">Restart</a>{% endif %} <a href="" class="button">Delete</a></p>
 {% endblock %}
