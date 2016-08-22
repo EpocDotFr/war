@@ -30,10 +30,6 @@ p {
     margin-bottom: 10px;
 }
 
-.text-center {
-    text-align: center !important;
-}
-
 .page-wrapper {
     border-top: 1px solid #12b2a0;
     background: #0c7367 url("/images/bg.png");
