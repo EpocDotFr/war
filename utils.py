@@ -166,9 +166,7 @@ def update_one_sample(db, sample_id, query):
     ).modified_count > 0
 
 
-def get_one_sample(db, sample_id):
-    sample = db.samples.find_one({'_id': ObjectId(sample_id)})
-
+def _get_one_sample(sample):
     if sample is None:
         return None
 
@@ -178,6 +176,25 @@ def get_one_sample(db, sample_id):
         sample['submitted_at'] = arrow.get(sample['submitted_at'])
 
     return sample
+
+
+def get_one_sample_by_id(db, sample_id):
+    sample = db.samples.find_one({'_id': ObjectId(sample_id)})
+
+    return _get_one_sample(sample)
+
+
+def get_latest_sample(db):
+    sample = db.samples.find({
+        'done': {'$eq': True}
+    }).limit(1).sort('submitted_at', -1)
+
+    sample = list(sample)
+
+    if len(sample) == 1:
+        return _get_one_sample(sample[0])
+    else:
+        return None
 
 
 def get_global_stats(db):

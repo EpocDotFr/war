@@ -48,8 +48,9 @@ def stats():
 
     audio_databases = get_enabled_audio_databases(db)
     global_stats = get_global_stats(db)
+    latest_sample = get_latest_sample(db)
 
-    return render_template('stats.html', audio_databases=audio_databases, global_stats=global_stats)
+    return render_template('stats.html', audio_databases=audio_databases, global_stats=global_stats, latest_sample=latest_sample)
 
 
 # News list
@@ -159,7 +160,7 @@ def results(sample_id):
     sample = None
 
     try:
-        sample = get_one_sample(db, sample_id)
+        sample = get_one_sample_by_id(db, sample_id)
     except bson.errors.InvalidId as bei:
         abort(404)
 
@@ -359,7 +360,7 @@ def sample_manage(sample_id):
     db = get_database()
 
     try:
-        sample = get_one_sample(db, sample_id)
+        sample = get_one_sample_by_id(db, sample_id)
     except bson.errors.InvalidId as bei:
         flash('The provided sample ID is invalid.', 'error')
 

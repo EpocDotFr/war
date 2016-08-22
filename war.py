@@ -87,7 +87,7 @@ def worker():
         job_data = json.loads(job.body)
         sample_id = job_data['sample_id']
 
-        sample = get_one_sample(db, sample_id)
+        sample = get_one_sample_by_id(db, sample_id)
 
         if sample is None:
             raise Exception('The sample {} does not exists in the database'.format(sample_id))
