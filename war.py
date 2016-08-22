@@ -86,9 +86,8 @@ def worker():
 
         job_data = json.loads(job.body)
         sample_id = job_data['sample_id']
-        sample_object_id = ObjectId(sample_id)
 
-        sample = db.samples.find_one({'_id': sample_object_id})
+        sample = get_one_sample(db, sample_id)
 
         if sample is None:
             raise Exception('The sample {} does not exists in the database'.format(sample_id))
@@ -106,7 +105,7 @@ def worker():
             try:
                 recognization = audio_database_instance.recognize(sample_id)
 
-                db.samples.update_one({'_id': sample_object_id}, {'$set': {audio_database_id: recognization}})
+                update_one_sample(db, sample_id, {'$set': {audio_database_id: recognization}})
 
                 if recognization['status'] == 'success':
                     db.stats.update_one({'audio_database': audio_database_id}, {'$inc': {'successes': 1}})
@@ -147,10 +146,12 @@ def worker():
             except Exception as e:
                 there_were_errors = True
 
-                db.samples.update_one({'_id': sample_object_id}, {'$set': {audio_database_id: {
-                    'status': 'error',
-                    'data': {'message': str(e)}
-                }}})
+                update_one_sample(db, sample, {
+                    '$set': {audio_database_id: {
+                        'status': 'error',
+                        'data': {'message': str(e)}
+                    }}
+                })
 
                 push.trigger(push_channel, 'error', {
                     'audio_database_id': audio_database_id,
@@ -160,7 +161,7 @@ def worker():
 
                 app.logger.error(e)
 
-        db.samples.update_one({'_id': sample_object_id}, {'$set': {'done': True}})
+        update_one_sample(db, sample_id, {'$set': {'done': True}})
         push.trigger(push_channel, 'done', {})
         job.delete()
 

@@ -129,18 +129,7 @@ def recognize():
         try:
             db = get_database()
 
-            enabled_audio_databases = app.config['ENABLED_AUDIO_DATABASES']
-
-            db_data = {
-                'done': False,
-                'submitted_at': arrow.now().datetime
-            }
-
-            for audio_database_classname in enabled_audio_databases:
-                db_data[audio_database_classname] = None
-
-            sample = db.samples.insert_one(db_data)
-
+            sample = create_one_sample(db)
             sample_id = str(sample.inserted_id)
             
             sample_file_path = get_sample_file_path(sample_id)
@@ -165,14 +154,14 @@ def recognize():
 # Sample results
 @app.route('/r/<sample_id>')
 def results(sample_id):
-    try:
-        sample_id_object = ObjectId(sample_id)
-    except bson.errors.InvalidId as bei:
-        abort(404)
-
     db = get_database()
 
-    sample = db.samples.find_one({'_id': sample_id_object})
+    sample = None
+
+    try:
+        sample = get_one_sample(db, sample_id)
+    except bson.errors.InvalidId as bei:
+        abort(404)
 
     if sample is None:
         abort(404)
@@ -367,26 +356,19 @@ def news_delete(news_id):
 @app.route('/manage/samples/<sample_id>')
 @auth.login_required
 def sample_manage(sample_id):
+    db = get_database()
+
     try:
-        sample_id_object = ObjectId(sample_id)
+        sample = get_one_sample(db, sample_id)
     except bson.errors.InvalidId as bei:
         flash('The provided sample ID is invalid.', 'error')
 
         return redirect(url_for('manage'))
 
-    db = get_database()
-
-    sample = db.samples.find_one({'_id': sample_id_object})
-
     if sample is None:
         flash('This sample doesn\'t exists.', 'error')
 
         return redirect(url_for('manage'))
-
-    sample = dict(sample)
-
-    if 'submitted_at' in sample and sample['submitted_at'] is not None:
-        sample['submitted_at'] = arrow.get(sample['submitted_at'])
 
     try:
         get_sample_file_path(sample_id, check_if_exists=True)

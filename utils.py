@@ -145,6 +145,41 @@ def delete_one_news(db, news_id):
     return db.news.delete_one({'_id': ObjectId(news_id)}).deleted_count > 0
 
 
+def create_one_sample(db):
+    data = {
+        'done': False,
+        'submitted_at': arrow.now().datetime
+    }
+
+    enabled_audio_databases = app.config['ENABLED_AUDIO_DATABASES']
+
+    for audio_database_classname in enabled_audio_databases:
+        data[audio_database_classname] = None
+
+    return db.samples.insert_one(data)
+
+
+def update_one_sample(db, sample_id, query):
+    return db.samples.update_one(
+        {'_id': ObjectId(sample_id)},
+        query
+    ).modified_count > 0
+
+
+def get_one_sample(db, sample_id):
+    sample = db.samples.find_one({'_id': ObjectId(sample_id)})
+
+    if sample is None:
+        return None
+
+    sample = dict(sample)
+
+    if 'submitted_at' in sample and sample['submitted_at'] is not None:
+        sample['submitted_at'] = arrow.get(sample['submitted_at'])
+
+    return sample
+
+
 def get_global_stats(db):
     global_stats = db.stats.aggregate([
         {'$group': {
