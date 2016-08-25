@@ -22,23 +22,36 @@
     <script src="{{ url_for('static', filename='js/MediaStreamRecorder.min.js') }}"></script>
     <script>
     Zepto(function () {
+        var recording = false;
+        var mediaRecorder;
+        var countdown_interval;
+
         navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 
         var div_progress = $('div#progress');
         var button_recognize = $('button#recognize');
 
         function onStreamConnected(stream) {
-            var mediaRecorder = new MediaStreamRecorder(stream);
+            recording = true;
+            button_recognize.text('Cancel');
+
+            mediaRecorder = new MediaStreamRecorder(stream);
 
             mediaRecorder.mimeType = 'audio/wav';
 
             mediaRecorder.ondataavailable = function (sample) {
+                if (!recording) {
+                    return;
+                }
+
                 mediaRecorder.stop();
 
                 displayStatus('info', 'Sending sample...');
 
                 var sfd = new FormData();
                 sfd.append('sample', sample);
+
+                button_recognize.prop('disabled', true);
 
                 $.ajax({
                     type: 'POST',
@@ -64,9 +77,6 @@
                         }
 
                         displayStatus('error', 'Error sending your sample: '+message);
-                    },
-                    complete: function(xhr, status) {
-                        button_recognize.prop('disabled', false);
                     }
                 });
             };
@@ -78,7 +88,7 @@
 
             displayStatus('info', message);
 
-            var countdown_interval = window.setInterval(function() {
+            countdown_interval = window.setInterval(function() {
                 countdown = countdown - 1;
                 
                 if (countdown == 0) {
@@ -91,7 +101,12 @@
         }
 
         function onStreamError(err) {
-            button_recognize.prop('disabled', false);
+            button_recognize.text('Recognize');
+
+            recording = false;
+
+            mediaRecorder = null;
+
             displayStatus('error', 'Error while getting the recording device: '+err.name);
         }
 
@@ -107,11 +122,25 @@
             displayStatus('error', 'Oh no, your web browser doesn\'t seem to support audio recording :/');
         } else {
             button_recognize.on('click', function() {
-                button_recognize.prop('disabled', true);
+                if (recording) {
+                    $(this).text('Recognize');
 
-                displayStatus('info', 'Waiting for your permission...');
-                
-                navigator.getUserMedia({audio: true, video: false}, onStreamConnected, onStreamError);
+                    div_progress.hide();
+
+                    recording = false;
+
+                    if (countdown_interval) {
+                        clearInterval(countdown_interval);
+                    }
+
+                    mediaRecorder.stop();
+
+                    mediaRecorder = null;
+                } else {
+                    displayStatus('info', 'Waiting for your permission...');
+
+                    navigator.getUserMedia({audio: true, video: false}, onStreamConnected, onStreamError);
+                }
             });
         }
     });
