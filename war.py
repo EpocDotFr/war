@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, abort, json
 from flask_httpauth import HTTPBasicAuth
-from flask_debugtoolbar import DebugToolbarExtension
 from urllib.parse import quote_plus
 from bugsnag.handlers import BugsnagHandler
 from werkzeug.exceptions import HTTPException
@@ -27,10 +26,6 @@ if not app.config['DEBUG']:
     app.logger.addHandler(BugsnagHandler())
 
 auth = HTTPBasicAuth()
-
-debug_toolbar = DebugToolbarExtension(app)
-
-app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 from utils import *
 
