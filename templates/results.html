@@ -28,8 +28,8 @@
     <p><a href="{{ url_for('home') }}" class="button">« Back</a></p>
 
     {% if not sample['done'] %}
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.7/zepto.min.js"></script>
-        <script src="https://js.pusher.com/3.1/pusher.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+        <script src="https://js.pusher.com/3.2/pusher.min.js"></script>
         <script>
         Zepto(function () {
             {% if config['DEBUG'] %}Pusher.logToConsole = true;{% endif %}
