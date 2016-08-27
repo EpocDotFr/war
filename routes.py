@@ -105,6 +105,10 @@ def one_news(slug):
 
     if the_news is None:
         abort(404)
+    
+    if the_news['date'] is None:
+        g.INCLUDE_WEB_ANALYTICS = False
+        g.NO_INDEX = True
 
     return render_template('news/one.html', the_news=the_news)
 
