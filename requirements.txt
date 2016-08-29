@@ -5,9 +5,9 @@ arrow
 pystalkd
 pymongo
 pusher
-mistune
 PyRSS2Gen
 psutil
 python-slugify
 blinker
 bugsnag
+Flask-Misaka

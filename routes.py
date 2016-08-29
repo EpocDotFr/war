@@ -326,7 +326,7 @@ def news_create():
 def news_edit(news_id):
     db = get_database()
 
-    the_news = get_one_news_by_id(db, news_id, markdown=True)
+    the_news = get_one_news_by_id(db, news_id)
 
     if the_news is None:
         abort(404)

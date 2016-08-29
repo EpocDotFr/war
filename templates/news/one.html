@@ -5,5 +5,5 @@
 {% block content %}
     {% if the_news.date %}<p><em>Published {{ the_news.date.humanize() }}</em></p>{% else %}<p class="alert info">This is a draft.</p>{% endif %}
 
-    {{ the_news.content|safe }}
+    {{ the_news.content|markdown }}
 {% endblock %}
