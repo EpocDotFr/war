@@ -23,11 +23,8 @@
     <link rel="icon" href="{{ url_for('static', filename='images/android-icon-192x192.png') }}" sizes="192x192">
     <link rel="icon" href="{{ url_for('static', filename='images/android-icon-128x128.png') }}" sizes="128x128">
 
-    {% assets filters="cssmin", output="css/app.min.css", "css/app.css" %}
-        <link rel="stylesheet" href="{{ ASSET_URL }}">
-    {% endassets %}
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
     {% block cssfiles %} {% endblock %}
 
     {% block jsfiles %} {% endblock %}

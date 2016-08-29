@@ -36,7 +36,7 @@ Zepto(function () {
         spellChecker: false,
         autosave: {
             enabled: true,
-            uniqueId: 'news_content{{ the_news._id if the_news }}'
+            uniqueId: 'news_content{{ '_' + the_news._id if the_news }}'
         },
         indentWithTabs: false,
         tabSize: 4,
