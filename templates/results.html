@@ -12,7 +12,7 @@
 
 {% block content %}
     <div id="processing" {% if sample['done'] %}style="display: none"{% endif %}>
-        <p class="alert info">Your sample is now being processed! The results are displayed in realtime below (no need to refresh this page!).</p>
+        <p class="alert info">Your sample is now being processed! The results are automatically displayed below (no need to refresh this page!).</p>
         <p>You can close this page and access it at any given time using this link:</p>
         <p style="text-align: center !important;"><input type="text" readonly value="{{ url_for('results', sample_id=sample['_id'], _external=True) }}" onClick="this.setSelectionRange(0, this.value.length)"></p>
     </div>
@@ -33,7 +33,7 @@
         {% endfor %}
     </div>
 
-    <p><a href="{{ url_for('home') }}" class="button">« Back</a></p>
+    <p style="text-align: center !important;"><a href="{{ url_for('home') }}" class="button">« Back</a></p>
 
     {% if not sample['done'] %}
         <script>
