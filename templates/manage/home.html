@@ -2,6 +2,12 @@
 
 {% block title %}Manage{% endblock %}
 
+{% block jsfiles %}
+    {{ super() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+    <script src="{{ url_for('static', filename='js/MediaStreamRecorder.min.js') }}"></script>
+{% endblock %}
+
 {% block content %}
     <div class="row manage">
         <div style="width:33%">
@@ -88,7 +94,6 @@
     <div class="alert info">No news to display.</div>
     {% endif %}
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
     <script>
     Zepto(function () {
         var flattenObject = function(ob) {
