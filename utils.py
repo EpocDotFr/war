@@ -7,7 +7,6 @@ from slugify import slugify
 import os
 import pusher
 import arrow
-import mistune
 
 
 def get_database():
@@ -69,19 +68,12 @@ def get_news_list(db, limit=None, admin=False):
     news_list = []
 
     for the_news in news_list_db:
-        the_news = dict(the_news)
-
-        if the_news['date'] is not None:
-            the_news['date'] = arrow.get(the_news['date'])
-
-        the_news['content'] = mistune.markdown(the_news['content'])
-
-        news_list.append(the_news)
+        news_list.append(_get_one_news(the_news))
 
     return news_list
 
 
-def _get_one_news(the_news=None, markdown=False):
+def _get_one_news(the_news=None):
     if the_news is None:
         return None
 
@@ -90,22 +82,19 @@ def _get_one_news(the_news=None, markdown=False):
     if the_news['date'] is not None:
         the_news['date'] = arrow.get(the_news['date'])
 
-    if not markdown:
-        the_news['content'] = mistune.markdown(the_news['content'])
-
     return the_news
 
 
-def get_one_news_by_slug(db, slug, markdown=False):
+def get_one_news_by_slug(db, slug):
     the_news = db.news.find_one({'slug': slug})
 
-    return _get_one_news(the_news, markdown)
+    return _get_one_news(the_news)
 
 
-def get_one_news_by_id(db, news_id, markdown=False):
+def get_one_news_by_id(db, news_id):
     the_news = db.news.find_one({'_id': ObjectId(news_id)})
 
-    return _get_one_news(the_news, markdown)
+    return _get_one_news(the_news)
 
 
 def update_one_news(db, news_id, title, content, date=None):

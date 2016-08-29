@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, abort, json
 from flask_httpauth import HTTPBasicAuth
+from flask.ext.misaka import Misaka
 from urllib.parse import quote_plus
 from bugsnag.handlers import BugsnagHandler
 from werkzeug.exceptions import HTTPException
@@ -16,6 +17,7 @@ import os
 
 app = Flask(__name__, static_url_path='')
 app.config.from_pyfile('config.py')
+Misaka(app)
 
 gauges.TOKEN = app.config['GAUGES']['API_TOKEN']
 bugsnag_client.API_KEY = app.config['BUGSNAG']['ORG_API_KEY']
