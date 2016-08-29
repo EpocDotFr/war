@@ -1,7 +1,3 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/simplemde/1.11.2/simplemde.min.js"></script>
-
 <div class="row">
     <div style="width:50%">
         <div class="group">
@@ -40,7 +36,7 @@ Zepto(function () {
         spellChecker: false,
         autosave: {
             enabled: true,
-            uniqueId: 'news_content{{ the_news._id if the_news }}'
+            uniqueId: 'news_content{{ '_' + the_news._id|string if the_news }}'
         },
         indentWithTabs: false,
         tabSize: 4,
