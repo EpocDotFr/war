@@ -173,17 +173,24 @@ def get_one_sample_by_id(db, sample_id):
     return _get_one_sample(sample)
 
 
-def get_latest_sample(db):
-    sample = db.samples.find({
-        'done': {'$eq': True}
-    }).limit(1).sort('submitted_at', -1)
+def get_five_latest_samples(db):
+    samples = db.samples.find({
+        'done': {'$eq': True},
+        'final_result': {'$ne': None}
+    }).limit(5).sort('submitted_at', -1)
 
-    sample = list(sample)
+    ret = []
 
-    if len(sample) == 1:
-        return _get_one_sample(sample[0])
-    else:
-        return None
+    for sample in samples:
+        sample = _get_one_sample(sample)
+
+        ret.append('{} - {} ({})'.format(
+            sample[sample['final_result']]['artist'],
+            sample[sample['final_result']]['title'],
+            sample['submitted_at'].humanize()
+        ))
+
+    return ' • '.join(ret)
 
 
 def get_global_stats(db):
