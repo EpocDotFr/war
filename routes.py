@@ -172,7 +172,7 @@ def results(sample_id):
     if sample is None:
         abort(404)
 
-    result = {}
+    result = None
     
     if 'final_result' in sample and sample['final_result'] is not None:
         result = sample[sample['final_result']]

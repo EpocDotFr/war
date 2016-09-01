@@ -21,7 +21,7 @@
     </div>
 
     <p id="result" {% if not sample['done'] %}style="display: none"{% endif %}>
-        {% if sample['done'] %}
+        {% if sample['done'] and result %}
             {% if result.status == 'failure' %}
                 Sorry, I don't know :/
             {% elif result.status == 'error' %}
