@@ -9,7 +9,6 @@
         <thead>
         <tr>
             <th>Audio database</th>
-            <th>Latest recognition</th>
             <th>Successful recognitions</th>
             <th>Failed recognitions</th>
             <th>Total</th>
@@ -19,20 +18,19 @@
         {% for audio_database_id, audio_database_instance in audio_databases.items() %}
             <tr>
                 <td><a href="{{ audio_database_instance.get_website() }}">{{ audio_database_instance.get_name() }}</a></td>
-                <td>{% if latest_sample[audio_database_id] and latest_sample[audio_database_id].status == 'success' %}{{ latest_sample[audio_database_id].data.artist }} - {{ latest_sample[audio_database_id].data.title }}{% else %}Unknow :/{% endif %}</td>
                 <td>{{ audio_database_instance.get_stats().successes }} (<strong>{{ audio_database_instance.get_stats().successes_percent }}</strong> %)</td>
                 <td>{{ audio_database_instance.get_stats().failures }} (<strong>{{ audio_database_instance.get_stats().failures_percent }}</strong> %)</td>
                 <td>{{ audio_database_instance.get_stats().total }}</td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="5"><div class="alert info">No audio database found.</div></td>
+                <td colspan="4"><div class="alert info">No audio database found.</div></td>
             </tr>
         {% endfor %}
         </tbody>
         <tfoot>
         <tr>
-            <th colspan="2" style="text-align: right">Total</th>
+            <th style="text-align: right">Total</th>
             <th>{{ global_stats.total_successes }} (<strong>{{ global_stats.total_successes_percent }}</strong> %)</th>
             <th>{{ global_stats.total_failures }} (<strong>{{ global_stats.total_failures_percent }}</strong> %)</th>
             <th>{{ global_stats.total_successes_and_failures }}</th>

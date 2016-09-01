@@ -48,9 +48,8 @@ def stats():
 
     audio_databases = get_enabled_audio_databases(db)
     global_stats = get_global_stats(db)
-    latest_sample = get_latest_sample(db)
 
-    return render_template('stats.html', audio_databases=audio_databases, global_stats=global_stats, latest_sample=latest_sample)
+    return render_template('stats.html', audio_databases=audio_databases, global_stats=global_stats)
 
 
 # News list
