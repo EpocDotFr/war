@@ -76,6 +76,7 @@ def worker():
 
     app.logger.info('Initialized')
 
+    # For each beanstalk jobs
     while True:
         job = queue.reserve()
 
@@ -84,6 +85,7 @@ def worker():
         job_data = json.loads(job.body)
         sample_id = job_data['sample_id']
 
+        # Get the sample in the database
         sample = get_one_sample_by_id(db, sample_id)
 
         if sample is None:
@@ -95,16 +97,19 @@ def worker():
 
         there_were_errors = False
 
+        # For each enabled audio database
         for audio_database_id, audio_database_instance in audio_databases.items():
             if audio_database_id in sample and sample[audio_database_id] is not None:
                 continue
 
+            # Launch recognization process
             try:
                 recognization = audio_database_instance.recognize(sample_id)
 
                 update_one_sample(db, sample_id, {'$set': {audio_database_id: recognization}})
+                sample[audio_database_id] = recognization
 
-                if recognization['status'] == 'success':
+                if recognization['status'] == 'success': # The audio database have found a matching
                     db.stats.update_one({'audio_database': audio_database_id}, {'$inc': {'successes': 1}})
 
                     search_terms = []
@@ -116,50 +121,49 @@ def worker():
                         search_terms.append(recognization['data']['title'])
 
                     recognization['data']['search_terms'] = quote_plus(' '.join(search_terms))
-
-                    push.trigger(push_channel, 'success', {
-                        'audio_database_id': audio_database_id,
-                        'audio_database_name': audio_database_instance.get_name(),
-                        'data': recognization['data']
-                    })
-                elif recognization['status'] == 'failure':
+                elif recognization['status'] == 'failure': # The audio database doesn't found anything
                     db.stats.update_one({'audio_database': audio_database_id}, {'$inc': {'failures': 1}})
-
-                    push.trigger(push_channel, 'failure', {
-                        'audio_database_id': audio_database_id,
-                        'audio_database_name': audio_database_instance.get_name()
-                    })
-                elif recognization['status'] == 'error':
+                elif recognization['status'] == 'error': # There were an error with the audio database
                     there_were_errors = True
-
-                    push.trigger(push_channel, 'error', {
-                        'audio_database_id': audio_database_id,
-                        'audio_database_name': audio_database_instance.get_name(),
-                        'data': recognization['data']
-                    })
 
                     app.logger.error(recognization['data']['message'])
 
             except Exception as e:
                 there_were_errors = True
 
-                update_one_sample(db, sample, {
+                update_one_sample(db, sample_id, {
                     '$set': {audio_database_id: {
                         'status': 'error',
                         'data': {'message': str(e)}
                     }}
                 })
 
-                push.trigger(push_channel, 'error', {
-                    'audio_database_id': audio_database_id,
-                    'audio_database_name': audio_database_instance.get_name(),
+                sample[audio_database_id] = {
+                    'status': 'error',
                     'data': {'message': str(e)}
-                })
+                }
 
                 app.logger.error(e)
 
+        # Start TODO
+        # Here we'll normally make some fuzzy string matching between all results to set the final
+        # recognized result. But as we only have one audio database to search in, we'll force the final
+        # result to be the one returned by our only audio database.
+
         update_one_sample(db, sample_id, {'$set': {'done': True}})
-        push.trigger(push_channel, 'done', {})
+        sample['done'] = True
+
+        if sample[sample['final_result']]['status'] == 'success':
+            update_one_sample(db, sample_id, {'$set': {'final_result': 'ACRCloud'}})
+            sample['final_result'] = 'ACRCloud'
+            push.trigger(push_channel, 'success', sample[sample['final_result']]['data'])
+        elif sample[sample['final_result']]['status'] == 'failure':
+            push.trigger(push_channel, 'failure', {})
+        elif sample[sample['final_result']]['status'] == 'error':
+            push.trigger(push_channel, 'error', sample[sample['final_result']]['data'])
+
+        # End TODO
+
         job.delete()
 
         if not there_were_errors:
