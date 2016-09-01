@@ -20,9 +20,9 @@ def home():
 
     latest_news = get_latest_news(db)
 
-    five_latest_samples = get_five_latest_samples(db)
+    latest_success_samples = get_latest_success_samples(db)
 
-    return render_template('home.html', global_stats=global_stats, latest_news=latest_news, five_latest_samples=five_latest_samples)
+    return render_template('home.html', global_stats=global_stats, latest_news=latest_news, latest_success_samples=latest_success_samples)
 
 
 # About page

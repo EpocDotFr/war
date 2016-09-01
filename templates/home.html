@@ -19,7 +19,7 @@
         <p><small>There were <strong>{{ global_stats.total_successes_and_failures }}</strong> recognition requests so far.<br><strong>{{ global_stats.total_successes }}</strong> (<strong>{{ global_stats.total_successes_percent }}</strong> %) of them matched, the other <strong>{{ global_stats.total_failures }}</strong> (<strong>{{ global_stats.total_failures_percent }}</strong> %) didn't.</small></p>
     </div>
 
-    <p style="text-align: center !important;"><small>Latest recognitions: {{ five_latest_samples }}</small></p>
+    <p style="text-align: center !important;"><small>Latest recognitions: {{ latest_success_samples }}</small></p>
 
     {% if latest_news %}
         <hr>

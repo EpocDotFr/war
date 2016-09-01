@@ -174,11 +174,11 @@ def get_one_sample_by_id(db, sample_id):
     return _get_one_sample(sample)
 
 
-def get_five_latest_samples(db):
+def get_latest_success_samples(db, num=3):
     samples = db.samples.find({
         'done': {'$eq': True},
         'final_result': {'$ne': None}
-    }).limit(5).sort('submitted_at', -1)
+    }).limit(num).sort('submitted_at', -1)
 
     ret = []
 
