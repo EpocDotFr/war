@@ -51,6 +51,8 @@
             var channel = pusher.subscribe('results-{{ sample['_id'] }}');
 
             channel.bind('error', function(data) {
+                p_result.show();
+                
                 p_result.html('Sorry, an error occured :/ We have been informed about it.');
 
                 div_processing.remove();
@@ -58,6 +60,8 @@
             });
 
             channel.bind('failure', function(data) {
+                p_result.show();
+            
                 p_result.html('Sorry, I don\'t know :/');
 
                 div_processing.remove();
@@ -70,6 +74,8 @@
                 if (data.album) {
                     album_string = ' from the album <strong>'+data.album+'</strong>';
                 }
+                
+                p_result.show();
 
                 p_result.html('It is <strong>'+data.artist+'</strong> with <strong>'+data.title+'</strong>'+album_string+'. Search on <a href="https://www.youtube.com/results?search_query='+data.search_terms+'">Youtube</a>, <a href="https://www.deezer.com/search/'+data.search_terms+'">Deezer</a> or <a href="https://open.spotify.com/search/'+data.search_terms+'">Spotify</a>?');
 
