@@ -6,4 +6,6 @@
     {% if the_news.date %}<p><em>Published {{ the_news.date.humanize() }}</em></p>{% else %}<p class="alert info">This is a draft.</p>{% endif %}
 
     {{ the_news.content|markdown }}
+
+    <p style="text-align: center !important;"><a href="{{ url_for('news') }}" class="button">« Back</a></p>
 {% endblock %}
