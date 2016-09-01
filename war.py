@@ -154,16 +154,12 @@ def worker():
         sample['done'] = True
         sample['final_result'] = 'ACRCloud'
 
-        if sample[sample['final_result']]['data']['status'] == 'success':
-            push.trigger(push_channel, 'success', {
-                'data': sample[sample['final_result']]['data']
-            })
-        elif sample[sample['final_result']]['data']['status'] == 'failure':
+        if sample[sample['final_result']]['status'] == 'success':
+            push.trigger(push_channel, 'success', sample[sample['final_result']]['data'])
+        elif sample[sample['final_result']]['status'] == 'failure':
             push.trigger(push_channel, 'failure', {})
-        elif sample[sample['final_result']]['data']['status'] == 'error':
-            push.trigger(push_channel, 'error', {
-                'data': sample[sample['final_result']]['data']
-            })
+        elif sample[sample['final_result']]['status'] == 'error':
+            push.trigger(push_channel, 'error', sample[sample['final_result']]['data'])
 
         # End TODO
 

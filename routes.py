@@ -171,34 +171,23 @@ def results(sample_id):
     if sample is None:
         abort(404)
 
-    res = []
+    result = {}
+    
+    if 'final_result' in sample and sample['final_result'] is not None:
+        result = sample[sample['final_result']]
 
-    audio_databases = get_enabled_audio_databases(db)
+        if result['status'] == 'success':
+            search_terms = []
 
-    for audio_database_id, audio_database_instance in audio_databases.items():
-        if audio_database_id in sample and sample[audio_database_id] is not None:
-            recognization = dict(sample[audio_database_id])
+            if 'artist' in result['data']:
+                search_terms.append(result['data']['artist'])
 
-            if recognization['status'] == 'success':
-                search_terms = []
+            if 'title' in result['data']:
+                search_terms.append(result['data']['title'])
 
-                if 'artist' in recognization['data']:
-                    search_terms.append(recognization['data']['artist'])
+            result['data']['search_terms'] = quote_plus(' '.join(search_terms))
 
-                if 'title' in recognization['data']:
-                    search_terms.append(recognization['data']['title'])
-
-                recognization['data']['search_terms'] = quote_plus(' '.join(search_terms))
-
-            res.append({
-                **{
-                    'audio_database_id': audio_database_id,
-                    'audio_database_name': audio_database_instance.get_name(),
-                },
-                **recognization
-            })
-
-    return render_template('results.html', sample=sample, results=res)
+    return render_template('results.html', sample=sample, result=result)
 
 
 # Sitemap XML
