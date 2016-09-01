@@ -8,4 +8,6 @@
     {% else %}
         <div class="alert info">No news to read at this moment.</div>
     {% endfor %}
+
+    <p style="text-align: center !important;"><a href="{{ url_for('news') }}" class="button">« Back</a></p>
 {% endblock %}
