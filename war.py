@@ -150,11 +150,12 @@ def worker():
         # recognized result. But as we only have one audio database to search in, we'll force the final
         # result to be the one returned by our only audio database.
 
-        update_one_sample(db, sample_id, {'$set': {'done': True, 'final_result': 'ACRCloud'}})
+        update_one_sample(db, sample_id, {'$set': {'done': True}})
         sample['done'] = True
-        sample['final_result'] = 'ACRCloud'
 
         if sample[sample['final_result']]['status'] == 'success':
+            update_one_sample(db, sample_id, {'$set': {'final_result': 'ACRCloud'}})
+            sample['final_result'] = 'ACRCloud'
             push.trigger(push_channel, 'success', sample[sample['final_result']]['data'])
         elif sample[sample['final_result']]['status'] == 'failure':
             push.trigger(push_channel, 'failure', {})

@@ -137,6 +137,7 @@ def delete_one_news(db, news_id):
 def create_one_sample(db):
     data = {
         'done': False,
+        'final_result': None,
         'submitted_at': arrow.now().datetime
     }
 
@@ -185,8 +186,8 @@ def get_five_latest_samples(db):
         sample = _get_one_sample(sample)
 
         ret.append('{} - {} ({})'.format(
-            sample[sample['final_result']]['artist'],
-            sample[sample['final_result']]['title'],
+            sample[sample['final_result']]['data']['artist'],
+            sample[sample['final_result']]['data']['title'],
             sample['submitted_at'].humanize()
         ))
 
