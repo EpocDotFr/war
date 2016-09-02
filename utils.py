@@ -149,6 +149,15 @@ def create_one_sample(db):
     return db.samples.insert_one(data)
 
 
+def delete_one_sample(db, sample_id):
+    sample_file_path = get_sample_file_path(sample_id)
+
+    if os.path.exists(sample_file_path):
+        os.remove(sample_file_path)
+
+    return db.samples.delete_one({'_id': ObjectId(sample_id)}).deleted_count > 0
+
+
 def update_one_sample(db, sample_id, query):
     return db.samples.update_one(
         {'_id': ObjectId(sample_id)},

@@ -375,6 +375,19 @@ def sample_manage(sample_id):
 
     return render_template('manage/sample.html', sample=sample, sample_file=sample_file, audio_databases=audio_databases)
 
+# Delete a sample
+@app.route('/manage/samples/<sample_id>/delete')
+@auth.login_required
+def sample_manage_delete(sample_id):
+    db = get_database()
+
+    if delete_one_sample(db, sample_id):
+        flash('Sample deleted successfuly.', 'success')
+    else:
+        flash('Error deleting this sample.', 'error')
+
+    return redirect(url_for('manage'))
+
 
 # Unauthorized page
 @app.route('/401')

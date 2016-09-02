@@ -41,5 +41,5 @@
         {% endif %}
    {% endfor %}
 
-    <p><a href="{{ url_for('manage') }}" class="button">« Back</a> {% if sample_file %}<a href="" class="button">Restart</a>{% endif %} <a href="" class="button">Delete</a></p>
+    <p><a href="{{ url_for('manage') }}" class="button">« Back</a> {% if sample_file %}<a href="" class="button">Restart</a>{% endif %} <a href="{{ url_for('sample_manage_delete', sample_id=sample._id) }}" onclick="return confirm('Are you sure? This will also delete the sample file.')" class="button">Delete</a></p>
 {% endblock %}
