@@ -375,6 +375,7 @@ def sample_manage(sample_id):
 
     return render_template('manage/sample.html', sample=sample, sample_file=sample_file, audio_databases=audio_databases)
 
+
 # Delete a sample
 @app.route('/manage/samples/<sample_id>/delete')
 @auth.login_required
@@ -387,6 +388,21 @@ def sample_manage_delete(sample_id):
         flash('Error deleting this sample.', 'error')
 
     return redirect(url_for('manage'))
+
+
+# Requeue a sample
+@app.route('/manage/samples/<sample_id>/requeue')
+@auth.login_required
+def sample_manage_requeue(sample_id):
+    recognization_job_data = {'sample_id': sample_id}
+
+    queue = get_queue()
+    queue.use('samples')
+    queue.put(json.dumps(recognization_job_data))
+
+    flash('Sample was requeued successfully.', 'success')
+
+    return redirect(url_for('sample_manage', sample_id=sample_id))
 
 
 # Unauthorized page
