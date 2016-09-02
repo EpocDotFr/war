@@ -88,7 +88,7 @@ def news_rss():
         link=url_for('home', _external=True),
         description='Latest news from WAR (Web Audio Recognizer)',
         language='en',
-        image=PyRSS2Gen.Image(url_for('static', filename='images/logo_128.png', _external=True),
+        image=PyRSS2Gen.Image(url_for('static', filename='images/apple-icon-114x114.png', _external=True),
                               'Latest news from WAR (Web Audio Recognizer)',
                               url_for('home', _external=True)),
         lastBuildDate=arrow.now().datetime,
