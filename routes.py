@@ -365,13 +365,15 @@ def sample_manage(sample_id):
 
         return redirect(url_for('manage'))
 
+    audio_databases = get_enabled_audio_databases(db)
+
     try:
         get_sample_file_path(sample_id, check_if_exists=True)
         sample_file = get_public_sample_file_url(sample_id)
     except Exception as e:
         sample_file = False
 
-    return render_template('manage/sample.html', sample=sample, sample_file=sample_file)
+    return render_template('manage/sample.html', sample=sample, sample_file=sample_file, audio_databases=audio_databases)
 
 
 # Unauthorized page

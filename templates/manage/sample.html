@@ -8,7 +8,8 @@
             <h2>General informations</h2>
 
             <ul>
-                <li>Submitted <strong>{{ sample.submitted_at.humanize() }}</strong></li>
+                <li>Submitted <strong>{{ sample.submitted_at.humanize() }}</strong> ({{ sample.submitted_at.format('YYYY-MM-DD HH:mm') }})</li>
+                <li>Done? <strong>{% if sample.done %}Yes{% else %}No{% endif %}</strong></li>
             </ul>
         </div>
         <div style="width:50%">
@@ -17,6 +18,28 @@
             {% if sample_file %}<audio controls src="{{ sample_file }}"></audio>{% else %}<div class="alert info">Doesn't exists.</div>{% endif %}
         </div>
    </div>
+
+   <h2>Audio databases</h2>
+
+   {% for audio_database_id, audio_database_instance in audio_databases.items() %}
+        <h3>{{ audio_database_instance.get_name() }} {% if audio_database_id == sample.final_result %}<small class="alert success">Final result</small>{% endif %}</h3>
+
+        {% if audio_database_id not in sample %}
+            <div class="alert error">Not used. This isn't normal behaviour.</div>
+        {% else %}
+            {% if sample[audio_database_id].status == 'failure' %}
+                <p>Unknown</p>
+            {% elif sample[audio_database_id].status == 'error' %}
+                <p class="alert error">{{ sample[audio_database_id].data.message }}</p>
+            {% elif sample[audio_database_id].status == 'success' %}
+                <ul>
+                    <li>Artist: <strong>{{ sample[audio_database_id].data.artist }}</strong></li>
+                    <li>Title: <strong>{{ sample[audio_database_id].data.title }}</strong></li>
+                    {% if sample[audio_database_id].data.album %}<li>Album: <strong>{{ sample[audio_database_id].data.album }}</strong></li>{% endif %}
+                </ul>
+            {% endif %}
+        {% endif %}
+   {% endfor %}
 
     <p><a href="{{ url_for('manage') }}" class="button">« Back</a> {% if sample_file %}<a href="" class="button">Restart</a>{% endif %} <a href="" class="button">Delete</a></p>
 {% endblock %}
