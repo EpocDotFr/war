@@ -145,7 +145,7 @@ def worker():
 
                 app.logger.error(e)
 
-        # Start TODO
+        # TODO
         # Here we'll normally make some fuzzy string matching between all results to set the final
         # recognized result. But as we only have one audio database to search in, we'll force the final
         # result to be the one returned by our only audio database.

@@ -177,7 +177,8 @@ def get_one_sample_by_id(db, sample_id):
 def get_latest_success_samples(db, num=3):
     samples = db.samples.find({
         'done': {'$eq': True},
-        'final_result': {'$ne': None}
+        'final_result': {'$ne': None},
+        'ACRCloud.status': {'$eq': 'success'}, # TODO temporary
     }).limit(num).sort('submitted_at', -1)
 
     ret = []
