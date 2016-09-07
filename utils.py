@@ -195,13 +195,13 @@ def get_latest_success_samples(db, num=3):
     for sample in samples:
         sample = _get_one_sample(sample)
 
-        ret.append('{} - {} ({})'.format(
-            sample[sample['final_result']]['data']['artist'],
-            sample[sample['final_result']]['data']['title'],
-            sample['submitted_at'].humanize()
-        ))
+        ret.append({
+            'artist': sample[sample['final_result']]['data']['artist'],
+            'title': sample[sample['final_result']]['data']['title'],
+            'submitted_at': sample['submitted_at']
+        })
 
-    return ' • '.join(ret)
+    return ret
 
 
 def get_global_stats(db):
