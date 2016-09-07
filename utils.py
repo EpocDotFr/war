@@ -190,18 +190,14 @@ def get_latest_success_samples(db, num=3):
         'ACRCloud.status': {'$eq': 'success'}, # TODO temporary
     }).limit(num).sort('submitted_at', -1)
 
-    ret = []
+    samples_list = []
 
     for sample in samples:
         sample = _get_one_sample(sample)
 
-        ret.append({
-            'artist': sample[sample['final_result']]['data']['artist'],
-            'title': sample[sample['final_result']]['data']['title'],
-            'submitted_at': sample['submitted_at']
-        })
+        samples_list.append(sample)
 
-    return ret
+    return samples_list
 
 
 def get_global_stats(db):

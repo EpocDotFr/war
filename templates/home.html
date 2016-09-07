@@ -21,7 +21,7 @@
 
     <p style="text-align: center !important;"><small>Latest recognitions: 
         {% for latest_success_sample in latest_success_samples %}
-            {{ latest_success_sample.artist }} - {{ latest_success_sample.title }} ({{ latest_success_sample.submitted_at.humanize() }}){% if not loop.last %} • {% endif %}
+            <a href="{{ url_for('results', sample_id=latest_success_sample._id) }}">{{ latest_success_sample[latest_success_sample.final_result].data.artist }} - {{ latest_success_sample[latest_success_sample.final_result].data.title }}</a> ({{ latest_success_sample.submitted_at.humanize() }}){% if not loop.last %} • {% endif %}
         {% endfor %}
     </small></p>
 
