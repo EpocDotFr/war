@@ -68,7 +68,7 @@ def resetdb():
 def worker():
     """Start the beanstalkd worker."""
     queue = get_queue()
-    queue.watch('samples')
+    queue.watch('war-samples-recognize')
 
     push = get_push()
 

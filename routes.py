@@ -145,7 +145,7 @@ def recognize():
             recognization_job_data = {'sample_id': sample_id}
 
             queue = get_queue()
-            queue.use('samples')
+            queue.use('war-samples-recognize')
             queue.put(json.dumps(recognization_job_data), delay=1)
 
             ajax_response['data']['sample_id'] = sample_id
@@ -398,7 +398,7 @@ def sample_manage_requeue(sample_id):
     recognization_job_data = {'sample_id': sample_id}
 
     queue = get_queue()
-    queue.use('samples')
+    queue.use('war-samples-recognize')
     queue.put(json.dumps(recognization_job_data))
 
     flash('Sample was requeued successfully.', 'success')
