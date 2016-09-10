@@ -1,4 +1,4 @@
-from flask import Response, jsonify, url_for, flash, redirect, send_from_directory
+from flask import Response, jsonify, url_for, flash, redirect
 from war import *
 from urllib.parse import quote_plus
 from flask.ext.misaka import markdown
@@ -8,6 +8,7 @@ import PyRSS2Gen
 import psutil
 import bugsnag_client
 import arrow
+import sample_store
 
 
 # ----- Public routes -------
@@ -139,14 +140,13 @@ def recognize():
             sample = create_one_sample(db)
             sample_id = str(sample.inserted_id)
             
-            sample_file_path = get_sample_file_path(sample_id)
-            sample_file.save(sample_file_path)
+            sample_store.save_locally(sample_file, sample_id)
 
             recognization_job_data = {'sample_id': sample_id}
 
             queue = get_queue()
             queue.use('war-samples-recognize')
-            queue.put(json.dumps(recognization_job_data), delay=1)
+            queue.put(json.dumps(recognization_job_data))
 
             ajax_response['data']['sample_id'] = sample_id
         except Exception as e:
@@ -167,7 +167,7 @@ def results(sample_id):
 
     try:
         sample = get_one_sample_by_id(db, sample_id)
-    except bson.errors.InvalidId as bei:
+    except bson.errors.InvalidId:
         abort(404)
 
     if sample is None:
@@ -206,15 +206,7 @@ def sitemap_xml():
 
     return Response(render_template('sitemap.xml', routes=app_routes), mimetype='application/xml')
 
-
-# Serve sample files only in debug mode, otherwise they have to be served by the web server
-if app.config['DEBUG']:
-    @app.route('/samples/<path:filename>')
-    def sample_file(filename):
-        return send_from_directory(os.path.abspath(app.config['SAMPLES_PATH']), filename)
-
 # ----- Private routes -------
-
 
 # Managing dashboard
 @app.route('/manage')
@@ -241,7 +233,7 @@ def manage_get_data():
 
     try:
         ajax_response['data']['visits'] = gauges.get_gauge(app.config['GAUGES']['SITE_ID'])
-    except Exception as e:
+    except Exception:
         pass
 
     try:
@@ -250,7 +242,7 @@ def manage_get_data():
             'ram': psutil.virtual_memory().percent,
             'hdd': psutil.disk_usage('/').percent
         }
-    except Exception as e:
+    except Exception:
         pass
 
     try:
@@ -259,20 +251,20 @@ def manage_get_data():
         ajax_response['data']['live_results'] = {
             'channels': len(push.channels_info('results-')['channels'])
         }
-    except Exception as e:
+    except Exception:
         pass
 
     try:
         ajax_response['data']['errors'] = bugsnag_client.get_project_errors(app.config['BUGSNAG']['PROJECT_ID'],
                                                                             status='open')
-    except Exception as e:
+    except Exception:
         pass
 
     try:
         xmlrpc_proxy = xmlrpc.client.ServerProxy('http://{}:{}/RPC2'.format(app.config['SUPERVISORD']['HOST'], app.config['SUPERVISORD']['PORT']))
 
         ajax_response['data']['processes'] = xmlrpc_proxy.supervisor.getAllProcessInfo()
-    except Exception as e:
+    except Exception:
         pass
 
     try:
@@ -285,7 +277,7 @@ def manage_get_data():
                 continue
 
             ajax_response['data']['queues'].append(queue.stats_tube(tube))
-    except Exception as e:
+    except Exception:
         pass
 
     return jsonify(ajax_response), status
@@ -356,7 +348,7 @@ def sample_manage(sample_id):
 
     try:
         sample = get_one_sample_by_id(db, sample_id)
-    except bson.errors.InvalidId as bei:
+    except bson.errors.InvalidId:
         flash('The provided sample ID is invalid.', 'error')
 
         return redirect(url_for('manage'))
@@ -369,9 +361,9 @@ def sample_manage(sample_id):
     audio_databases = get_enabled_audio_databases(db)
 
     try:
-        get_sample_file_path(sample_id, check_if_exists=True)
-        sample_file = get_public_sample_file_url(sample_id)
-    except Exception as e:
+        sample_store.get_local_path(sample_id, check_if_exists=True)
+        sample_file = sample_store.get_remote_path(sample)
+    except Exception:
         sample_file = False
 
     return render_template('manage/sample.html', sample=sample, sample_file=sample_file, audio_databases=audio_databases)
@@ -400,6 +392,11 @@ def sample_manage_requeue(sample_id):
     queue = get_queue()
     queue.use('war-samples-recognize')
     queue.put(json.dumps(recognization_job_data))
+
+    # TODO refactor this route to check if the local sample exists, if
+    # TODO not: download it from the object storage and save it locally (but
+    # TODO remove it as usual when all is done)
+    # TODO Or refactor the worker?
 
     flash('Sample was requeued successfully.', 'success')
 

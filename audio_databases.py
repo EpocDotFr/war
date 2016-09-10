@@ -1,5 +1,5 @@
+import sample_store
 from war import app
-from utils import get_sample_file_path
 
 
 class AudioDatabaseInterface:
@@ -65,7 +65,7 @@ class ACRCloud(AudioDatabaseInterface):
         from acrcloud.recognizer import ACRCloudRecognizer
         from flask import json
 
-        sample_file_path = get_sample_file_path(sample_id, check_if_exists=True)
+        sample_file_path = sample_store.get_local_path(sample_id, check_if_exists=True)
 
         config = {
             'host': app.config['ACRCLOUD']['HOST'],

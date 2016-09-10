@@ -29,6 +29,7 @@ if not app.config['DEBUG']:
 
 auth = HTTPBasicAuth()
 
+import sample_store
 from utils import *
 
 # -----------------------------------------------------------
@@ -167,7 +168,7 @@ def worker():
 
         if not there_were_errors:
             app.logger.info('No errors')
-            os.remove(get_sample_file_path(sample_id))
+            sample_store.delete_locally(sample_id)
         else:
             app.logger.info('There were errors')
 
