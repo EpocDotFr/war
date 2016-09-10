@@ -5,36 +5,91 @@
 {% block content %}
     <p>Here are some realtime stats about <strong>WAR</strong>.</p>
 
-    <table>
-        <thead>
-        <tr>
-            <th>Audio database</th>
-            <th>Successful recognitions</th>
-            <th>Failed recognitions</th>
-            <th>Total</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for audio_database_id, audio_database_instance in audio_databases.items() %}
+    <h2>Audio databases</h2>
+
+    <div class="table-responsive">
+        <table>
+            <thead>
             <tr>
-                <td><a href="{{ audio_database_instance.get_website() }}">{{ audio_database_instance.get_name() }}</a></td>
-                <td>{{ audio_database_instance.get_stats().successes }} (<strong>{{ audio_database_instance.get_stats().successes_percent }}</strong> %)</td>
-                <td>{{ audio_database_instance.get_stats().failures }} (<strong>{{ audio_database_instance.get_stats().failures_percent }}</strong> %)</td>
-                <td>{{ audio_database_instance.get_stats().total }}</td>
+                <th>Audio database</th>
+                <th>Successful recognitions</th>
+                <th>Failed recognitions</th>
+                <th>Total</th>
             </tr>
-        {% else %}
+            </thead>
+            <tbody>
+            {% for audio_database_id, audio_database_instance in audio_databases.items() %}
+                <tr>
+                    <td><a href="{{ audio_database_instance.get_website() }}">{{ audio_database_instance.get_name() }}</a></td>
+                    <td>{{ audio_database_instance.get_stats().successes }} (<strong>{{ audio_database_instance.get_stats().successes_percent }}</strong> %)</td>
+                    <td>{{ audio_database_instance.get_stats().failures }} (<strong>{{ audio_database_instance.get_stats().failures_percent }}</strong> %)</td>
+                    <td>{{ audio_database_instance.get_stats().total }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4"><div class="alert info">No audio database found.</div></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            <tfoot>
             <tr>
-                <td colspan="4"><div class="alert info">No audio database found.</div></td>
+                <th style="text-align: right">Total</th>
+                <th>{{ global_stats.total_successes }} (<strong>{{ global_stats.total_successes_percent }}</strong> %)</th>
+                <th>{{ global_stats.total_failures }} (<strong>{{ global_stats.total_failures_percent }}</strong> %)</th>
+                <th>{{ global_stats.total_successes_and_failures }}</th>
             </tr>
-        {% endfor %}
-        </tbody>
-        <tfoot>
-        <tr>
-            <th style="text-align: right">Total</th>
-            <th>{{ global_stats.total_successes }} (<strong>{{ global_stats.total_successes_percent }}</strong> %)</th>
-            <th>{{ global_stats.total_failures }} (<strong>{{ global_stats.total_failures_percent }}</strong> %)</th>
-            <th>{{ global_stats.total_successes_and_failures }}</th>
-        </tr>
-        </tfoot>
-    </table>
+            </tfoot>
+        </table>
+    </div>
+
+    <div class="row separated">
+        <div style="width:50%">
+            <h2>Top five recognized artists</h2>
+
+            <table>
+                <tbody>
+                <tr>
+                    <td>Daniel Jackson</td>
+                    <td>20 times</td>
+                </tr>
+                <tr>
+                    <td>Daniel Jackson</td>
+                    <td>16 times</td>
+                </tr>
+                <tr>
+                    <td>Daniel Jackson</td>
+                    <td>6 times</td>
+                </tr>
+                <tr>
+                    <td>Daniel Jackson</td>
+                    <td>3 times</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div style="width:50%">
+            <h2>Top five recognized tracks</h2>
+
+            <table>
+                <tbody>
+                <tr>
+                    <td>Daniel Jackson</td>
+                    <td>20 times</td>
+                </tr>
+                <tr>
+                    <td>Daniel Jackson</td>
+                    <td>19 times</td>
+                </tr>
+                <tr>
+                    <td>Daniel Jackson</td>
+                    <td>16 times</td>
+                </tr>
+                <tr>
+                    <td>Daniel Jackson</td>
+                    <td>10 times</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 {% endblock %}
