@@ -15,7 +15,7 @@
 
 <div class="group">
     <label for="content">Content</label>
-    <textarea name="content" id="content" required>{{ the_news.content if the_news }}</textarea>
+    <textarea name="content" id="content" class="markdown" required>{{ the_news.content if the_news }}</textarea>
 </div>
 
 {% if the_news %}
@@ -28,20 +28,3 @@
 <p>
     <a href="{{ url_for('manage') }}" class="button">« Back</a> <button type="submit">Save</button> {% if the_news %}<a class="button" href="{{ url_for('one_news', slug=the_news.slug) }}">Read</a>{% endif %}
 </p>
-
-<script>
-Zepto(function () {
-    var simplemde = new SimpleMDE({
-        element: $('textarea#content').get(0),
-        spellChecker: false,
-        autosave: {
-            enabled: true,
-            uniqueId: 'news_content{{ '_' + the_news._id|string if the_news }}'
-        },
-        indentWithTabs: false,
-        tabSize: 4,
-        forceSync: true,
-        promptURLs: true
-    });
-});
-</script>

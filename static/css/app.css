@@ -217,6 +217,7 @@ textarea {
     border: 1px solid #2c2c2c;
     border-radius: 5px;
     color: #94eae3;
+    font-size: 16px;
 }
 
 input:focus,
@@ -342,21 +343,10 @@ footer p {
 /************************************************************************
  * Manage section */
 
-.editor-statusbar {
-    color: inherit !important;
-}
-
-.editor-toolbar {
-    background-color: #fff;
-}
-
-.editor-toolbar,
-.CodeMirror {
-    border-color: #2c2c2c !important;
-}
-
-.CodeMirror {
-    height: 450px !important;
+.markdown {
+    font-family: monospace;
+    font-size: 12px;
+    min-height: 400px;
 }
 
 .row.manage > div {
