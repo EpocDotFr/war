@@ -231,6 +231,38 @@ def get_global_stats(db):
     }
 
 
+def _get_top_recognized_query(type):
+    return [
+        {'$match': {
+            'done': {'$eq': True},
+            'final_result': {'$ne': None},
+            'ACRCloud.status': {'$eq': 'success'},  # TODO temporary
+        }},
+        {'$group': {
+            '_id': '$ACRCloud.data.'+type,  # TODO temporary
+            'total': {'$sum': 1}
+        }},
+        {'$limit': 5},
+        {'$sort': {'total': -1}}
+    ]
+
+
+def get_top_recognized_artists(db):
+    top_recognized_artists = db.samples.aggregate(_get_top_recognized_query('artist'))
+
+    top_recognized_artists = list(top_recognized_artists)
+
+    return top_recognized_artists
+
+
+def get_top_recognized_tracks(db):
+    top_recognized_artists = db.samples.aggregate(_get_top_recognized_query('title'))
+
+    top_recognized_artists = list(top_recognized_artists)
+
+    return top_recognized_artists
+
+
 def get_sample_file_path(sample_id, check_if_exists=False):
     sample_file_destination = os.path.abspath(app.config['SAMPLES_PATH'])
     sample_file_name = '{}.wav'.format(sample_id)

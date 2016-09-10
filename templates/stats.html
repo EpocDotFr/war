@@ -48,22 +48,16 @@
 
             <table>
                 <tbody>
-                <tr>
-                    <td>Daniel Jackson</td>
-                    <td>20 times</td>
-                </tr>
-                <tr>
-                    <td>Daniel Jackson</td>
-                    <td>16 times</td>
-                </tr>
-                <tr>
-                    <td>Daniel Jackson</td>
-                    <td>6 times</td>
-                </tr>
-                <tr>
-                    <td>Daniel Jackson</td>
-                    <td>3 times</td>
-                </tr>
+                {% for top_recognized_artist in top_recognized_artists %}
+                    <tr>
+                        <td>{{ top_recognized_artist._id }}</td>
+                        <td>{{ top_recognized_artist.total }} times</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td><div class="alert info">Not enough data.</div></td>
+                    </tr>
+                {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -72,22 +66,16 @@
 
             <table>
                 <tbody>
-                <tr>
-                    <td>Daniel Jackson</td>
-                    <td>20 times</td>
-                </tr>
-                <tr>
-                    <td>Daniel Jackson</td>
-                    <td>19 times</td>
-                </tr>
-                <tr>
-                    <td>Daniel Jackson</td>
-                    <td>16 times</td>
-                </tr>
-                <tr>
-                    <td>Daniel Jackson</td>
-                    <td>10 times</td>
-                </tr>
+                {% for top_recognized_track in top_recognized_tracks %}
+                    <tr>
+                        <td>{{ top_recognized_track._id }}</td>
+                        <td>{{ top_recognized_track.total }} times</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td><div class="alert info">Not enough data.</div></td>
+                    </tr>
+                {% endfor %}
                 </tbody>
             </table>
         </div>
