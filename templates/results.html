@@ -12,12 +12,12 @@
 
 {% block content %}
     <div id="processing" {% if sample['done'] %}style="display: none"{% endif %}>
-        <p class="alert info">Your sample is now being processed! The results are automatically displayed below (no need to refresh this page!).</p>
+        <p class="alert info">This sample is being processed! The results will automatically be displayed below (no need to refresh this page!).</p>
         <p>You can close this page and access it at any given time using this link:</p>
         <p style="text-align: center !important;"><input type="text" readonly value="{{ url_for('results', sample_id=sample['_id'], _external=True) }}" onClick="this.setSelectionRange(0, this.value.length)"></p>
     </div>
     <div id="done" {% if not sample['done'] %}style="display: none"{% endif %}>
-        <p class="alert success">Your sample finished being processed! Here are the final results.</p>
+        <p class="alert success">This sample finished being processed! Here are the final results.</p>
     </div>
 
     <p id="result" {% if not sample['done'] %}style="display: none"{% endif %}>
