@@ -361,7 +361,6 @@ def sample_manage(sample_id):
     audio_databases = get_enabled_audio_databases(db)
 
     try:
-        sample_store.get_local_path(sample_id, check_if_exists=True)
         sample_file = sample_store.get_remote_path(sample)
     except Exception:
         sample_file = False
