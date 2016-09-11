@@ -1,5 +1,19 @@
 from war import app
+import swiftclient
 import os
+
+
+def _get_remote_connection():
+    connection = swiftclient.Connection(
+        authurl=app.config['AUTH_URL'],
+        user=app.config['USERNAME'],
+        key=app.config['PASSWORD'],
+        tenant_name=app.config['TENANT_NAME'],
+        auth_version='2',
+        os_options={'tenant_id': app.config['TENANT_ID'], 'region_name': 'GRA1'}
+    )
+
+    # connection.put_object(app.config['CONTAINER_URL'], container='samples', name='test')
 
 
 def save_locally(file, sample_id):

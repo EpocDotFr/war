@@ -208,6 +208,7 @@ def sitemap_xml():
 
 # ----- Private routes -------
 
+
 # Managing dashboard
 @app.route('/manage')
 @auth.login_required
