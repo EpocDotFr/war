@@ -232,7 +232,7 @@ def get_global_stats(db):
 
 
 def _get_top_recognized(db, what):
-    top_recognized_artists = db.samples.aggregate([
+    top_recognized = db.samples.aggregate([
         {'$match': {
             'done': {'$eq': True},
             'final_result': {'$ne': None},
@@ -249,7 +249,7 @@ def _get_top_recognized(db, what):
         {'$sort': {'total': -1}}
     ])
 
-    return list(top_recognized_artists)
+    return list(top_recognized)
 
 
 def get_top_recognized_artists(db):
