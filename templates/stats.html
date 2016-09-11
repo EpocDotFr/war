@@ -46,24 +46,25 @@
         <div style="width:50%">
             <h2>Top five recognized artists</h2>
 
-            <table>
-                <tbody>
-                {% for top_recognized_artist in top_recognized_artists %}
-                    <tr>
-                        <td>{{ top_recognized_artist._id }}</td>
-                        <td>{{ top_recognized_artist.total }} times</td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td><div class="alert info">Not enough data.</div></td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+            {% if top_recognized_artists %}
+                <table>
+                    <tbody>
+                    {% for top_recognized_artist in top_recognized_artists %}
+                        <tr>
+                            <td>{{ top_recognized_artist._id }}</td>
+                            <td>{{ top_recognized_artist.total }} times</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="alert info">Not enough data :/</div>
+            {% endif %}
         </div>
         <div style="width:50%">
             <h2>Top five recognized tracks</h2>
 
+            {% if top_recognized_tracks %}
             <table>
                 <tbody>
                 {% for top_recognized_track in top_recognized_tracks %}
@@ -71,13 +72,12 @@
                         <td>{{ top_recognized_track._id }}</td>
                         <td>{{ top_recognized_track.total }} times</td>
                     </tr>
-                {% else %}
-                    <tr>
-                        <td><div class="alert info">Not enough data.</div></td>
-                    </tr>
                 {% endfor %}
                 </tbody>
             </table>
+            {% else %}
+                <div class="alert info">Not enough data :/</div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

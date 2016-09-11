@@ -236,11 +236,14 @@ def _get_top_recognized(db, what):
         {'$match': {
             'done': {'$eq': True},
             'final_result': {'$ne': None},
-            'ACRCloud.status': {'$eq': 'success'},  # TODO temporary
+            'ACRCloud.status': {'$eq': 'success'}  # TODO temporary
         }},
         {'$group': {
             '_id': '$ACRCloud.data.'+what,  # TODO temporary
             'total': {'$sum': 1}
+        }},
+        {'$match': {
+            'total': {'$gte': 3}
         }},
         {'$limit': 5},
         {'$sort': {'total': -1}}
