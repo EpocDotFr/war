@@ -8,7 +8,7 @@ def save_locally(file, sample_id):
     file.save(sample_file_path)
 
 
-def save_remotely(sample_file):
+def save_remotely(file, sample_id):
     pass # TODO
 
 
@@ -34,5 +34,5 @@ def delete_locally(sample_id):
         os.remove(sample_file_path)
 
 
-def delete_remotely():
+def delete_remotely(sample_id):
     pass # TODO
