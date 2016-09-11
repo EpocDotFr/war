@@ -192,6 +192,48 @@ def results(sample_id):
     return render_template('results.html', sample=sample, result=result)
 
 
+# RSS of the latest recognitions
+@app.route('/recognitions/latest/rss')
+def latest_recognitions_rss():
+    db = get_database()
+
+    samples_list = get_latest_success_samples(db, num=10)
+
+    rss_items = []
+
+    for sample in samples_list:
+        result = sample[sample['final_result']]
+
+        description = 'It is <strong>{}</strong> with <strong>{}</strong>{} (submitted {}).'.format(
+            result['data']['artist'],
+            result['data']['title'],
+            ' from the album <strong>{}</strong>'.format(result['data']['album']) if 'album' in result['data'] else '',
+            sample['submitted_at'].humanize()
+        )
+
+        rss_items.append(PyRSS2Gen.RSSItem(
+            title=result['data']['artist'] + ' - ' + result['data']['title'],
+            link=url_for('results', sample_id=sample['_id'], _external=True),
+            description=description,
+            guid=PyRSS2Gen.Guid(url_for('results', sample_id=sample['_id'], _external=True)),
+            pubDate=sample['submitted_at'].datetime
+        ))
+
+    rss = PyRSS2Gen.RSS2(
+        title='Latest recognitions from WAR (Web Audio Recognizer)',
+        link=url_for('home', _external=True),
+        description='Latest recognitions from WAR (Web Audio Recognizer)',
+        language='en',
+        image=PyRSS2Gen.Image(url_for('static', filename='images/apple-icon-114x114.png', _external=True),
+                              'Latest recognitions from WAR (Web Audio Recognizer)',
+                              url_for('home', _external=True)),
+        lastBuildDate=arrow.now().datetime,
+        items=rss_items
+    )
+
+    return Response(rss.to_xml(encoding='utf-8'), mimetype='application/rss+xml')
+
+
 # Sitemap XML
 @app.route('/sitemap.xml')
 def sitemap_xml():

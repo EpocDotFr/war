@@ -19,7 +19,7 @@
         <p><small>There were <strong>{{ global_stats.total_successes_and_failures }}</strong> recognition requests so far.<br><strong>{{ global_stats.total_successes }}</strong> (<strong>{{ global_stats.total_successes_percent }}</strong> %) of them matched, the other <strong>{{ global_stats.total_failures }}</strong> (<strong>{{ global_stats.total_failures_percent }}</strong> %) didn't.</small></p>
     </div>
 
-    <p style="text-align: center !important;"><small>Latest recognitions: 
+    <p style="text-align: center !important;"><small>Latest recognitions (<a href="{{ url_for('latest_recognitions_rss') }}">RSS</a>):
         {% for latest_success_sample in latest_success_samples %}
             <a href="{{ url_for('results', sample_id=latest_success_sample._id) }}">{{ latest_success_sample[latest_success_sample.final_result].data.artist }} - {{ latest_success_sample[latest_success_sample.final_result].data.title }}</a> ({{ latest_success_sample.submitted_at.humanize() }}){% if not loop.last %} • {% endif %}
         {% endfor %}
