@@ -15,7 +15,7 @@
         <div style="width:50%">
             <h2>Sample file</h2>
 
-            {% if sample_file %}<audio controls src="{{ sample_file }}"></audio>{% else %}<div class="alert info">Doesn't exists.</div>{% endif %}
+            {% if sample_file %}<audio controls src="{{ sample_file }}" preload="none"></audio>{% else %}<div class="alert info">Doesn't exists.</div>{% endif %}
         </div>
    </div>
 
