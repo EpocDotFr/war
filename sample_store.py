@@ -4,16 +4,16 @@ import os
 
 
 def _get_remote_connection():
-    connection = swiftclient.Connection(
-        authurl=app.config['AUTH_URL'],
-        user=app.config['USERNAME'],
-        key=app.config['PASSWORD'],
-        tenant_name=app.config['TENANT_NAME'],
-        auth_version='2',
-        os_options={'tenant_id': app.config['TENANT_ID'], 'region_name': 'GRA1'}
-    )
+    object_store_config = app.config['OBJECT_STORE']
 
-    # connection.put_object(app.config['CONTAINER_URL'], container='samples', name='test')
+    return swiftclient.Connection(
+        authurl=object_store_config['AUTH_URL'],
+        user=object_store_config['USERNAME'],
+        key=object_store_config['PASSWORD'],
+        tenant_name=object_store_config['TENANT_NAME'],
+        auth_version='2',
+        os_options={'tenant_id': object_store_config['TENANT_ID'], 'region_name': object_store_config['REGION_NAME']}
+    )
 
 
 def save_locally(file, sample_id):
@@ -23,7 +23,14 @@ def save_locally(file, sample_id):
 
 
 def save_remotely(file, sample_id):
-    pass # TODO
+    conn = _get_remote_connection()
+
+    conn.put_object(
+        'samples',
+        sample_id + '.wav',
+        contents=file,
+        content_type='audio/wav'
+    )
 
 
 def get_local_path(sample_id, check_if_exists=False):
