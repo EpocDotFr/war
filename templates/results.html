@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block content %}
-    <p style="text-align: center !important;"><audio controls src="http://www.kozco.com/tech/piano2.wav" preload="none"></audio></p>
+    <p style="text-align: center !important; {% if not sample.file_url %}display: none;{% endif %}"><audio controls src="{{ sample.file_url }}" preload="none"></audio></p>
 
     <div id="processing" {% if sample['done'] %}style="display: none"{% endif %}>
         <p class="alert info">This sample is being processed! The results will automatically be displayed below (no need to refresh this page!).</p>
