@@ -170,6 +170,11 @@ def _get_one_sample(sample):
 
     if 'submitted_at' in sample and sample['submitted_at'] is not None:
         sample['submitted_at'] = arrow.get(sample['submitted_at'])
+    else:
+        sample['submitted_at'] = None
+
+    if 'file_url' not in sample:
+        sample['file_url'] = None
 
     return sample
 

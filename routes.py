@@ -361,9 +361,7 @@ def sample_manage(sample_id):
 
     audio_databases = get_enabled_audio_databases(db)
 
-    sample_file = sample_store.get_remote_path(sample)
-
-    return render_template('manage/sample.html', sample=sample, sample_file=sample_file, audio_databases=audio_databases)
+    return render_template('manage/sample.html', sample=sample, audio_databases=audio_databases)
 
 
 # Delete a sample

@@ -3,7 +3,7 @@ import swiftclient
 import os
 
 
-def _get_remote_connection():
+def _get_swift_client():
     object_store_config = app.config['OBJECT_STORE']
 
     return swiftclient.Connection(
@@ -23,9 +23,9 @@ def save_locally(file, sample_id):
 
 
 def save_remotely(file, sample_id):
-    conn = _get_remote_connection()
+    client = _get_swift_client()
 
-    conn.put_object(
+    client.put_object(
         'samples',
         sample_id + '.wav',
         contents=file,
@@ -44,8 +44,8 @@ def get_local_path(sample_id, check_if_exists=False):
     return sample_file_path
 
 
-def get_remote_path(sample):
-    return sample['remote_url'] if 'remote_url' in sample and sample['remote_url'] is not None else None
+def get_remote_path(sample_id):
+    return app.config['OBJECT_STORE']['STORAGE_URL'] + app.config['OBJECT_STORE']['TENANT_ID'] + '/samples/' + sample_id + '.wav'
 
 
 def delete_locally(sample_id):

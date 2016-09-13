@@ -66,8 +66,8 @@ def resetdb():
 
 
 @app.cli.command()
-def worker():
-    """Start the beanstalkd worker."""
+def samples_recognize():
+    """Samples recognization worker."""
     queue = get_queue()
     queue.watch('war-samples-recognize')
 
@@ -81,18 +81,44 @@ def worker():
     while True:
         job = queue.reserve()
 
-        app.logger.info('Incomming job')
+        if not job:
+            app.logger.error('Unable to reserve job')
+            continue
 
-        job_data = json.loads(job.body)
+        try:
+            job_data = json.loads(job.body)
+        except Exception as e:
+            app.logger.error(e)
+            continue
+
         sample_id = job_data['sample_id']
 
         # Get the sample in the database
         sample = get_one_sample_by_id(db, sample_id)
 
         if sample is None:
-            raise Exception('The sample {} does not exists in the database'.format(sample_id))
+            app.logger.error('The sample {} does not exists in the database'.format(sample_id))
+            continue
 
+        # Pusher channel where updates will be pushed
         push_channel = 'results-{}'.format(sample_id)
+
+        # Upload the sample to the object storage
+        try:
+            sample_file_path = sample_store.get_local_path(sample_id, check_if_exists=True)
+
+            with open(sample_file_path, 'rb') as sample_file:
+                sample_store.save_remotely(sample_file, sample_id)
+
+                sample_file_url = sample_store.get_remote_path(sample_id)
+
+                update_one_sample(db, sample_id, {'$set': {'file_url': sample_file_url}})
+                sample['file_url'] = sample_file_url
+
+                push.trigger(push_channel, 'can-play', {'file_url': sample_file_url})
+        except Exception as e:
+            app.logger.error(e)
+            continue
 
         audio_databases = get_enabled_audio_databases(db)
 
