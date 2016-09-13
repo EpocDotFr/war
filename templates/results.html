@@ -4,7 +4,7 @@
 
 {% block jsfiles %}
       {{ super() }}
-      {% if not sample['done'] %}
+      {% if not sample.done %}
           <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
           <script src="https://js.pusher.com/3.2/pusher.min.js"></script>
       {% endif %}
@@ -13,17 +13,17 @@
 {% block content %}
     <p style="text-align: center !important; {% if not sample.file_url %}display: none;{% endif %}"><audio controls src="{{ sample.file_url }}" preload="none"></audio></p>
 
-    <div id="processing" {% if sample['done'] %}style="display: none"{% endif %}>
+    <div id="processing" {% if sample.done %}style="display: none"{% endif %}>
         <p class="alert info">This sample is being processed! The results will automatically be displayed below (no need to refresh this page!).</p>
         <p>You can close this page and access it at any given time using this link:</p>
-        <p style="text-align: center !important;"><input type="text" readonly value="{{ url_for('results', sample_id=sample['_id'], _external=True) }}" onClick="this.setSelectionRange(0, this.value.length)"></p>
+        <p style="text-align: center !important;"><input type="text" readonly value="{{ url_for('results', sample_id=sample._id, _external=True) }}" onClick="this.setSelectionRange(0, this.value.length)"></p>
     </div>
-    <div id="done" {% if not sample['done'] %}style="display: none"{% endif %}>
+    <div id="done" {% if not sample.done %}style="display: none"{% endif %}>
         <p class="alert success">This sample finished being processed! Here are the final results.</p>
     </div>
 
-    <p id="result" {% if not sample['done'] %}style="display: none"{% endif %}>
-        {% if sample['done'] and result %}
+    <p id="result" {% if not sample.done %}style="display: none"{% endif %}>
+        {% if sample.done and result %}
             {% if result.status == 'failure' %}
                 Sorry, I don't know :/
             {% elif result.status == 'error' %}
@@ -36,7 +36,7 @@
 
     <p style="text-align: center !important;"><a href="{{ url_for('home') }}" class="button">« Back</a></p>
 
-    {% if not sample['done'] %}
+    {% if not sample.done %}
         <script>
         Zepto(function () {
             {% if config['DEBUG'] %}Pusher.logToConsole = true;{% endif %}
@@ -50,7 +50,7 @@
                 encrypted: true
             });
 
-            var channel = pusher.subscribe('results-{{ sample['_id'] }}');
+            var channel = pusher.subscribe('results-{{ sample._id }}');
 
             channel.bind('error', function(data) {
                 p_result.show();
