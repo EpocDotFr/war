@@ -43,5 +43,5 @@
         {% endif %}
    {% endfor %}
 
-    <p><a href="{{ url_for('manage') }}" class="button">« Back</a> {% if sample.file_url %}<a href="{{ url_for('sample_manage_requeue', sample_id=sample._id) }}" class="button">Requeue</a>{% endif %} <a href="{{ url_for('sample_manage_delete', sample_id=sample._id) }}" onclick="return confirm('Are you sure? This will also delete the sample file.')" class="button">Delete</a></p>
+    <p><a href="{{ url_for('manage') }}" class="button">« Back</a> {% if sample.file_url %}<a href="{{ url_for('sample_manage_requeue', sample_id=sample._id) }}" class="button">Requeue</a>{% endif %} <a href="{{ url_for('sample_manage_delete', sample_id=sample._id) }}" onclick="return confirm('Are you sure? This will also delete the sample file both locally and remotely.')" class="button">Delete</a></p>
 {% endblock %}

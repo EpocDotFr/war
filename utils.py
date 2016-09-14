@@ -151,6 +151,7 @@ def create_one_sample(db):
 
 def delete_one_sample(db, sample_id):
     sample_store.delete_locally(sample_id)
+    sample_store.delete_remotely(sample_id)
 
     return db.samples.delete_one({'_id': ObjectId(sample_id)}).deleted_count > 0
 

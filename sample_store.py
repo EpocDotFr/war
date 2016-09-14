@@ -56,4 +56,6 @@ def delete_locally(sample_id):
 
 
 def delete_remotely(sample_id):
-    pass # TODO
+    client = _get_swift_client()
+
+    client.delete_object('samples', sample_id + '.wav')
