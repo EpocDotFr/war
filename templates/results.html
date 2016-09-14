@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block content %}
-    <p style="text-align: center !important; {% if not sample.file_url %}display: none;{% endif %}"><audio controls src="{{ sample.file_url }}" preload="none"></audio></p>
+    <p id="player" style="text-align: center !important; {% if not sample.file_url %}display: none;{% endif %}"><audio controls src="{{ sample.file_url }}" preload="none"></audio></p>
 
     <div id="processing" {% if sample.done %}style="display: none"{% endif %}>
         <p class="alert info">This sample is being processed! The results will automatically be displayed below (no need to refresh this page!).</p>
@@ -44,6 +44,7 @@
             var div_processing = $('div#processing');
             var div_done = $('div#done');
             var p_result = $('p#result');
+            var p_player = $('p#player');
 
             var pusher = new Pusher('{{ config['PUSHER']['KEY'] }}', {
                 cluster: '{{ config['PUSHER']['CLUSTER'] }}',
@@ -51,6 +52,12 @@
             });
 
             var channel = pusher.subscribe('results-{{ sample._id }}');
+
+            channel.bind('can-play', function(data) {
+                p_player.show();
+                
+                p_player.children('audio').attr('src', data.file_url);
+            });
 
             channel.bind('error', function(data) {
                 p_result.show();
