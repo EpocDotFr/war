@@ -388,11 +388,6 @@ def sample_manage_requeue(sample_id):
     queue.use('war-samples-recognize')
     queue.put(json.dumps(recognization_job_data))
 
-    # TODO refactor this route to check if the local sample exists, if
-    # TODO not: download it from the object storage and save it locally (but
-    # TODO remove it as usual when all is done)
-    # TODO Or refactor the worker?
-
     flash('Sample was requeued successfully.', 'success')
 
     return redirect(url_for('sample_manage', sample_id=sample_id))

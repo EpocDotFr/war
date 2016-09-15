@@ -33,6 +33,15 @@ def save_remotely(file, sample_id):
     )
 
 
+def download_from_remote(sample_id):
+    client = _get_swift_client()
+
+    resp_headers, obj_contents =  client.get_object('samples', sample_id + '.wav')
+
+    with open(get_local_path(sample_id), 'wb') as local:
+        local.write(obj_contents)
+
+
 def get_local_path(sample_id, check_if_exists=False):
     sample_file_destination = os.path.abspath(app.config['SAMPLES_PATH'])
     sample_file_name = '{}.wav'.format(sample_id)
