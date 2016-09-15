@@ -32,8 +32,10 @@ else:
     import logging
     from logging.handlers import RotatingFileHandler
 
+    formatter = logging.Formatter("[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s")
     handler = RotatingFileHandler(os.path.join(app.config['LOGS_PATH'], 'app.log'), maxBytes=10000, backupCount=1)
     handler.setLevel(logging.INFO)
+    handler.setFormatter(formatter)
     app.logger.addHandler(handler)
 
 auth = HTTPBasicAuth()
@@ -137,6 +139,9 @@ def samples_recognize():
                 job.delete()
                 app.logger.error(e)
                 continue
+        elif os.path.exists(sample_file_path) and sample['file_url']:
+            # Do nothing
+            pass
         else:
             job.delete()
             app.logger.error('The sample {} doesn\'t have file to recognize at all'.format(sample_id))
@@ -148,7 +153,7 @@ def samples_recognize():
 
         # For each enabled audio database
         for audio_database_id, audio_database_instance in audio_databases.items():
-            if audio_database_id in sample:
+            if audio_database_id not in sample:
                 continue
 
             # Launch recognization process
