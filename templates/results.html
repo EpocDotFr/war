@@ -29,7 +29,7 @@
             {% elif result.status == 'error' %}
                 Sorry, an error occured :/ We have been informed about it.
             {% elif result.status == 'success' %}
-                It is <strong>{{ result.data.artist }}</strong> with <strong>{{ result.data.title }}</strong>{% if result.data.album %} from the album <strong>{{ result.data.album }}</strong>{% endif %}.<br>Search on <a href="https://www.youtube.com/results?search_query={{ result.data.search_terms }}">Youtube</a>, <a href="https://www.deezer.com/search/{{ result.data.search_terms }}">Deezer</a> or <a href="https://open.spotify.com/search/{{ result.data.search_terms }}">Spotify</a>?
+                It is <strong>{{ result.data.artist }}</strong> with <strong>{{ result.data.title }}</strong>{% if result.data.album %} from the album <strong>{{ result.data.album }}</strong>{% endif %}.<br>Search on <a href="https://www.youtube.com/results?search_query={{ result.data.search_terms }}">Youtube</a>, <a href="https://www.deezer.com/search/{{ result.data.search_terms }}">Deezer</a>, <a href="https://open.spotify.com/search/{{ result.data.search_terms }}">Spotify</a> or <a href="http://www.last.fm/search?q={{ result.data.search_terms }}">Last.fm</a>?
             {% endif %}
         {% endif %}
     </p>
