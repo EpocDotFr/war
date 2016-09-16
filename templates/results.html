@@ -3,11 +3,12 @@
 {% block title %}Results{% endblock %}
 
 {% block jsfiles %}
-      {{ super() }}
-      {% if not sample.done %}
-          <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
-          <script src="https://js.pusher.com/3.2/pusher.min.js"></script>
-      {% endif %}
+    {{ super() }}
+    {% if not sample.done %}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+        <script src="https://js.pusher.com/3.2.1/pusher.min.js"></script>
+        <script src="{{ url_for('static', filename='js/modernizr-custom.min.js') }}"></script>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -29,7 +30,7 @@
             {% elif result.status == 'error' %}
                 Sorry, an error occured :/ We have been informed about it.
             {% elif result.status == 'success' %}
-                It is <strong>{{ result.data.artist }}</strong> with <strong>{{ result.data.title }}</strong>{% if result.data.album %} from the album <strong>{{ result.data.album }}</strong>{% endif %}.<br>Search on <a href="https://www.youtube.com/results?search_query={{ result.data.search_terms }}">Youtube</a>, <a href="https://www.deezer.com/search/{{ result.data.search_terms }}">Deezer</a>, <a href="https://open.spotify.com/search/{{ result.data.search_terms }}">Spotify</a> or <a href="http://www.last.fm/search?q={{ result.data.search_terms }}">Last.fm</a>?
+                It is <strong>{{ result.data.artist }}</strong> with <strong>{{ result.data.title }}</strong>{% if result.data.album %} from the album <strong>{{ result.data.album }}</strong>{% endif %}.<br>Search on <a href="https://www.youtube.com/results?search_query={{ result.data.search_terms }}">YouTube</a>, <a href="https://www.deezer.com/search/{{ result.data.search_terms }}">Deezer</a>, <a href="https://open.spotify.com/search/{{ result.data.search_terms }}">Spotify</a> or <a href="http://www.last.fm/search?q={{ result.data.search_terms }}">Last.fm</a>?
             {% endif %}
         {% endif %}
     </p>
@@ -43,54 +44,66 @@
 
             var div_processing = $('div#processing');
             var div_done = $('div#done');
-            var p_result = $('p#result');
-            var p_player = $('p#player');
 
-            var pusher = new Pusher('{{ config['PUSHER']['KEY'] }}', {
-                cluster: '{{ config['PUSHER']['CLUSTER'] }}',
-                encrypted: true
-            });
+            if (Modernizr.websockets) {
+                var p_result = $('p#result');
+                var p_player = $('p#player');
 
-            var channel = pusher.subscribe('results-{{ sample._id }}');
+                var pusher = new Pusher('{{ config['PUSHER']['KEY'] }}', {
+                    cluster: '{{ config['PUSHER']['CLUSTER'] }}',
+                    encrypted: true
+                });
 
-            channel.bind('can-play', function(data) {
-                p_player.show();
-                
-                p_player.children('audio').attr('src', data.file_url);
-            });
+                var channel = pusher.subscribe('results-{{ sample._id }}');
 
-            channel.bind('error', function(data) {
-                p_result.show();
-                
-                p_result.html('Sorry, an error occured :/ We have been informed about it.');
-
-                div_processing.remove();
-                div_done.show();
-            });
-
-            channel.bind('failure', function(data) {
-                p_result.show();
-            
-                p_result.html('Sorry, I don\'t know :/');
-
-                div_processing.remove();
-                div_done.show();
-            });
-
-            channel.bind('success', function(data) {
-                var album_string = '';
-
-                if (data.album) {
-                    album_string = ' from the album <strong>'+data.album+'</strong>';
+                if (Modernizr.audio) {
+                    channel.bind('can-play', function(data) {
+                        p_player.show();
+                        p_player.children('audio').attr('src', data.file_url);
+                    });
+                } else {
+                    p_player.show();
+                    p_player.addClass('alert alert-error');
+                    p_player.html('Oh no, your web browser doesn\'t seem to support playing audio :/ You won\'t be able to listen to this sample. You can try on another web browser.');
                 }
-                
-                p_result.show();
 
-                p_result.html('It is <strong>'+data.artist+'</strong> with <strong>'+data.title+'</strong>'+album_string+'.<br>Search on <a href="https://www.youtube.com/results?search_query='+data.search_terms+'">Youtube</a>, <a href="https://www.deezer.com/search/'+data.search_terms+'">Deezer</a>, <a href="https://open.spotify.com/search/'+data.search_terms+'">Spotify</a> or <a href="http://www.last.fm/search?q='+data.search_terms+'">Last.fm</a>?');
+                channel.bind('error', function(data) {
+                    p_result.show();
+                    p_result.html('Sorry, an error occured :/ We have been informed about it.');
 
-                div_processing.remove();
+                    div_processing.remove();
+                    div_done.show();
+                });
+
+                channel.bind('failure', function(data) {
+                    p_result.show();
+                    p_result.html('Sorry, I don\'t know :/');
+
+                    div_processing.remove();
+                    div_done.show();
+                });
+
+                channel.bind('success', function(data) {
+                    var album_string = '';
+
+                    if (data.album) {
+                        album_string = ' from the album <strong>'+data.album+'</strong>';
+                    }
+                    
+                    p_result.show();
+
+                    p_result.html('It is <strong>'+data.artist+'</strong> with <strong>'+data.title+'</strong>'+album_string+'.<br>Search on <a href="https://www.youtube.com/results?search_query='+data.search_terms+'">YouTube</a>, <a href="https://www.deezer.com/search/'+data.search_terms+'">Deezer</a>, <a href="https://open.spotify.com/search/'+data.search_terms+'">Spotify</a> or <a href="http://www.last.fm/search?q='+data.search_terms+'">Last.fm</a>?');
+
+                    div_processing.remove();
+                    div_done.show();
+                });
+            } else {
+                div_processing.children('p.alert.info').html('This sample is being processed!');
+                div_done.removeClass();
                 div_done.show();
-            });
+                div_done.addClass('alert error');
+                div_done.html('Oh no, your web browser doesn\'t seem to support Websockets :/ You won\'t be able to get results displaying automatically. Please refresh this page manually.');
+            }
         });
         </script>
     {% endif %}
