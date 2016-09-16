@@ -4,37 +4,39 @@
 
 {% block jsfiles %}
       {{ super() }}
-      {% if not sample['done'] %}
+      {% if not sample.done %}
           <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
           <script src="https://js.pusher.com/3.2/pusher.min.js"></script>
       {% endif %}
 {% endblock %}
 
 {% block content %}
-    <div id="processing" {% if sample['done'] %}style="display: none"{% endif %}>
+    <p id="player" style="text-align: center !important; {% if not sample.file_url %}display: none;{% endif %}"><audio controls src="{{ sample.file_url }}" preload="none"></audio></p>
+
+    <div id="processing" {% if sample.done %}style="display: none"{% endif %}>
         <p class="alert info">This sample is being processed! The results will automatically be displayed below (no need to refresh this page!).</p>
         <p>You can close this page and access it at any given time using this link:</p>
-        <p style="text-align: center !important;"><input type="text" readonly value="{{ url_for('results', sample_id=sample['_id'], _external=True) }}" onClick="this.setSelectionRange(0, this.value.length)"></p>
+        <p style="text-align: center !important;"><input type="text" readonly value="{{ url_for('results', sample_id=sample._id, _external=True) }}" onClick="this.setSelectionRange(0, this.value.length)"></p>
     </div>
-    <div id="done" {% if not sample['done'] %}style="display: none"{% endif %}>
+    <div id="done" {% if not sample.done %}style="display: none"{% endif %}>
         <p class="alert success">This sample finished being processed! Here are the final results.</p>
     </div>
 
-    <p id="result" {% if not sample['done'] %}style="display: none"{% endif %}>
-        {% if sample['done'] and result %}
+    <p id="result" {% if not sample.done %}style="display: none"{% endif %}>
+        {% if sample.done and result %}
             {% if result.status == 'failure' %}
                 Sorry, I don't know :/
             {% elif result.status == 'error' %}
                 Sorry, an error occured :/ We have been informed about it.
             {% elif result.status == 'success' %}
-                It is <strong>{{ result.data.artist }}</strong> with <strong>{{ result.data.title }}</strong>{% if result.data.album %} from the album <strong>{{ result.data.album }}</strong>{% endif %}.<br>Search on <a href="https://www.youtube.com/results?search_query={{ result.data.search_terms }}">Youtube</a>, <a href="https://www.deezer.com/search/{{ result.data.search_terms }}">Deezer</a> or <a href="https://open.spotify.com/search/{{ result.data.search_terms }}">Spotify</a>?
+                It is <strong>{{ result.data.artist }}</strong> with <strong>{{ result.data.title }}</strong>{% if result.data.album %} from the album <strong>{{ result.data.album }}</strong>{% endif %}.<br>Search on <a href="https://www.youtube.com/results?search_query={{ result.data.search_terms }}">Youtube</a>, <a href="https://www.deezer.com/search/{{ result.data.search_terms }}">Deezer</a>, <a href="https://open.spotify.com/search/{{ result.data.search_terms }}">Spotify</a> or <a href="http://www.last.fm/search?q={{ result.data.search_terms }}">Last.fm</a>?
             {% endif %}
         {% endif %}
     </p>
 
     <p style="text-align: center !important;"><a href="{{ url_for('home') }}" class="button">« Back</a></p>
 
-    {% if not sample['done'] %}
+    {% if not sample.done %}
         <script>
         Zepto(function () {
             {% if config['DEBUG'] %}Pusher.logToConsole = true;{% endif %}
@@ -42,13 +44,20 @@
             var div_processing = $('div#processing');
             var div_done = $('div#done');
             var p_result = $('p#result');
+            var p_player = $('p#player');
 
             var pusher = new Pusher('{{ config['PUSHER']['KEY'] }}', {
                 cluster: '{{ config['PUSHER']['CLUSTER'] }}',
                 encrypted: true
             });
 
-            var channel = pusher.subscribe('results-{{ sample['_id'] }}');
+            var channel = pusher.subscribe('results-{{ sample._id }}');
+
+            channel.bind('can-play', function(data) {
+                p_player.show();
+                
+                p_player.children('audio').attr('src', data.file_url);
+            });
 
             channel.bind('error', function(data) {
                 p_result.show();
@@ -77,7 +86,7 @@
                 
                 p_result.show();
 
-                p_result.html('It is <strong>'+data.artist+'</strong> with <strong>'+data.title+'</strong>'+album_string+'.<br>Search on <a href="https://www.youtube.com/results?search_query='+data.search_terms+'">Youtube</a>, <a href="https://www.deezer.com/search/'+data.search_terms+'">Deezer</a> or <a href="https://open.spotify.com/search/'+data.search_terms+'">Spotify</a>?');
+                p_result.html('It is <strong>'+data.artist+'</strong> with <strong>'+data.title+'</strong>'+album_string+'.<br>Search on <a href="https://www.youtube.com/results?search_query='+data.search_terms+'">Youtube</a>, <a href="https://www.deezer.com/search/'+data.search_terms+'">Deezer</a>, <a href="https://open.spotify.com/search/'+data.search_terms+'">Spotify</a> or <a href="http://www.last.fm/search?q='+data.search_terms+'">Last.fm</a>?');
 
                 div_processing.remove();
                 div_done.show();

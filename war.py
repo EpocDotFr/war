@@ -2,12 +2,8 @@ from flask import Flask, render_template, request, abort, json
 from flask_httpauth import HTTPBasicAuth
 from flask.ext.misaka import Misaka
 from urllib.parse import quote_plus
-from bugsnag.handlers import BugsnagHandler
 from werkzeug.exceptions import HTTPException
-from bugsnag.flask import handle_exceptions
 import gauges
-import bugsnag
-import bugsnag_client
 import os
 
 
@@ -20,15 +16,31 @@ app.config.from_pyfile('config.py')
 Misaka(app)
 
 gauges.TOKEN = app.config['GAUGES']['API_TOKEN']
-bugsnag_client.API_KEY = app.config['BUGSNAG']['ORG_API_KEY']
 
 if not app.config['DEBUG']:
+    from bugsnag.handlers import BugsnagHandler
+    from bugsnag.flask import handle_exceptions
+    import bugsnag
+    import bugsnag_client
+
+    bugsnag_client.API_KEY = app.config['BUGSNAG']['ORG_API_KEY']
+
     bugsnag.configure(api_key=app.config['BUGSNAG']['NOTIFIER_API_KEY'])
     handle_exceptions(app)
     app.logger.addHandler(BugsnagHandler())
+else:
+    import logging
+    from logging.handlers import RotatingFileHandler
+
+    formatter = logging.Formatter("[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s")
+    handler = RotatingFileHandler(os.path.join(app.config['LOGS_PATH'], 'app.log'), maxBytes=10000, backupCount=1)
+    handler.setLevel(logging.INFO)
+    handler.setFormatter(formatter)
+    app.logger.addHandler(handler)
 
 auth = HTTPBasicAuth()
 
+import sample_store
 from utils import *
 
 # -----------------------------------------------------------
@@ -65,8 +77,8 @@ def resetdb():
 
 
 @app.cli.command()
-def worker():
-    """Start the beanstalkd worker."""
+def samples_recognize():
+    """Samples recognization worker."""
     queue = get_queue()
     queue.watch('war-samples-recognize')
 
@@ -80,18 +92,60 @@ def worker():
     while True:
         job = queue.reserve()
 
-        app.logger.info('Incomming job')
+        if not job:
+            app.logger.error('Unable to reserve job')
+            continue
 
-        job_data = json.loads(job.body)
+        try:
+            job_data = json.loads(job.body)
+        except Exception as e:
+            job.delete()
+            app.logger.error(e)
+            continue
+
         sample_id = job_data['sample_id']
 
         # Get the sample in the database
         sample = get_one_sample_by_id(db, sample_id)
 
         if sample is None:
-            raise Exception('The sample {} does not exists in the database'.format(sample_id))
+            job.delete()
+            app.logger.error('The sample {} does not exists in the database'.format(sample_id))
+            continue
 
+        # Pusher channel where updates will be pushed
         push_channel = 'results-{}'.format(sample_id)
+
+        sample_file_path = sample_store.get_local_path(sample_id)
+
+        # Upload the sample to the object storage if it's not already done
+        if sample['file_url'] is None and os.path.exists(sample_file_path):
+            try:
+                with open(sample_file_path, 'rb') as sample_file:
+                    sample_store.save_remotely(sample_file, sample_id)
+
+                sample_file_url = sample_store.get_remote_path(sample_id)
+
+                update_one_sample(db, sample_id, {'$set': {'file_url': sample_file_url}})
+                sample['file_url'] = sample_file_url
+
+                push.trigger(push_channel, 'can-play', {'file_url': sample_file_url})
+            except Exception as e:
+                app.logger.error(e)
+        elif not os.path.exists(sample_file_path) and sample['file_url']:
+            try:
+                sample_store.download_from_remote(sample_id)
+            except Exception as e:
+                job.delete()
+                app.logger.error(e)
+                continue
+        elif os.path.exists(sample_file_path) and sample['file_url']:
+            # Do nothing
+            pass
+        else:
+            job.delete()
+            app.logger.error('The sample {} doesn\'t have file to recognize at all'.format(sample_id))
+            continue
 
         audio_databases = get_enabled_audio_databases(db)
 
@@ -99,7 +153,7 @@ def worker():
 
         # For each enabled audio database
         for audio_database_id, audio_database_instance in audio_databases.items():
-            if audio_database_id in sample and sample[audio_database_id] is not None:
+            if audio_database_id not in sample:
                 continue
 
             # Launch recognization process
@@ -166,8 +220,7 @@ def worker():
         job.delete()
 
         if not there_were_errors:
-            app.logger.info('No errors')
-            os.remove(get_sample_file_path(sample_id))
+            sample_store.delete_locally(sample_id)
         else:
             app.logger.info('There were errors')
 

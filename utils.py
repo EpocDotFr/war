@@ -1,12 +1,12 @@
+from bson.objectid import ObjectId
 from flask import g
-from war import app
 from pymongo import MongoClient
 from pystalkd import Beanstalkd
-from bson.objectid import ObjectId
 from slugify import slugify
-import os
-import pusher
+from war import app
+import sample_store
 import arrow
+import pusher
 
 
 def get_database():
@@ -150,10 +150,8 @@ def create_one_sample(db):
 
 
 def delete_one_sample(db, sample_id):
-    sample_file_path = get_sample_file_path(sample_id)
-
-    if os.path.exists(sample_file_path):
-        os.remove(sample_file_path)
+    sample_store.delete_locally(sample_id)
+    sample_store.delete_remotely(sample_id)
 
     return db.samples.delete_one({'_id': ObjectId(sample_id)}).deleted_count > 0
 
@@ -173,6 +171,11 @@ def _get_one_sample(sample):
 
     if 'submitted_at' in sample and sample['submitted_at'] is not None:
         sample['submitted_at'] = arrow.get(sample['submitted_at'])
+    else:
+        sample['submitted_at'] = None
+
+    if 'file_url' not in sample:
+        sample['file_url'] = None
 
     return sample
 
@@ -258,21 +261,6 @@ def get_top_recognized_artists(db):
 
 def get_top_recognized_tracks(db):
     return _get_top_recognized(db, 'title')
-
-
-def get_sample_file_path(sample_id, check_if_exists=False):
-    sample_file_destination = os.path.abspath(app.config['SAMPLES_PATH'])
-    sample_file_name = '{}.wav'.format(sample_id)
-    sample_file_path = os.path.join(sample_file_destination, sample_file_name)
-
-    if check_if_exists and not os.path.exists(sample_file_path):
-        raise Exception('The sample file "{}" does not exists on the file system'.format(sample_file_path))
-
-    return sample_file_path
-
-def get_public_sample_file_url(sample_id):
-    return '/samples/{}.wav'.format(sample_id)
-
 
 def get_enabled_audio_databases(db):
     ret = {}

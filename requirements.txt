@@ -11,3 +11,5 @@ python-slugify
 blinker
 bugsnag
 Flask-Misaka
+python-swiftclient
+python-keystoneclient

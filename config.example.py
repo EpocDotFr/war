@@ -15,3 +15,4 @@ SUPERVISORD = {'HOST': '127.0.0.1', 'PORT': 9666}
 PUSHER = {'APP_ID': 'ahah', 'KEY': 'ahah', 'SECRET': 'ahah', 'CLUSTER': 'eu'}
 ENABLED_AUDIO_DATABASES = ('ACRCloud', 'Gracenote', 'AudibleMagic', 'MufinAudioID', 'AcoustID')
 ACRCLOUD = {'HOST': 'eu-west-1.api.acrcloud.com', 'ACCESS_KEY': 'ahah', 'ACCESS_SECRET': 'ahah'}
+OBJECT_STORE = {'AUTH_URL': 'https://auth.example.com/v2.0', 'STORAGE_URL': 'https://storage.loc1.example.com/v1/AUTH_', 'TENANT_ID': 'ahah', 'TENANT_NAME': 'ahah', 'USERNAME': 'ahah', 'PASSWORD': 'ahah', 'REGION_NAME': 'XXX'}
