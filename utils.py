@@ -234,6 +234,34 @@ def get_global_stats(db):
     }
 
 
+def _get_top_recognized(db, what):
+    top_recognized = db.samples.aggregate([
+        {'$match': {
+            'done': {'$eq': True},
+            'final_result': {'$ne': None},
+            'ACRCloud.status': {'$eq': 'success'}  # TODO temporary
+        }},
+        {'$group': {
+            '_id': '$ACRCloud.data.'+what,  # TODO temporary
+            'total': {'$sum': 1}
+        }},
+        {'$match': {
+            'total': {'$gte': 3}
+        }},
+        {'$limit': 5},
+        {'$sort': {'total': -1}}
+    ])
+
+    return list(top_recognized)
+
+
+def get_top_recognized_artists(db):
+    return _get_top_recognized(db, 'artist')
+
+
+def get_top_recognized_tracks(db):
+    return _get_top_recognized(db, 'title')
+
 def get_enabled_audio_databases(db):
     ret = {}
 

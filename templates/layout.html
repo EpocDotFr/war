@@ -30,6 +30,7 @@
     {% block jsfiles %} {% endblock %}
 
     <link rel="alternate" type="application/rss+xml" title="Latest news from WAR (Web Audio Recognizer)" href="{{ url_for('news_rss', _external=True) }}" />
+    <link rel="alternate" type="application/rss+xml" title="Latest recognitions from WAR (Web Audio Recognizer)" href="{{ url_for('latest_recognitions_rss', _external=True) }}" />
 
     {% if g.NO_INDEX %}<meta name="robots" content="noindex,nofollow,noarchive" />{% endif %}
 
