@@ -3,11 +3,12 @@
 {% block title %}Results{% endblock %}
 
 {% block jsfiles %}
-      {{ super() }}
-      {% if not sample.done %}
-          <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
-          <script src="https://js.pusher.com/3.2/pusher.min.js"></script>
-      {% endif %}
+    {{ super() }}
+    {% if not sample.done %}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+        <script src="https://js.pusher.com/3.2/pusher.min.js"></script>
+        <script src="{{ url_for('static', filename='js/modernizr-custom.min.js') }}"></script>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -53,15 +54,19 @@
 
             var channel = pusher.subscribe('results-{{ sample._id }}');
 
-            channel.bind('can-play', function(data) {
+            if (Modernizr.audio) {
+                channel.bind('can-play', function(data) {
+                    p_player.show();
+                    p_player.children('audio').attr('src', data.file_url);
+                });
+            } else {
                 p_player.show();
-                
-                p_player.children('audio').attr('src', data.file_url);
-            });
+                p_player.addClass('alert alert-error');
+                p_player.html('Oh no, your web browser doesn\'t seem to support playing audio :/ You won\'t be able to listen to this sample. Please try on another web browser.');
+            }
 
             channel.bind('error', function(data) {
                 p_result.show();
-                
                 p_result.html('Sorry, an error occured :/ We have been informed about it.');
 
                 div_processing.remove();
@@ -70,7 +75,6 @@
 
             channel.bind('failure', function(data) {
                 p_result.show();
-            
                 p_result.html('Sorry, I don\'t know :/');
 
                 div_processing.remove();
