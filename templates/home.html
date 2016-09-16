@@ -130,6 +130,8 @@
             button_recognize.parent().remove();
             displayStatus('error', 'Oh no, your web browser doesn\'t seem to support audio recording :/ You won\'t be able to submit a sample. Please try on another web browser.');
         } else {
+            navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+
             button_recognize.on('click', function() {
                 if (recording) {
                     $(this).text('Recognize');
@@ -148,7 +150,7 @@
                 } else {
                     displayStatus('info', 'Waiting for your permission...');
 
-                    (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia)({audio: true, video: false}, onStreamConnected, onStreamError);
+                    navigator.getUserMedia({audio: true, video: false}, onStreamConnected, onStreamError);
                 }
             });
         }
