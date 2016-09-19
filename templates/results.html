@@ -16,15 +16,15 @@
     <p id="player" style="text-align: center !important; {% if not sample.file_url %}display: none;{% endif %}"><audio controls src="{{ sample.file_url }}" preload="none"></audio></p>
 
     <div id="processing" {% if sample.done %}style="display: none"{% endif %}>
-        <p class="alert info">This sample is being processed! The results will automatically be displayed below (no need to refresh this page!).</p>
+        <p>This sample is being processed! The results will automatically be displayed below (no need to refresh this page!).</p>
         <p>You can close this page and access it at any given time using this link:</p>
         <p style="text-align: center !important;"><input type="text" readonly value="{{ url_for('results', sample_id=sample._id, _external=True) }}" onClick="this.setSelectionRange(0, this.value.length)"></p>
     </div>
     <div id="done" {% if not sample.done %}style="display: none"{% endif %}>
-        <p class="alert success">This sample finished being processed! Here are the final results.</p>
+        <p>This sample finished being processed! Here are the final results.</p>
     </div>
 
-    <p id="result" {% if not sample.done %}style="display: none"{% endif %}>
+    <p id="result" {% if not sample.done %}style="display: none"{% endif %} class="alert {% if sample.done and result %}{% if result.status == 'failure' %}info{% elif result.status == 'error' %}error{% elif result.status == 'success' %}success{% endif %}{% endif %}">
         {% if sample.done and result %}
             {% if result.status == 'failure' %}
                 Sorry, I don't know :/
