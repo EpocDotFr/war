@@ -16,19 +16,26 @@
         <p><button id="recognize">Recognize</button></p>
 
         <div id="progress"></div>
-
-        <p><small>There were <strong>{{ global_stats.total_successes_and_failures }}</strong> recognition requests so far.<br><strong>{{ global_stats.total_successes }}</strong> (<strong>{{ global_stats.total_successes_percent }}</strong> %) of them matched, the other <strong>{{ global_stats.total_failures }}</strong> (<strong>{{ global_stats.total_failures_percent }}</strong> %) didn't.</small></p>
     </div>
 
-    <p style="text-align: center !important;"><small>Latest recognitions (<a href="{{ url_for('latest_recognitions_rss') }}">RSS</a>):
+    <hr>
+    
+    <div class="row separated">
+        <div style="width:50%">
+            <p style="text-align: right !important;"><small>There were <strong>{{ global_stats.total_successes_and_failures }}</strong> recognition requests so far.<br><strong>{{ global_stats.total_successes }}</strong> (<strong>{{ global_stats.total_successes_percent }}</strong> %) of them matched, the other <strong>{{ global_stats.total_failures }}</strong> (<strong>{{ global_stats.total_failures_percent }}</strong> %) didn't.</small></p>
+        </div>
+        <div style="width:50%">
+            <p style="text-align: left !important;"><small><strong>Latest recognitions (<a href="{{ url_for('latest_recognitions_rss') }}">RSS</a>):</strong> 
         {% for latest_success_sample in latest_success_samples %}
             <a href="{{ url_for('results', sample_id=latest_success_sample._id) }}">{{ latest_success_sample[latest_success_sample.final_result].data.artist }} - {{ latest_success_sample[latest_success_sample.final_result].data.title }}</a> ({{ latest_success_sample.submitted_at.humanize() }}){% if not loop.last %} • {% endif %}
         {% endfor %}
     </small></p>
+        </div>
+    </div>
 
     {% if latest_news %}
         <hr>
-        <h3 class="latest-news"><a href="{{ url_for('one_news', slug=latest_news.slug) }}">{{ latest_news.title }}</a> <small>— published {{ latest_news.date.humanize() }}</small></h3>
+        <h3 class="latest-news"><small>Latest news:</small> <a href="{{ url_for('one_news', slug=latest_news.slug) }}">{{ latest_news.title }}</a> <small>— published {{ latest_news.date.humanize() }}</small></h3>
     {% endif %}
 
     <script>
