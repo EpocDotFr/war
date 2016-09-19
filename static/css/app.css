@@ -365,7 +365,5 @@ footer p {
  * Manage section */
 
 .markdown {
-    font-family: monospace;
-    font-size: 12px;
     min-height: 400px;
 }
