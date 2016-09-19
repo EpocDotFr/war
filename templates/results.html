@@ -37,7 +37,7 @@
     </p>
 
     <p style="text-align: center !important;"><a href="{{ url_for('home') }}" class="button">« Back</a></p>
-    {% if sample.done %}<p style="text-align: center !important;"><small>Submitted {{ sample.submitted_at.humanize() }}</small></p>{% endif %}
+    <p style="text-align: center !important;"><small>Submitted {{ sample.submitted_at.humanize() }}</small></p>
 
     {% if not sample.done %}
         <script>
