@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 
 {% block page_title %}<h1>Results</h1>{% endblock %}
-{% block meta_title %}Results{% if sample.done and result %}: {{ result.data.artist }} - {{ result.data.title }}{% endif %}{% endblock %}
+{% block meta_title %}Results{% if sample.done and result and result.status == 'success' %}: {{ result.data.artist }} - {{ result.data.title }}{% endif %}{% endblock %}
 
 {% block jsfiles %}
     {{ super() }}
