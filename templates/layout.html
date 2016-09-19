@@ -10,7 +10,7 @@
     <meta name="keywords" content="web, audio, recognizer, recognize, music, track, musics, tracks, recognition, online, free, shazam, epoc, epocdotfr">
     <meta name="author" content="Epoc">
 
-    <title>{% block title %}{% endblock %}{% if self.title() | trim %} • {% endif %}This is WAR! (Web Audio Recognizer)</title>
+    <title>{% block meta_title %}{% endblock %}{% if self.meta_title() | trim %} • {% endif %}This is WAR! (Web Audio Recognizer)</title>
 
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
     <!--[if IE]><link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" /><![endif]-->
@@ -43,7 +43,7 @@
 
     <div class="page-wrapper">
         <div class="content">
-            {% if self.title() | trim %}<h1>{{ self.title() }}</h1>{% endif %}
+            {% block page_title %}{% endblock %}
 
             {% with flash_messages = get_flashed_messages(with_categories=true) %}
               {% if flash_messages %}

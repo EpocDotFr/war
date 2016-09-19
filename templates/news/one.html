@@ -1,6 +1,7 @@
 {% extends 'layout.html' %}
 
-{% block title %}News › {{ the_news.title }}{% endblock %}
+{% block page_title %}<h1>News › {{ the_news.title }}</h1>{% endblock %}
+{% block meta_title %}News › {{ the_news.title }}{% endblock %}
 
 {% block content %}
     {% if the_news.date %}<p><em>Published {{ the_news.date.humanize() }}</em></p>{% else %}<p class="alert info">This is a draft.</p>{% endif %}

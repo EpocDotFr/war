@@ -1,6 +1,7 @@
 {% extends 'layout.html' %}
 
-{% block title %}Manage › News › {{ the_news.title }}{% endblock %}
+{% block page_title %}<h1>Manage › News › {{ the_news.title }}</h1>{% endblock %}
+{% block meta_title %}Manage › News › {{ the_news.title }}{% endblock %}
 
 {% block jsfiles %}
     {{ super() }}

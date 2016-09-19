@@ -1,5 +1,7 @@
 {% extends 'layout.html' %}
 
+{% block page_title %}<h1>Welcome to WAR!</h1>{% endblock %}
+
 {% block jsfiles %}
     {{ super() }}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
@@ -8,8 +10,6 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Welcome to WAR!</h1>
-
     <div class="recognize-block">
         <p> Click the <strong>Recognize</strong> button below, give <strong>WAR</strong> the permission to access one of your recording devices, and wait {{ config['SAMPLE_DURATION'] }} seconds until the sample is submitted. <small><a href="{{ url_for('faq') }}">Troubles?</a></small></p>
 

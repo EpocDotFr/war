@@ -1,6 +1,7 @@
 {% extends 'layout.html' %}
 
-{% block title %}News{% endblock %}
+{% block page_title %}<h1>News</h1>{% endblock %}
+{% block meta_title %}News{% endblock %}
 
 {% block content %}
     {% for the_news in news_list %}
