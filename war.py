@@ -15,7 +15,7 @@ import os
 app = Flask(__name__, static_url_path='')
 app.config.from_pyfile('config.py')
 Misaka(app)
-db = MongoAlchemy(app)
+db = MongoAlchemy(app, config_prefix='MONGODB')
 
 gauges.TOKEN = app.config['GAUGES']['API_TOKEN']
 
