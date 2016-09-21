@@ -43,6 +43,7 @@ else:
 auth = HTTPBasicAuth()
 
 import sample_store
+import models
 from utils import *
 
 # -----------------------------------------------------------
