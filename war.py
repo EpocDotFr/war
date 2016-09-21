@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, abort, json
 from flask_httpauth import HTTPBasicAuth
 from flask_misaka import Misaka
+from flask_mongoalchemy import MongoAlchemy
 from urllib.parse import quote_plus
 from werkzeug.exceptions import HTTPException
 import gauges
@@ -14,6 +15,7 @@ import os
 app = Flask(__name__, static_url_path='')
 app.config.from_pyfile('config.py')
 Misaka(app)
+db = MongoAlchemy(app)
 
 gauges.TOKEN = app.config['GAUGES']['API_TOKEN']
 

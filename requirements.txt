@@ -11,5 +11,6 @@ python-slugify
 blinker
 bugsnag
 Flask-Misaka
+Flask-MongoAlchemy
 python-swiftclient
 python-keystoneclient
