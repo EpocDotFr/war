@@ -17,10 +17,10 @@ class Sample(db.Document):
     done = db.BoolField(default=False)
     ACRCloud = db.DocumentField(AudioDatabaseResult, allow_none=True)
     submitted_at = db.DateTimeField()
-    final_result = db.StringField(allow_none=True)
+    final_result = db.EnumField(db.StringField(), 'ACRCloud', allow_none=True)
     file_url = db.StringField(allow_none=True)
 
-    @computed_field
+    @db.computed_field
     def result(obj):
         return obj[obj.final_result] if 'final_result' in obj and obj.final_result is not None else None
 
