@@ -1,7 +1,7 @@
 from flask import Response, jsonify, url_for, flash, redirect
 from war import *
 from urllib.parse import quote_plus
-from flask.ext.misaka import markdown
+from flask_misaka import markdown
 import xmlrpc.client
 import bson
 import PyRSS2Gen

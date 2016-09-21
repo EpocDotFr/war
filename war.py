@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, abort, json
 from flask_httpauth import HTTPBasicAuth
-from flask.ext.misaka import Misaka
+from flask_misaka import Misaka
 from urllib.parse import quote_plus
 from werkzeug.exceptions import HTTPException
 import gauges
