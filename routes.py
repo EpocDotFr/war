@@ -210,11 +210,10 @@ def latest_recognitions_rss():
     for sample in samples_list:
         result = sample[sample['final_result']]
 
-        description = 'It is <strong>{}</strong> with <strong>{}</strong>{} (submitted {}).'.format(
+        description = 'It is <strong>{}</strong> with <strong>{}</strong>{}.'.format(
             result['data']['artist'],
             result['data']['title'],
-            ' from the album <strong>{}</strong>'.format(result['data']['album']) if 'album' in result['data'] else '',
-            sample['submitted_at'].humanize()
+            ' from the album <strong>{}</strong>'.format(result['data']['album']) if 'album' in result['data'] else ''
         )
 
         rss_items.append(PyRSS2Gen.RSSItem(
