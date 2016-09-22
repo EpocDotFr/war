@@ -203,6 +203,7 @@ def samples_recognize():
 def define_globals():
     g.INCLUDE_WEB_ANALYTICS = not app.config['DEBUG']
     g.NO_INDEX = False
+    g.SHOW_MANAGE_BAR = False
 
 
 @app.before_request
@@ -216,6 +217,12 @@ def manage_area():
     if request.path.startswith('/manage'):
         g.INCLUDE_WEB_ANALYTICS = False
         g.NO_INDEX = True
+
+
+@app.before_request
+def show_manage_bar():
+    if auth.username() is not None:
+        g.SHOW_MANAGE_BAR = True
 
 
 @app.teardown_appcontext

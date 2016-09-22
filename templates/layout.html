@@ -37,6 +37,17 @@
     <meta name="google-site-verification" content="TCvS4J7s1J_4HY3BF5tqeGMM45VZgKANeBDPY8k2ins">
 </head>
 <body>
+    {% if g.SHOW_MANAGE_BAR %}
+    <div class="manage-bar">
+        <div class="content">
+            <strong>Manage Bar</strong> — 
+            <a href="{{ url_for('manage') }}">Home</a>
+
+            {% block manage_bar_items %}{% endblock %}
+        </div>
+    </div>
+    {% endif %}
+
     <header>
         <a href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='images/logo_full.png') }}" alt="WAR (Web Audio Recognizer) logo"></a>
     </header>

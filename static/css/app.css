@@ -377,3 +377,16 @@ footer p {
 .markdown {
     min-height: 400px;
 }
+
+.manage-bar {
+    background-color: #facb1b;
+    color: #333;
+    border-bottom: 1px solid #333;
+}
+
+.manage-bar a,
+.manage-bar a:visited,
+.manage-bar a:hover,
+.manage-bar a:focus {
+    color: inherit;
+}
