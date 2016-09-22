@@ -51,35 +51,6 @@ from utils import *
 
 
 @app.cli.command()
-def initdb():
-    """Create the MongoDB collection's goods."""
-    db = get_database()
-
-    db.samples.create_index('audio_database')
-    db.news.create_index('slug')
-
-
-@app.cli.command()
-def emptydb():
-    """Empty the MongoDB database."""
-    db = get_database()
-
-    db.samples.delete_many({})
-    db.stats.delete_many({})
-    db.news.delete_many({})
-
-
-@app.cli.command()
-def resetdb():
-    """Drop the MongoDB database."""
-    db = get_database()
-
-    db.samples.drop()
-    db.stats.drop()
-    db.news.drop()
-
-
-@app.cli.command()
 def samples_recognize():
     """Samples recognization worker."""
     queue = get_queue()

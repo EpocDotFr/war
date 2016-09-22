@@ -135,10 +135,19 @@ button:disabled {
 /************************************************************************
  * Alerts */
 
-.alert {
+p.alert,
+div.alert {
     padding: 10px;
-    border-radius: 5px;
     margin-bottom: 15px;
+}
+
+span.alert,
+small.alert {
+    padding: 3px;
+}
+
+.alert {
+    border-radius: 5px;
     border: 2px solid;
 }
 
