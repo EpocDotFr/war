@@ -221,7 +221,7 @@ def manage_area():
 
 @app.before_request
 def show_manage_bar():
-    if auth.username() is not None:
+    if auth.username() != '' and auth.username() != 'logout' and auth.username() != None:
         g.SHOW_MANAGE_BAR = True
 
 
