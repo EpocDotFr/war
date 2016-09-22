@@ -3,6 +3,8 @@
 {% block page_title %}<h1>Results</h1>{% endblock %}
 {% block meta_title %}Results{% if sample.done and result and result.status == 'success' %}: {{ result.data.artist }} - {{ result.data.title }}{% endif %}{% endblock %}
 
+{% block manage_bar_items %} • <a href="{{ url_for('sample_manage', sample_id=sample._id) }}">Manage this sample</a>{% if sample.file_url %} • <a href="{{ url_for('sample_manage_requeue', sample_id=sample._id) }}">Requeue</a>{% endif %} • <a href="{{ url_for('sample_manage_delete', sample_id=sample._id) }}" onclick="return confirm('Are you sure? This will also delete the sample file both locally and remotely.')">Delete</a>{% endblock %}
+
 {% block jsfiles %}
     {{ super() }}
     {% if not sample.done %}
