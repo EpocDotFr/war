@@ -54,25 +54,6 @@ def get_latest_news(db):
         return None
 
 
-def get_news_list(db, limit=None, admin=False):
-    params = {}
-
-    if not admin:
-        params = {'date': {'$ne': None, '$lte': arrow.now().datetime}}
-
-    news_list_db = db.news.find(params).sort('date', -1)
-
-    if limit is not None:
-        news_list_db = news_list_db.limit(limit)
-
-    news_list = []
-
-    for the_news in news_list_db:
-        news_list.append(_get_one_news(the_news))
-
-    return news_list
-
-
 def _get_one_news(the_news=None):
     if the_news is None:
         return None

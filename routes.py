@@ -65,9 +65,7 @@ def stats():
 # News list
 @app.route('/news')
 def news():
-    db = get_database()
-
-    news_list = get_news_list(db)
+    news_list = News.query.get_news_list()
 
     return render_template('news/list.html', news_list=news_list)
 
@@ -75,9 +73,7 @@ def news():
 # RSS of the news
 @app.route('/news/rss')
 def news_rss():
-    db = get_database()
-
-    news_list = get_news_list(db, limit=5)
+    news_list = News.query.get_news_list(limit=5)
 
     rss_items = []
 
@@ -244,9 +240,7 @@ def latest_recognitions_rss():
 def sitemap_xml():
     app_routes = []
 
-    db = get_database()
-
-    news_list = get_news_list(db)
+    news_list = News.query.get_news_list()
 
     for one_news in news_list:
         app_routes.append(url_for('one_news', slug=one_news['slug'], _external=True))
@@ -262,7 +256,7 @@ def sitemap_xml():
 def manage():
     db = get_database()
 
-    news_list = get_news_list(db, admin=True)
+    news_list = News.query.get_news_list(admin=True)
     global_stats = get_global_stats(db)
 
     return render_template('manage/home.html', news_list=news_list, global_stats=global_stats)

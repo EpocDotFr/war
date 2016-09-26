@@ -1,15 +1,29 @@
 from war import *
+from flask_mongoalchemy import BaseQuery
+
+
+class NewsQuery(BaseQuery):
+    def get_news_list(self, limit=None, admin=False):
+        self.ascending(News.date)
+
+        if not admin:
+            self.not_(News.date == None)
+            self.filter(News.date <= arrow.now().datetime)
+
+        if limit is not None:
+            self.limit(limit)
+
+        return self
 
 
 class News(db.Document):
     config_collection_name = 'news'
+    query_class = NewsQuery
 
     title = db.StringField()
     date = db.DateTimeField(allow_none=True, default=None)
     content = db.StringField()
     slug = db.StringField()
-
-    # slug_index = db.Document.Index().ascending('slug').unique()
 
 
 class AudioDatabaseResult(db.Document):
@@ -37,5 +51,3 @@ class Stats(db.Document):
     failures = db.IntField()
     successes = db.IntField()
     audio_database = db.EnumField(db.StringField(), 'ACRCloud')
-
-    # audio_database_index = db.Document.Index().ascending('audio_database').unique()
