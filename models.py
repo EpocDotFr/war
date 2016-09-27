@@ -14,7 +14,7 @@ class NewsQuery(BaseQuery):
         if limit is not None:
             self.limit(limit)
 
-        return self
+        return self.all()
 
 
     def get_one_news_by_slug(self, slug):
