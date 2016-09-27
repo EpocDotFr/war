@@ -7,7 +7,7 @@
 
 {% block content %}
     {% for the_news in news_list %}
-        <p><a href="{{ url_for('one_news', slug=the_news.slug) }}">{{ the_news.title }}</a> <small>— published {{ the_news.date.humanize() }}</small></p>
+        <p><a href="{{ url_for('one_news', slug=the_news.slug) }}">{{ the_news.title }}</a> <small>— published {{ the_news.date_humanized }}</small></p>
     {% else %}
         <div class="alert info">No news to read at this moment.</div>
     {% endfor %}

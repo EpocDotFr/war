@@ -9,6 +9,7 @@ import psutil
 import bugsnag_client
 import arrow
 import sample_store
+from models import *
 
 
 # ----- Public routes -------
@@ -79,11 +80,11 @@ def news_rss():
 
     for the_news in news_list:
         rss_items.append(PyRSS2Gen.RSSItem(
-            title=the_news['title'],
-            link=url_for('one_news', slug=the_news['slug'], _external=True),
-            description=str(markdown(the_news['content'], escape=True)),
-            guid=PyRSS2Gen.Guid(url_for('one_news', slug=the_news['slug'], _external=True)),
-            pubDate=the_news['date'].datetime
+            title=the_news.title,
+            link=url_for('one_news', slug=the_news.slug, _external=True),
+            description=str(markdown(the_news.content, escape=True)),
+            guid=PyRSS2Gen.Guid(url_for('one_news', slug=the_news.slug, _external=True)),
+            pubDate=the_news.date
         ))
 
     rss = PyRSS2Gen.RSS2(
@@ -104,14 +105,12 @@ def news_rss():
 # One news
 @app.route('/news/<slug>')
 def one_news(slug):
-    db = get_database()
-
-    the_news = get_one_news_by_slug(db, slug)
+    the_news = News.query.get_one_news_by_slug(slug)
 
     if the_news is None:
         abort(404)
     
-    if the_news['date'] is None:
+    if the_news.date is None:
         g.INCLUDE_WEB_ANALYTICS = False
         g.NO_INDEX = True
 

@@ -1,5 +1,6 @@
 from war import *
 from flask_mongoalchemy import BaseQuery
+import arrow
 
 
 class NewsQuery(BaseQuery):
@@ -16,6 +17,12 @@ class NewsQuery(BaseQuery):
         return self
 
 
+    def get_one_news_by_slug(self, slug):
+        self.filter(News.slug == slug)
+
+        return self.one()
+
+
 class News(db.Document):
     config_collection_name = 'news'
     query_class = NewsQuery
@@ -24,6 +31,10 @@ class News(db.Document):
     date = db.DateTimeField(allow_none=True, default=None)
     content = db.StringField()
     slug = db.StringField()
+
+    @db.computed_field(db.StringField(), deps=[date])
+    def date_humanized(obj):
+        return arrow.get(obj.get('date')).humanize() if obj.get('date') is not None else None
 
 
 class AudioDatabaseResult(db.Document):

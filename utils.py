@@ -66,12 +66,6 @@ def _get_one_news(the_news=None):
     return the_news
 
 
-def get_one_news_by_slug(db, slug):
-    the_news = db.news.find_one({'slug': slug})
-
-    return _get_one_news(the_news)
-
-
 def get_one_news_by_id(db, news_id):
     the_news = db.news.find_one({'_id': ObjectId(news_id)})
 
