@@ -339,7 +339,8 @@ def news_create():
 
     if request.method == 'POST':
         create_one_news_result = create_one_news(db, request.form['title'], request.form['content'],
-                                                 request.form['date'] if request.form['date'] != '' else None)
+                                                 request.form['date'] if request.form['date'] != '' else None,
+                                                 request.form['tags'] if request.form['tags'] != '' else None)
 
         if create_one_news_result.inserted_id:
             flash('News created successfuly.', 'success')
@@ -364,7 +365,8 @@ def news_edit(news_id):
 
     if request.method == 'POST':
         if update_one_news(db, news_id, request.form['title'], request.form['content'],
-                           request.form['date'] if request.form['date'] != '' else None):
+                           request.form['date'] if request.form['date'] != '' else None,
+                           request.form['tags'] if request.form['tags'] != '' else None):
             flash('News edited successfuly.', 'success')
 
             return redirect(url_for('news_edit', news_id=the_news['_id']))

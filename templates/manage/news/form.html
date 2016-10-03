@@ -15,7 +15,7 @@
 
 <div class="group">
     <label>Tags</label>
-    <input type="text" name="tags" id="tags" value="{{ the_news.tags if the_news }}" required placeholder="Comma-separated list of words">
+    <input type="text" name="tags" id="tags" value="{{ ', '.join(the_news.tags) if the_news and the_news.tags }}" required placeholder="Comma-separated list of words">
 </div>
 
 <div class="group">

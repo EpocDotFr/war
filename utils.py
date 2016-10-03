@@ -82,6 +82,9 @@ def _get_one_news(the_news=None):
     if the_news['date'] is not None:
         the_news['date'] = arrow.get(the_news['date'])
 
+    if 'tags' not in the_news or the_news['tags'] is None:
+        the_news['tags'] = []
+
     return the_news
 
 
@@ -97,7 +100,7 @@ def get_one_news_by_id(db, news_id):
     return _get_one_news(the_news)
 
 
-def update_one_news(db, news_id, title, content, date=None):
+def update_one_news(db, news_id, title, content, date=None, tags=None):
     data = {
         'title': title,
         'slug': slugify(title),
@@ -108,6 +111,11 @@ def update_one_news(db, news_id, title, content, date=None):
         data['date'] = arrow.get(date).datetime
     else:
         data['date'] = None
+
+    if tags is not None:
+        tags = [tag.strip() for tag in tags.split(',')]
+
+        data['tags'] = tags
 
     return db.news.update_one(
         {'_id': ObjectId(news_id)},
@@ -115,7 +123,7 @@ def update_one_news(db, news_id, title, content, date=None):
     ).modified_count > 0
 
 
-def create_one_news(db, title, content, date=None):
+def create_one_news(db, title, content, date=None, tags=None):
     data = {
         'title': title,
         'slug': slugify(title),
@@ -126,6 +134,11 @@ def create_one_news(db, title, content, date=None):
         data['date'] = arrow.get(date).datetime
     else:
         data['date'] = None
+
+    if tags is not None:
+        tags = [tag.strip() for tag in tags.split(',')]
+
+        data['tags'] = tags
 
     return db.news.insert_one(data)
 
