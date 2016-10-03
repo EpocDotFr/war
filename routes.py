@@ -97,7 +97,8 @@ def news_rss():
             link=url_for('one_news', slug=the_news['slug'], _external=True),
             description=str(markdown(the_news['content'], escape=True)),
             guid=PyRSS2Gen.Guid(url_for('one_news', slug=the_news['slug'], _external=True)),
-            pubDate=the_news['date'].datetime
+            pubDate=the_news['date'].datetime,
+            categories=the_news['tags']
         ))
 
     rss = PyRSS2Gen.RSS2(
