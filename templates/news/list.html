@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 
-{% block page_title %}<h1>News</h1>{% endblock %}
-{% block meta_title %}News{% endblock %}
+{% block page_title %}<h1>News{% if tag %} by tag: {{ tag }}{% endif %}</h1>{% endblock %}
+{% block meta_title %}News{% if tag %} by tag: {{ tag }}{% endif %}{% endblock %}
 
 {% block manage_bar_items %} • <a href="{{ url_for('news_create') }}">Create a news</a>{% endblock %}
 
@@ -9,6 +9,6 @@
     {% for the_news in news_list %}
         <p><a href="{{ url_for('one_news', slug=the_news.slug) }}">{{ the_news.title }}</a> <small>— published {{ the_news.date.humanize() }}</small></p>
     {% else %}
-        <div class="alert info">No news to read at this moment.</div>
+        <div class="alert info">No news found.</div>
     {% endfor %}
 {% endblock %}

@@ -72,6 +72,16 @@ def news():
     return render_template('news/list.html', news_list=news_list)
 
 
+# News list by tag
+@app.route('/news/tag/<tag>')
+def news_by_tag(tag):
+    db = get_database()
+
+    news_list = get_news_list(db, tag=tag)
+
+    return render_template('news/list.html', news_list=news_list, tag=tag)
+
+
 # RSS of the news
 @app.route('/news/rss')
 def news_rss():

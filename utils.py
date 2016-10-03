@@ -54,11 +54,14 @@ def get_latest_news(db):
         return None
 
 
-def get_news_list(db, limit=None, admin=False):
+def get_news_list(db, limit=None, admin=False, tag=None):
     params = {}
 
     if not admin:
         params = {'date': {'$ne': None, '$lte': arrow.now().datetime}}
+
+    if tag is not None:
+        params.update({'tags': {'$eq': tag}})
 
     news_list_db = db.news.find(params).sort('date', -1)
 
