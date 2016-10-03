@@ -14,8 +14,13 @@
 </div>
 
 <div class="group">
+    <label>Tags</label>
+    <input type="text" name="tags" id="tags" value="{{ the_news.tags if the_news }}" required placeholder="Comma-separated list of words">
+</div>
+
+<div class="group">
     <label for="content">Content</label>
-    <textarea name="content" id="content" class="markdown" required>{{ the_news.content if the_news }}</textarea>
+    <textarea name="content" id="content" class="markdown" required placeholder="Markdown powered">{{ the_news.content if the_news }}</textarea>
 </div>
 
 {% if the_news %}
