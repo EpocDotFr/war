@@ -6,6 +6,8 @@
 {% block manage_bar_items %} • <a href="{{ url_for('news_create') }}">Create a news</a>{% endblock %}
 
 {% block content %}
+    {% if not tag %}<p><em>Filter by tag:</em> <a href="">gaag</a></p>{% endif %}
+
     {% for the_news in news_list %}
         <p><a href="{{ url_for('one_news', slug=the_news.slug) }}">{{ the_news.title }}</a> <small>— published {{ the_news.date.humanize() }}</small></p>
     {% else %}
