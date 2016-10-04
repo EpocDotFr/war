@@ -62,19 +62,10 @@ def stats():
                            top_recognized_tracks=top_recognized_tracks)
 
 
-# News list
-@app.route('/news')
-def news():
-    db = get_database()
-
-    news_list = get_news_list(db)
-
-    return render_template('news/list.html', news_list=news_list)
-
-
-# News list by tag
+# News list (can also be filtered by tag)
+@app.route('/news', defaults={'tag': None})
 @app.route('/news/tag/<tag>')
-def news_by_tag(tag):
+def news(tag):
     db = get_database()
 
     news_list = get_news_list(db, tag=tag)
