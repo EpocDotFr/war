@@ -39,6 +39,10 @@ def get_push():
     return g.push
 
 
+def get_all_news_tags(db):
+    return list(db.news.distinct('tags', {'date': {'$ne': None, '$lte': arrow.now().datetime}}))
+
+
 def get_latest_news(db):
     latest_news = db.news.find({'date': {'$ne': None, '$lte': arrow.now().datetime}}).limit(1).sort('date', -1)
 

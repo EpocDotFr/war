@@ -70,7 +70,12 @@ def news(tag):
 
     news_list = get_news_list(db, tag=tag)
 
-    return render_template('news/list.html', news_list=news_list, tag=tag)
+    all_tags = None
+
+    if tag is None:
+        all_tags = get_all_news_tags(db)
+
+    return render_template('news/list.html', news_list=news_list, tag=tag, all_tags=all_tags)
 
 
 # RSS of the news
