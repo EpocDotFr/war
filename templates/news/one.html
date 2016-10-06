@@ -6,7 +6,7 @@
 {% block manage_bar_items %} • <a href="{{ url_for('news_edit', news_id=the_news._id) }}">Edit</a> • <a href="{{ url_for('news_delete', news_id=the_news._id) }}" onclick="return confirm('Are you sure?')">Delete</a>{% endblock %}
 
 {% block content %}
-    {% if the_news.date %}<p><em>Published {{ the_news.date.humanize() }}</em></p>{% else %}<p class="alert info">This is a draft.</p>{% endif %}
+    <p{% if the_news.date %}><em>Published {{ the_news.date.humanize() }}</em>{% else %} class="alert info">This is a draft{% endif %}{% if the_news.tags %} • {% for tag in the_news.tags %}<a href="{{ url_for('news', tag=tag) }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}</p>
 
     {{ the_news.content|markdown }}
 

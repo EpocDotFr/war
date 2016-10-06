@@ -68,14 +68,20 @@ def stats():
                            top_recognized_tracks=top_recognized_tracks)
 
 
-# News list
-@app.route('/news')
-def news():
+# News list (can also be filtered by tag)
+@app.route('/news', defaults={'tag': None})
+@app.route('/news/tag/<tag>')
+def news(tag):
     db = get_database()
 
-    news_list = get_news_list(db)
+    news_list = get_news_list(db, tag=tag)
 
-    return render_template('news/list.html', news_list=news_list)
+    all_tags = None
+
+    if tag is None:
+        all_tags = get_all_news_tags(db)
+
+    return render_template('news/list.html', news_list=news_list, tag=tag, all_tags=all_tags)
 
 
 # RSS of the news
@@ -93,7 +99,8 @@ def news_rss():
             link=url_for('one_news', slug=the_news['slug'], _external=True),
             description=str(markdown(the_news['content'], escape=True)),
             guid=PyRSS2Gen.Guid(url_for('one_news', slug=the_news['slug'], _external=True)),
-            pubDate=the_news['date'].datetime
+            pubDate=the_news['date'].datetime,
+            categories=the_news['tags']
         ))
 
     rss = PyRSS2Gen.RSS2(
@@ -345,7 +352,8 @@ def news_create():
 
     if request.method == 'POST':
         create_one_news_result = create_one_news(db, request.form['title'], request.form['content'],
-                                                 request.form['date'] if request.form['date'] != '' else None)
+                                                 request.form['date'] if request.form['date'] != '' else None,
+                                                 request.form['tags'] if request.form['tags'] != '' else None)
 
         if create_one_news_result.inserted_id:
             flash('News created successfuly.', 'success')
@@ -370,7 +378,8 @@ def news_edit(news_id):
 
     if request.method == 'POST':
         if update_one_news(db, news_id, request.form['title'], request.form['content'],
-                           request.form['date'] if request.form['date'] != '' else None):
+                           request.form['date'] if request.form['date'] != '' else None,
+                           request.form['tags'] if request.form['tags'] != '' else None):
             flash('News edited successfuly.', 'success')
 
             return redirect(url_for('news_edit', news_id=the_news['_id']))
