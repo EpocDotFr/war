@@ -33,6 +33,12 @@ def about():
     return render_template('about.html')
 
 
+# Roadmap page
+@app.route('/roadmap')
+def roadmap():
+    return render_template('roadmap.html')
+
+
 # FAQ page
 @app.route('/faq')
 def faq():
