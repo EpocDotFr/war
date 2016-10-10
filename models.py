@@ -24,7 +24,7 @@ class NewsQuery(BaseQuery):
 
         return self.one()
 
-    def get_all_news_tags(self): # FIXME doesn't work: returns documents
+    def get_all_news_tags(self):
         self.not_(News.date == None)
         self.filter(News.date <= arrow.now().datetime)
         
