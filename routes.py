@@ -75,7 +75,7 @@ def stats():
 def news(tag):
     db = get_database()
 
-    news_list = News.query.get_news_list(db, tag=tag)
+    news_list = News.query.get_news_list(tag=tag)
 
     all_tags = None
 
@@ -98,7 +98,7 @@ def news_rss():
             link=url_for('one_news', slug=the_news.slug, _external=True),
             description=str(markdown(the_news.content, escape=True)),
             guid=PyRSS2Gen.Guid(url_for('one_news', slug=the_news.slug, _external=True)),
-            pubDate=the_news.date
+            pubDate=the_news.date,
             categories=the_news.tags
         ))
 
