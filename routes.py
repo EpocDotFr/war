@@ -73,14 +73,12 @@ def stats():
 @app.route('/news', defaults={'tag': None})
 @app.route('/news/tag/<tag>')
 def news(tag):
-    db = get_database()
-
     news_list = News.query.get_news_list(tag=tag)
 
     all_tags = None
 
     if tag is None:
-        all_tags = get_all_news_tags(db)
+        all_tags = News.query.get_all_news_tags()
 
     return render_template('news/list.html', news_list=news_list, tag=tag, all_tags=all_tags)
 
@@ -257,7 +255,7 @@ def sitemap_xml():
     news_list = News.query.get_news_list()
 
     for one_news in news_list:
-        app_routes.append(url_for('one_news', slug=one_news['slug'], _external=True))
+        app_routes.append(url_for('one_news', slug=one_news.slug, _external=True))
 
     return Response(render_template('sitemap.xml', routes=app_routes), mimetype='application/xml')
 

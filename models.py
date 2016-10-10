@@ -5,25 +5,30 @@ import arrow
 
 class NewsQuery(BaseQuery):
     def get_news_list(self, limit=None, admin=False, tag=None):
-        self.ascending(News.date)
-
         if not admin:
             self.not_(News.date == None)
             self.filter(News.date <= arrow.now().datetime)
 
-        if limit is not None:
-            self.limit(limit)
-
         if tag is not None:
             self.in_(News.tags, tag)
 
-        return self.all()
+        if limit is not None:
+            self.limit(limit)
 
+        self.ascending(News.date)
+
+        return self.all()
 
     def get_one_news_by_slug(self, slug):
         self.filter(News.slug == slug)
 
         return self.one()
+
+    def get_all_news_tags(self): # FIXME doesn't work: returns documents
+        self.not_(News.date == None)
+        self.filter(News.date <= arrow.now().datetime)
+        
+        return self.distinct(News.tags)
 
 
 class News(db.Document):
