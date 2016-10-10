@@ -4,7 +4,7 @@ import arrow
 
 
 class NewsQuery(BaseQuery):
-    def get_news_list(self, limit=None, admin=False):
+    def get_news_list(self, limit=None, admin=False, tag=None):
         self.ascending(News.date)
 
         if not admin:
@@ -13,6 +13,9 @@ class NewsQuery(BaseQuery):
 
         if limit is not None:
             self.limit(limit)
+
+        if tag is not None:
+            self.in_(News.tags, tag)
 
         return self.all()
 
@@ -31,6 +34,7 @@ class News(db.Document):
     date = db.DateTimeField(allow_none=True, default=None)
     content = db.StringField()
     slug = db.StringField()
+    tags = db.ListField(db.StringField())
 
     @db.computed_field(db.StringField(), deps=[date])
     def date_humanized(obj):
