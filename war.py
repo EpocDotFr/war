@@ -262,6 +262,8 @@ def auth_error():
 def http_error_handler(error, without_code=False):
     if isinstance(error, HTTPException):
         error = error.code
+    else:
+        error = 500
 
     g.INCLUDE_WEB_ANALYTICS = False
     g.NO_INDEX = True
