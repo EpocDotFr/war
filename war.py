@@ -6,6 +6,7 @@ from urllib.parse import quote_plus
 from werkzeug.exceptions import HTTPException
 import gauges
 import os
+import uuid
 
 
 # -----------------------------------------------------------
@@ -83,6 +84,15 @@ def seed_database():
         db.session.add(models.News(slug=one_fake_news['slug'], title=one_fake_news['title'], date=one_fake_news['date'], content=one_fake_news['content'], tags=one_fake_news['tags']))
 
     db.session.add(models.AudioDatabase(name='ACRCloud', website='https://www.acrcloud.com/', is_enabled=True))
+
+    fake_samples = [
+        {'uuid': str(uuid.uuid4()).replace('-', ''), 'submitted_at': arrow.get('2016-10-13 13:30:00').datetime, 'done_at': None, 'file_url': 'http://www.kozco.com/tech/piano2.wav'},
+        {'uuid': str(uuid.uuid4()).replace('-', ''), 'submitted_at': arrow.get('2016-10-13 16:40:00').datetime, 'done_at': arrow.get('2016-10-13 16:40:30').datetime, 'file_url': 'http://www.kozco.com/tech/piano2.wav'},
+        {'uuid': str(uuid.uuid4()).replace('-', ''), 'submitted_at': arrow.get('2016-10-13 14:35:00').datetime, 'done_at': None, 'file_url': None},
+    ]
+
+    for one_fake_sample in fake_samples:
+        db.session.add(models.Sample(uuid=one_fake_sample['uuid'], submitted_at=one_fake_sample['submitted_at'], done_at=one_fake_sample['done_at'], file_url=one_fake_sample['file_url']))
 
     db.session.commit()
 
