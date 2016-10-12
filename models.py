@@ -1,5 +1,4 @@
 from war import db
-import arrow
 
 
 class News(db.Model):

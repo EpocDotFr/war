@@ -55,9 +55,36 @@ import models
 @app.cli.command()
 def create_database():
     """Delete then create all the database tables."""
+
+    if not app.debug:
+        print('Not in production, idiot')
+        return
+
     db.drop_all()
     db.create_all()
 
+
+@app.cli.command()
+def seed_database():
+    """Seeds the database with some fresh fake data."""
+
+    if not app.debug:
+        print('Not in production, idiot')
+        return
+
+    fake_news = [
+        {'slug': 'ahah-ahah-ah', 'title': 'Ahah ahah AH', 'date': arrow.get('2016-10-12 18:00:00').datetime, 'content': '*Some* _fucking_ [markdown](https://epoc.fr)', 'tags': 'gtfo'},
+        {'slug': 'blah-blah', 'title': 'Blah blah', 'date': arrow.get('2016-10-11 15:45:00').datetime, 'content': '*Some* _fucking_ [markdown](https://epoc.fr)', 'tags': 'hey'},
+        {'slug': 'this-is-a-test-draft', 'title': 'THIS is a test draft!', 'date': None, 'content': '*Some* _fucking_ [markdown](https://epoc.fr)', 'tags': ''},
+        {'slug': 'one-more', 'title': 'One more', 'date': arrow.get('2016-10-09 10:30:00').datetime, 'content': '*Some* _fucking_ [markdown](https://epoc.fr)', 'tags': 'gtfo,hey'}
+    ]
+
+    for one_fake_news in fake_news:
+        db.session.add(models.News(slug=one_fake_news['slug'], title=one_fake_news['title'], date=one_fake_news['date'], content=one_fake_news['content'], tags=one_fake_news['tags']))
+
+    db.session.add(models.AudioDatabase(name='ACRCloud', website='https://www.acrcloud.com/', is_enabled=True))
+
+    db.session.commit()
 
 @app.cli.command()
 def samples_recognize():
