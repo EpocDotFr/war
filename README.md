@@ -6,6 +6,8 @@ The **WAR** (Web Audio Recognizer) website (https://thisiswar.online/).
   - Facebook: [WebAudioReco](https://www.facebook.com/WebAudioReco)
   - Email: [hello[at]thisiswar[dot]online](mailto:hello[at]thisiswar[dot]online)
 
+> Folders that starts with a `_` character should never be pushed to production.
+
 ## Prerequisites
 
   - Python 3
