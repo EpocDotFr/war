@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, abort, json
 from flask_httpauth import HTTPBasicAuth
 from flask_misaka import Misaka
+from flask_sqlalchemy import SQLAlchemy
 from urllib.parse import quote_plus
 from werkzeug.exceptions import HTTPException
 import gauges
@@ -13,7 +14,6 @@ import os
 
 app = Flask(__name__, static_url_path='')
 app.config.from_pyfile('config.py')
-Misaka(app)
 
 gauges.TOKEN = app.config['GAUGES']['API_TOKEN']
 
@@ -40,11 +40,23 @@ else:
 
 auth = HTTPBasicAuth()
 
+db = SQLAlchemy(app)
+
+Misaka(app)
+
 import sample_store
 from utils import *
+import models
 
 # -----------------------------------------------------------
 # CLI commands
+
+
+@app.cli.command()
+def create_database():
+    """Delete then create all the database tables."""
+    db.drop_all()
+    db.create_all()
 
 
 @app.cli.command()
