@@ -87,7 +87,7 @@
     {% if news_list %}
     <ul>
         {% for the_news in news_list %}
-        <li>{{ the_news.title }} ({% if the_news.date %}published {{ the_news.date.humanize() }}{% else %}<strong>draft</strong>{% endif %}) — <a href="{{ url_for('one_news', slug=the_news.slug) }}">Read</a> — <a href="{{ url_for('news_edit', news_id=the_news._id) }}">Edit</a> — <a href="{{ url_for('news_delete', news_id=the_news._id) }}" onclick="return confirm('Are you sure?')">Delete</a></li>
+        <li>{{ the_news.title }} ({% if the_news.date %}published {{ the_news.date_arrowed.humanize() }}{% else %}<strong>draft</strong>{% endif %}) — <a href="{{ url_for('one_news', slug=the_news.slug) }}">Read</a> — <a href="{{ url_for('news_edit', news_id=the_news.id) }}">Edit</a> — <a href="{{ url_for('news_delete', news_id=the_news.id) }}" onclick="return confirm('Are you sure?')">Delete</a></li>
         {% endfor %}
     </ul>
     {% else %}

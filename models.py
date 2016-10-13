@@ -1,9 +1,35 @@
 from war import db
 from enum import Enum
+import arrow
 
 
 class News(db.Model):
+    class NewsQuery(db.Query):
+        def get_news_list(self, limit=None, admin=False, tag=None):
+            if not admin:
+                self.filter(News.date != None, News.date <= arrow.now().datetime)
+
+            if tag is not None:
+                self.filter(News.tags.like('%'+tag+'%'))
+
+            if limit is not None:
+                self.limit(limit)
+
+            self.order_by(News.date.desc())
+
+            return self.all()
+
+        def get_one_news_by_slug(self, slug):
+            return self.filter(News.slug == slug).first()
+
+        def get_all_news_tags(self):
+            return self.filter(News.date != None, News.date <= arrow.now().datetime).distinct(News.tags)
+
+        def get_latest_news(self):
+            return self.filter(News.date != None, News.date <= arrow.now().datetime).order_by(News.date.desc()).first()
+
     __tablename__ = 'news'
+    query_class = NewsQuery
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
@@ -24,6 +50,14 @@ class News(db.Model):
 
     def __repr__(self):
         return '<News> #{} : {}'.format(self.id, self.title)
+
+    @property
+    def tags_list(self):
+        return self.tags.split(',') if self.tags is not None else None
+
+    @property
+    def date_arrowed(self):
+        return arrow.get(self.date) if self.date is not None else None
 
 
 class AudioDatabase(db.Model):

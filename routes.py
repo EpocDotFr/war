@@ -16,13 +16,13 @@ import sample_store
 # Home page
 @app.route('/')
 def home():
-    db = get_database()
+    mongo_db = get_database()
 
-    global_stats = get_global_stats(db)
+    global_stats = get_global_stats(mongo_db)
 
-    latest_news = get_latest_news(db)
+    latest_news = News.query.get_latest_news()
 
-    latest_success_samples = get_latest_success_samples(db)
+    latest_success_samples = get_latest_success_samples(mongo_db)
 
     return render_template('home.html', global_stats=global_stats, latest_news=latest_news, latest_success_samples=latest_success_samples)
 
@@ -54,12 +54,12 @@ def tos():
 # Stats page
 @app.route('/stats')
 def stats():
-    db = get_database()
+    mongo_db = get_database()
 
-    audio_databases = get_enabled_audio_databases(db)
-    global_stats = get_global_stats(db)
-    top_recognized_artists = get_top_recognized_artists(db)
-    top_recognized_tracks = get_top_recognized_tracks(db)
+    audio_databases = get_enabled_audio_databases(mongo_db)
+    global_stats = get_global_stats(mongo_db)
+    top_recognized_artists = get_top_recognized_artists(mongo_db)
+    top_recognized_tracks = get_top_recognized_tracks(mongo_db)
 
     return render_template('stats.html',
                            audio_databases=audio_databases,
@@ -72,14 +72,12 @@ def stats():
 @app.route('/news', defaults={'tag': None})
 @app.route('/news/tag/<tag>')
 def news(tag):
-    db = get_database()
-
-    news_list = get_news_list(db, tag=tag)
+    news_list = News.query.get_news_list(tag=tag)
 
     all_tags = None
 
     if tag is None:
-        all_tags = get_all_news_tags(db)
+        all_tags = News.query.get_all_news_tags()
 
     return render_template('news/list.html', news_list=news_list, tag=tag, all_tags=all_tags)
 
@@ -87,20 +85,18 @@ def news(tag):
 # RSS of the news
 @app.route('/news/rss')
 def news_rss():
-    db = get_database()
-
-    news_list = get_news_list(db, limit=5)
+    news_list = News.query.get_news_list(limit=5)
 
     rss_items = []
 
     for the_news in news_list:
         rss_items.append(PyRSS2Gen.RSSItem(
-            title=the_news['title'],
-            link=url_for('one_news', slug=the_news['slug'], _external=True),
-            description=str(markdown(the_news['content'], escape=True)),
-            guid=PyRSS2Gen.Guid(url_for('one_news', slug=the_news['slug'], _external=True)),
-            pubDate=the_news['date'].datetime,
-            categories=the_news['tags']
+            title=the_news.title,
+            link=url_for('one_news', slug=the_news.slug, _external=True),
+            description=str(markdown(the_news.content, escape=True)),
+            guid=PyRSS2Gen.Guid(url_for('one_news', slug=the_news.slug, _external=True)),
+            pubDate=the_news.date,
+            categories=the_news.tags_list
         ))
 
     rss = PyRSS2Gen.RSS2(
@@ -121,14 +117,12 @@ def news_rss():
 # One news
 @app.route('/news/<slug>')
 def one_news(slug):
-    db = get_database()
-
-    the_news = get_one_news_by_slug(db, slug)
+    the_news = News.query.get_one_news_by_slug( slug)
 
     if the_news is None:
         abort(404)
     
-    if the_news['date'] is None:
+    if the_news.date is None:
         g.INCLUDE_WEB_ANALYTICS = False
         g.NO_INDEX = True
 
@@ -257,12 +251,10 @@ def latest_recognitions_rss():
 def sitemap_xml():
     app_routes = []
 
-    db = get_database()
-
-    news_list = get_news_list(db)
+    news_list = News.query.get_news_list()
 
     for one_news in news_list:
-        app_routes.append(url_for('one_news', slug=one_news['slug'], _external=True))
+        app_routes.append(url_for('one_news', slug=one_news.slug, _external=True))
 
     return Response(render_template('sitemap.xml', routes=app_routes), mimetype='application/xml')
 
@@ -273,10 +265,10 @@ def sitemap_xml():
 @app.route('/manage')
 @auth.login_required
 def manage():
-    db = get_database()
+    mongo_db = get_database()
 
-    news_list = get_news_list(db, admin=True)
-    global_stats = get_global_stats(db)
+    news_list = News.query.get_news_list(admin=True)
+    global_stats = get_global_stats(mongo_db)
 
     return render_template('manage/home.html', news_list=news_list, global_stats=global_stats)
 

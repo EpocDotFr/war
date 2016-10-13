@@ -159,7 +159,7 @@ def migrate_database():
 
     mongo_samples = mongo.samples.find()
 
-    ACRCloud = AudioDatabase.query.filter_by(class_name='ACRCloud').first()
+    ACRCloud = AudioDatabase.query.filter(AudioDatabase.class_name == 'ACRCloud').first()
 
     for mongo_sample in mongo_samples:
         mongo_sample = get_one_sample(mongo_sample)
