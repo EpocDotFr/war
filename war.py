@@ -57,21 +57,31 @@ import models
 def create_database():
     """Delete then create all the database tables."""
 
-    if not app.debug:
-        print('Not in production, idiot')
-        return
-
     db.drop_all()
     db.create_all()
 
 
 @app.cli.command()
-def seed_database():
-    """Seeds the database with some fresh fake data."""
+def base_seed_database():
+    """Seeds the database with the base data."""
 
-    if not app.debug:
-        print('Not in production, idiot')
-        return
+    audio_databases = [
+        {'name': 'ACRCloud', 'website': 'https://www.acrcloud.com/', 'is_enabled': True},
+        {'name': 'Gracenote', 'website': 'http://www.gracenote.com/', 'is_enabled': False},
+        {'name': 'Audible Magic', 'website': 'http://www.audiblemagic.com/', 'is_enabled': False},
+        {'name': 'Mufin AudioID', 'website': 'https://www.mufin.com/', 'is_enabled': False},
+        {'name': 'AcoustID', 'website': 'https://acoustid.org/', 'is_enabled': False},
+    ]
+
+    for one_audio_database in audio_databases:
+        db.session.add(models.AudioDatabase(name=one_audio_database['name'], website=one_audio_database['website'], is_enabled=one_audio_database['is_enabled']))
+
+    db.session.commit()
+
+
+@app.cli.command()
+def fake_seed_database():
+    """Seeds the database some fake data."""
 
     fake_news = [
         {'slug': 'ahah-ahah-ah', 'title': 'Ahah ahah AH', 'date': arrow.get('2016-10-12 18:00:00').datetime, 'content': '*Some* _fucking_ [markdown](https://epoc.fr)', 'tags': 'gtfo'},
@@ -83,8 +93,6 @@ def seed_database():
     for one_fake_news in fake_news:
         db.session.add(models.News(slug=one_fake_news['slug'], title=one_fake_news['title'], date=one_fake_news['date'], content=one_fake_news['content'], tags=one_fake_news['tags']))
 
-    db.session.add(models.AudioDatabase(name='ACRCloud', website='https://www.acrcloud.com/', is_enabled=True))
-
     fake_samples = [
         {'uuid': str(uuid.uuid4()).replace('-', ''), 'submitted_at': arrow.get('2016-10-13 13:30:00').datetime, 'done_at': None, 'file_url': 'http://www.kozco.com/tech/piano2.wav'},
         {'uuid': str(uuid.uuid4()).replace('-', ''), 'submitted_at': arrow.get('2016-10-13 16:40:00').datetime, 'done_at': arrow.get('2016-10-13 16:40:30').datetime, 'file_url': 'http://www.kozco.com/tech/piano2.wav'},
@@ -95,6 +103,7 @@ def seed_database():
         db.session.add(models.Sample(uuid=one_fake_sample['uuid'], submitted_at=one_fake_sample['submitted_at'], done_at=one_fake_sample['done_at'], file_url=one_fake_sample['file_url']))
 
     db.session.commit()
+
 
 @app.cli.command()
 def samples_recognize():
