@@ -36,6 +36,8 @@ class AudioDatabase(db.Model):
     website = db.Column(db.String(255), nullable=False)
     is_enabled = db.Column(db.Boolean, default=False, nullable=False)
 
+    recognition_results = db.relationship('RecognitionResult', backref=db.backref('audio_database', lazy='joined'))
+
     def __init__(self, name, class_name, website, is_enabled=False):
         self.name = name
         self.class_name = class_name
@@ -55,41 +57,40 @@ class Sample(db.Model):
     submitted_at = db.Column(db.DateTime, nullable=False)
 
     done_at = db.Column(db.DateTime,)
-    file_url = db.Column(db.String(255))
+    wav_file_url = db.Column(db.String(255))
 
-    def __init__(self, uuid, submitted_at, done_at=None, file_url=None):
+    recognition_results = db.relationship('RecognitionResult', backref=db.backref('sample', lazy='joined'))
+
+    def __init__(self, uuid, submitted_at, done_at=None, wav_file_url=None):
         self.uuid = uuid
         self.submitted_at = submitted_at
 
         self.done_at = done_at
-        self.file_url = file_url
+        self.wav_file_url = wav_file_url
 
     def __repr__(self):
         return '<Sample> #{} : {}'.format(self.id, self.uuid)
 
 
-class SampleResultStatus(Enum):
+class RecognitionResultStatus(Enum):
     success = 'success'
     failure = 'failure'
     error = 'error'
 
 
-class SampleResult(db.Model):
-    __tablename__ = 'sample_results'
+class RecognitionResult(db.Model):
+    __tablename__ = 'recognition_results'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     sample_id = db.Column(db.Integer, db.ForeignKey('samples.id'), nullable=False)
     audio_database_id = db.Column(db.Integer, db.ForeignKey('audio_databases.id'), nullable=False)
     is_final = db.Column(db.Boolean, default=False, nullable=False)
-    status = db.Column(db.Enum(SampleResultStatus), nullable=False)
+    status = db.Column(db.Enum(RecognitionResultStatus), nullable=False)
 
     artist = db.Column(db.String(255))
     title = db.Column(db.String(255))
     infos = db.Column(db.Text)
-
-    sample = db.relationship('Sample', backref=db.backref('sample_results', lazy='dynamic'))
-    audio_database = db.relationship('AudioDatabase', backref=db.backref('sample_results', lazy='dynamic'))
 
     def __init__(self, is_final, status, sample, audio_database, artist=None, title=None, infos=None):
         self.is_final = is_final
@@ -103,4 +104,4 @@ class SampleResult(db.Model):
         self.audio_database = audio_database
 
     def __repr__(self):
-        return '<SampleResult> #{} : {}'.format(self.id, self.status)
+        return '<RecognitionResult> #{} : {}'.format(self.id, self.status)

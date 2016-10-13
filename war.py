@@ -107,10 +107,10 @@ def fake_seed_database():
     db.session.commit()
 
     fake_samples = [
-        {'uuid': str(uuid.uuid4()).replace('-', ''), 'submitted_at': arrow.get('2016-10-13 13:30:00').datetime, 'done_at': None, 'file_url': 'http://www.kozco.com/tech/piano2.wav'},
-        {'uuid': str(uuid.uuid4()).replace('-', ''), 'submitted_at': arrow.get('2016-10-12 11:30:00').datetime, 'done_at': None, 'file_url': 'http://www.kozco.com/tech/piano2.wav'},
-        {'uuid': str(uuid.uuid4()).replace('-', ''), 'submitted_at': arrow.get('2016-10-26 22:20:00').datetime, 'done_at': arrow.get('2016-10-13 16:40:30').datetime, 'file_url': 'http://www.kozco.com/tech/piano2.wav'},
-        {'uuid': str(uuid.uuid4()).replace('-', ''), 'submitted_at': arrow.get('2016-10-06 18:10:00').datetime, 'done_at': None, 'file_url': None}
+        {'uuid': str(uuid.uuid4()).replace('-', ''), 'submitted_at': arrow.get('2016-10-13 13:30:00').datetime, 'done_at': None, 'wav_file_url': 'http://www.kozco.com/tech/piano2.wav'},
+        {'uuid': str(uuid.uuid4()).replace('-', ''), 'submitted_at': arrow.get('2016-10-12 11:30:00').datetime, 'done_at': None, 'wav_file_url': 'http://www.kozco.com/tech/piano2.wav'},
+        {'uuid': str(uuid.uuid4()).replace('-', ''), 'submitted_at': arrow.get('2016-10-26 22:20:00').datetime, 'done_at': arrow.get('2016-10-13 16:40:30').datetime, 'wav_file_url': 'http://www.kozco.com/tech/piano2.wav'},
+        {'uuid': str(uuid.uuid4()).replace('-', ''), 'submitted_at': arrow.get('2016-10-06 18:10:00').datetime, 'done_at': None, 'wav_file_url': None}
     ]
 
     ACRCloud = AudioDatabase.query.filter_by(class_name = 'ACRCloud').first()
@@ -120,15 +120,15 @@ def fake_seed_database():
             uuid=one_fake_sample['uuid'],
             submitted_at=one_fake_sample['submitted_at'],
             done_at=one_fake_sample['done_at'],
-            file_url=one_fake_sample['file_url']
+            wav_file_url=one_fake_sample['wav_file_url']
         )
 
         db.session.add(fake_sample)
         db.session.flush()
 
-        db.session.add(SampleResult(
+        db.session.add(RecognitionResult(
             is_final=True,
-            status=SampleResultStatus.success,
+            status=RecognitionResultStatus.success,
             sample=fake_sample,
             audio_database=ACRCloud,
             artist='AC/DC',
@@ -159,7 +159,7 @@ def migrate_database():
 
     mongo_samples = mongo.samples.find()
 
-    ACRCloud = AudioDatabase.query.filter_by(class_name = 'ACRCloud').first()
+    ACRCloud = AudioDatabase.query.filter_by(class_name='ACRCloud').first()
 
     for mongo_sample in mongo_samples:
         mongo_sample = get_one_sample(mongo_sample)
@@ -168,7 +168,7 @@ def migrate_database():
             uuid=str(mongo_sample['_id']),
             submitted_at=mongo_sample['submitted_at'].datetime,
             done_at=mongo_sample['submitted_at'].replace(minutes=+1).datetime if mongo_sample['done'] else None,
-            file_url=mongo_sample['file_url'] if 'file_url' in mongo_sample else None
+            wav_file_url=mongo_sample['file_url'] if 'file_url' in mongo_sample else None
         )
 
         db.session.add(sql_sample)
@@ -178,13 +178,13 @@ def migrate_database():
             audio_db = mongo_sample['ACRCloud']
 
             if audio_db['status'] == 'success':
-                status = SampleResultStatus.success
+                status = RecognitionResultStatus.success
             elif audio_db['status'] == 'error':
-                status = SampleResultStatus.error
+                status = RecognitionResultStatus.error
             elif audio_db['status'] == 'failure':
-                status = SampleResultStatus.failure
+                status = RecognitionResultStatus.failure
 
-            db.session.add(SampleResult(
+            db.session.add(RecognitionResult(
                 is_final=True,
                 status=status,
                 sample=sql_sample,
