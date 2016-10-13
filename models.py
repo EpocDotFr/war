@@ -103,4 +103,4 @@ class SampleResult(db.Model):
         self.audio_database = audio_database
 
     def __repr__(self):
-        return '<Sample> #{} : {}'.format(self.id, self.status)
+        return '<SampleResult> #{} : {}'.format(self.id, self.status)
