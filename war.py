@@ -66,15 +66,15 @@ def base_seed_database():
     """Seeds the database with the base data."""
 
     audio_databases = [
-        {'name': 'ACRCloud', 'website': 'https://www.acrcloud.com/', 'is_enabled': True},
-        {'name': 'Gracenote', 'website': 'http://www.gracenote.com/', 'is_enabled': False},
-        {'name': 'Audible Magic', 'website': 'http://www.audiblemagic.com/', 'is_enabled': False},
-        {'name': 'Mufin AudioID', 'website': 'https://www.mufin.com/', 'is_enabled': False},
-        {'name': 'AcoustID', 'website': 'https://acoustid.org/', 'is_enabled': False},
+        {'name': 'ACRCloud', 'class_name': 'ACRCloud', 'website': 'https://www.acrcloud.com/', 'is_enabled': True},
+        {'name': 'Gracenote', 'class_name': 'Gracenote', 'website': 'http://www.gracenote.com/', 'is_enabled': False},
+        {'name': 'Audible Magic', 'class_name': 'AudibleMagic', 'website': 'http://www.audiblemagic.com/', 'is_enabled': False},
+        {'name': 'Mufin AudioID', 'class_name': 'MufinAudioID', 'website': 'https://www.mufin.com/', 'is_enabled': False},
+        {'name': 'AcoustID', 'class_name': 'AcoustID', 'website': 'https://acoustid.org/', 'is_enabled': False},
     ]
 
     for one_audio_database in audio_databases:
-        db.session.add(models.AudioDatabase(name=one_audio_database['name'], website=one_audio_database['website'], is_enabled=one_audio_database['is_enabled']))
+        db.session.add(models.AudioDatabase(name=one_audio_database['name'], class_name=one_audio_database['class_name'], website=one_audio_database['website'], is_enabled=one_audio_database['is_enabled']))
 
     db.session.commit()
 

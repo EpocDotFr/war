@@ -31,11 +31,13 @@ class AudioDatabase(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     name = db.Column(db.String(255), nullable=False)
+    class_name = db.Column(db.String(255), nullable=False)
     website = db.Column(db.String(255), nullable=False)
     is_enabled = db.Column(db.Boolean, default=False, nullable=False)
 
-    def __init__(self, name, website, is_enabled=False):
+    def __init__(self, name, class_name, website, is_enabled=False):
         self.name = name
+        self.class_name = class_name
         self.website = website
         self.is_enabled = is_enabled
 
