@@ -144,16 +144,55 @@ def migrate_database():
 
     mongo = get_database()
 
-    news_mongo = get_news_list(mongo, admin=True)
+    mongo_news = get_news_list(mongo, admin=True)
 
-    for one_news_mongo in news_mongo:
+    for one_mongo_news in mongo_news:
         db.session.add(News(
-            slug=one_news_mongo['slug'],
-            title=one_news_mongo['title'],
-            date=one_news_mongo['date'].datetime if 'date' in one_news_mongo and one_news_mongo['date'] is not None else None,
-            content=one_news_mongo['content'],
-            tags=','.join(one_news_mongo['tags']) if 'tags' in one_news_mongo and one_news_mongo['tags'] is not None else None
+            slug=one_mongo_news['slug'],
+            title=one_mongo_news['title'],
+            date=one_mongo_news['date'].datetime if 'date' in one_mongo_news and one_mongo_news['date'] is not None else None,
+            content=one_mongo_news['content'],
+            tags=','.join(one_mongo_news['tags']) if 'tags' in one_mongo_news and one_mongo_news['tags'] is not None else None
         ))
+
+    db.session.commit()
+
+    mongo_samples = mongo.samples.find()
+
+    ACRCloud = AudioDatabase.query.filter_by(class_name = 'ACRCloud').first()
+
+    for mongo_sample in mongo_samples:
+        mongo_sample = get_one_sample(mongo_sample)
+
+        sql_sample = Sample(
+            uuid=str(mongo_sample['_id']),
+            submitted_at=mongo_sample['submitted_at'].datetime,
+            done_at=mongo_sample['submitted_at'].replace(minutes=+1).datetime if mongo_sample['done'] else None,
+            file_url=mongo_sample['file_url'] if 'file_url' in mongo_sample else None
+        )
+
+        db.session.add(sql_sample)
+        db.session.flush()
+
+        if 'ACRCloud' in mongo_sample and mongo_sample['ACRCloud'] is not None:
+            audio_db = mongo_sample['ACRCloud']
+
+            if audio_db['status'] == 'success':
+                status = SampleResultStatus.success
+            elif audio_db['status'] == 'error':
+                status = SampleResultStatus.error
+            elif audio_db['status'] == 'failure':
+                status = SampleResultStatus.failure
+
+            db.session.add(SampleResult(
+                is_final=True,
+                status=status,
+                sample=sql_sample,
+                audio_database=ACRCloud,
+                artist=audio_db['data']['artist'] if 'artist' in audio_db['data'] else None,
+                title=audio_db['data']['title'] if 'title' in audio_db['data'] else None,
+                infos=audio_db['data']['message'] if 'message' in audio_db['data'] else None
+            ))
 
     db.session.commit()
 

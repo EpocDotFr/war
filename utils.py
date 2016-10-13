@@ -183,7 +183,7 @@ def update_one_sample(db, sample_id, query):
     ).modified_count > 0
 
 
-def _get_one_sample(sample):
+def get_one_sample(sample):
     if sample is None:
         return None
 
@@ -203,7 +203,7 @@ def _get_one_sample(sample):
 def get_one_sample_by_id(db, sample_id):
     sample = db.samples.find_one({'_id': ObjectId(sample_id)})
 
-    return _get_one_sample(sample)
+    return get_one_sample(sample)
 
 
 def get_latest_success_samples(db, num=3):
@@ -216,7 +216,7 @@ def get_latest_success_samples(db, num=3):
     samples_list = []
 
     for sample in samples:
-        sample = _get_one_sample(sample)
+        sample = get_one_sample(sample)
 
         samples_list.append(sample)
 
