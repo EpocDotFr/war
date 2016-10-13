@@ -1,4 +1,5 @@
 from war import db
+from enum import Enum
 
 
 class News(db.Model):
@@ -31,7 +32,7 @@ class AudioDatabase(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     name = db.Column(db.String(255), nullable=False)
-    class_name = db.Column(db.String(255), nullable=False)
+    class_name = db.Column(db.String(255), unique=True, nullable=False)
     website = db.Column(db.String(255), nullable=False)
     is_enabled = db.Column(db.Boolean, default=False, nullable=False)
 
@@ -67,6 +68,12 @@ class Sample(db.Model):
         return '<Sample> #{} : {}'.format(self.id, self.uuid)
 
 
+class SampleResultStatus(Enum):
+    success = 'success'
+    failure = 'failure'
+    error = 'error'
+
+
 class SampleResult(db.Model):
     __tablename__ = 'sample_results'
 
@@ -75,7 +82,7 @@ class SampleResult(db.Model):
     sample_id = db.Column(db.Integer, db.ForeignKey('samples.id'), nullable=False)
     audio_database_id = db.Column(db.Integer, db.ForeignKey('audio_databases.id'), nullable=False)
     is_final = db.Column(db.Boolean, default=False, nullable=False)
-    status = db.Column(db.Enum('success', 'failure', 'error'), nullable=False)
+    status = db.Column(db.Enum(SampleResultStatus), nullable=False)
 
     artist = db.Column(db.String(255))
     title = db.Column(db.String(255))

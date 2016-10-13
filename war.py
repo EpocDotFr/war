@@ -47,7 +47,7 @@ Misaka(app)
 
 import sample_store
 from utils import *
-import models
+from models import *
 
 # -----------------------------------------------------------
 # CLI commands
@@ -63,7 +63,7 @@ def create_database():
 
 @app.cli.command()
 def base_seed_database():
-    """Seeds the database with the base data."""
+    """Seeds the database with base data."""
 
     audio_databases = [
         {'name': 'ACRCloud', 'class_name': 'ACRCloud', 'website': 'https://www.acrcloud.com/', 'is_enabled': True},
@@ -74,14 +74,19 @@ def base_seed_database():
     ]
 
     for one_audio_database in audio_databases:
-        db.session.add(models.AudioDatabase(name=one_audio_database['name'], class_name=one_audio_database['class_name'], website=one_audio_database['website'], is_enabled=one_audio_database['is_enabled']))
+        db.session.add(AudioDatabase(
+            name=one_audio_database['name'],
+            class_name=one_audio_database['class_name'],
+            website=one_audio_database['website'],
+            is_enabled=one_audio_database['is_enabled']
+        ))
 
     db.session.commit()
 
 
 @app.cli.command()
 def fake_seed_database():
-    """Seeds the database some fake data."""
+    """Seeds the database with fake data."""
 
     fake_news = [
         {'slug': 'ahah-ahah-ah', 'title': 'Ahah ahah AH', 'date': arrow.get('2016-10-12 18:00:00').datetime, 'content': '*Some* _fucking_ [markdown](https://epoc.fr)', 'tags': 'gtfo'},
@@ -91,16 +96,64 @@ def fake_seed_database():
     ]
 
     for one_fake_news in fake_news:
-        db.session.add(models.News(slug=one_fake_news['slug'], title=one_fake_news['title'], date=one_fake_news['date'], content=one_fake_news['content'], tags=one_fake_news['tags']))
+        db.session.add(News(
+            slug=one_fake_news['slug'],
+            title=one_fake_news['title'],
+            date=one_fake_news['date'],
+            content=one_fake_news['content'],
+            tags=one_fake_news['tags']
+        ))
+
+    db.session.commit()
 
     fake_samples = [
         {'uuid': str(uuid.uuid4()).replace('-', ''), 'submitted_at': arrow.get('2016-10-13 13:30:00').datetime, 'done_at': None, 'file_url': 'http://www.kozco.com/tech/piano2.wav'},
-        {'uuid': str(uuid.uuid4()).replace('-', ''), 'submitted_at': arrow.get('2016-10-13 16:40:00').datetime, 'done_at': arrow.get('2016-10-13 16:40:30').datetime, 'file_url': 'http://www.kozco.com/tech/piano2.wav'},
-        {'uuid': str(uuid.uuid4()).replace('-', ''), 'submitted_at': arrow.get('2016-10-13 14:35:00').datetime, 'done_at': None, 'file_url': None},
+        {'uuid': str(uuid.uuid4()).replace('-', ''), 'submitted_at': arrow.get('2016-10-12 11:30:00').datetime, 'done_at': None, 'file_url': 'http://www.kozco.com/tech/piano2.wav'},
+        {'uuid': str(uuid.uuid4()).replace('-', ''), 'submitted_at': arrow.get('2016-10-26 22:20:00').datetime, 'done_at': arrow.get('2016-10-13 16:40:30').datetime, 'file_url': 'http://www.kozco.com/tech/piano2.wav'},
+        {'uuid': str(uuid.uuid4()).replace('-', ''), 'submitted_at': arrow.get('2016-10-06 18:10:00').datetime, 'done_at': None, 'file_url': None}
     ]
 
+    ACRCloud = AudioDatabase.query.filter_by(class_name = 'ACRCloud').first()
+
     for one_fake_sample in fake_samples:
-        db.session.add(models.Sample(uuid=one_fake_sample['uuid'], submitted_at=one_fake_sample['submitted_at'], done_at=one_fake_sample['done_at'], file_url=one_fake_sample['file_url']))
+        fake_sample = Sample(
+            uuid=one_fake_sample['uuid'],
+            submitted_at=one_fake_sample['submitted_at'],
+            done_at=one_fake_sample['done_at'],
+            file_url=one_fake_sample['file_url']
+        )
+
+        db.session.add(fake_sample)
+        db.session.flush()
+
+        db.session.add(SampleResult(
+            is_final=True,
+            status=SampleResultStatus.success,
+            sample=fake_sample,
+            audio_database=ACRCloud,
+            artist='AC/DC',
+            title='Hells Bells'
+        ))
+
+    db.session.commit()
+
+
+@app.cli.command()
+def migrate_database():
+    """Migrate the data from MongoDB to the SQL database."""
+
+    mongo = get_database()
+
+    news_mongo = get_news_list(mongo, admin=True)
+
+    for one_news_mongo in news_mongo:
+        db.session.add(News(
+            slug=one_news_mongo['slug'],
+            title=one_news_mongo['title'],
+            date=one_news_mongo['date'].datetime if 'date' in one_news_mongo and one_news_mongo['date'] is not None else None,
+            content=one_news_mongo['content'],
+            tags=','.join(one_news_mongo['tags']) if 'tags' in one_news_mongo and one_news_mongo['tags'] is not None else None
+        ))
 
     db.session.commit()
 
