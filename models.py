@@ -5,28 +5,33 @@ import arrow
 
 class News(db.Model):
     class NewsQuery(db.Query):
-        def get_news_list(self, limit=None, admin=False, tag=None):
+        def get_many(self, limit=None, admin=False, tag=None):
+            q = self.order_by(News.date.desc())
+
             if not admin:
-                self.filter(News.date != None, News.date <= arrow.now().datetime)
+                q = q.filter(News.date != None, News.date <= arrow.now().datetime)
 
             if tag is not None:
-                self.filter(News.tags.like('%'+tag+'%'))
+                pass # TODO
 
             if limit is not None:
-                self.limit(limit)
+                q.limit(limit)
 
-            self.order_by(News.date.desc())
+            return q.all()
 
-            return self.all()
+        def get_one_by_slug(self, slug):
+            q = self.filter(News.slug == slug)
 
-        def get_one_news_by_slug(self, slug):
-            return self.filter(News.slug == slug).first()
+            return q.first()
 
-        def get_all_news_tags(self):
-            return self.filter(News.date != None, News.date <= arrow.now().datetime).distinct(News.tags)
+        def get_all_tags(self):
+            return ['TODO'] # TODO
 
-        def get_latest_news(self):
-            return self.filter(News.date != None, News.date <= arrow.now().datetime).order_by(News.date.desc()).first()
+        def get_latest(self):
+            q = self.filter(News.date != None, News.date <= arrow.now().datetime)
+            q.order_by(News.date.desc())
+
+            return q.first()
 
     __tablename__ = 'news'
     query_class = NewsQuery

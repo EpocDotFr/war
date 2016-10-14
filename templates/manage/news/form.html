@@ -8,14 +8,14 @@
     <div style="width:50%">
         <div class="group">
             <label for="date">Date</label>
-            <input type="datetime" name="date" id="date" value="{{ the_news.date.format('YYYY-MM-DD HH:mm') if the_news and the_news.date }}" placeholder="YYYY-MM-DD HH:mm (leave blank to set as draft)">
+            <input type="datetime" name="date" id="date" value="{{ the_news.date_arrowed.format('YYYY-MM-DD HH:mm') if the_news and the_news.date }}" placeholder="YYYY-MM-DD HH:mm (leave blank to set as draft)">
         </div>
     </div>
 </div>
 
 <div class="group">
     <label>Tags</label>
-    <input type="text" name="tags" id="tags" value="{{ ', '.join(the_news.tags) if the_news and the_news.tags }}" required placeholder="Comma-separated list of words">
+    <input type="text" name="tags" id="tags" value="{{ ', '.join(the_news.tags_list) if the_news and the_news.tags }}" required placeholder="Comma-separated list of words">
 </div>
 
 <div class="group">

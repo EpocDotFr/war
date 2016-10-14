@@ -2,6 +2,7 @@ from flask import Response, jsonify, url_for, flash, redirect
 from war import *
 from urllib.parse import quote_plus
 from flask_misaka import markdown
+from slugify import slugify
 import xmlrpc.client
 import bson
 import PyRSS2Gen
@@ -20,7 +21,7 @@ def home():
 
     global_stats = get_global_stats(mongo_db)
 
-    latest_news = News.query.get_latest_news()
+    latest_news = News.query.get_latest()
 
     latest_success_samples = get_latest_success_samples(mongo_db)
 
@@ -72,12 +73,12 @@ def stats():
 @app.route('/news', defaults={'tag': None})
 @app.route('/news/tag/<tag>')
 def news(tag):
-    news_list = News.query.get_news_list(tag=tag)
+    news_list = News.query.get_many(tag=tag)
 
     all_tags = None
 
     if tag is None:
-        all_tags = News.query.get_all_news_tags()
+        all_tags = News.query.get_all_tags()
 
     return render_template('news/list.html', news_list=news_list, tag=tag, all_tags=all_tags)
 
@@ -85,7 +86,7 @@ def news(tag):
 # RSS of the news
 @app.route('/news/rss')
 def news_rss():
-    news_list = News.query.get_news_list(limit=5)
+    news_list = News.query.get_many(limit=5)
 
     rss_items = []
 
@@ -117,7 +118,7 @@ def news_rss():
 # One news
 @app.route('/news/<slug>')
 def one_news(slug):
-    the_news = News.query.get_one_news_by_slug( slug)
+    the_news = News.query.get_one_by_slug(slug)
 
     if the_news is None:
         abort(404)
@@ -251,7 +252,7 @@ def latest_recognitions_rss():
 def sitemap_xml():
     app_routes = []
 
-    news_list = News.query.get_news_list()
+    news_list = News.query.get_many()
 
     for one_news in news_list:
         app_routes.append(url_for('one_news', slug=one_news.slug, _external=True))
@@ -267,7 +268,7 @@ def sitemap_xml():
 def manage():
     mongo_db = get_database()
 
-    news_list = News.query.get_news_list(admin=True)
+    news_list = News.query.get_many(admin=True)
     global_stats = get_global_stats(mongo_db)
 
     return render_template('manage/home.html', news_list=news_list, global_stats=global_stats)
@@ -340,18 +341,23 @@ def manage_get_data():
 @app.route('/manage/news/create', methods=['GET', 'POST'])
 @auth.login_required
 def news_create():
-    db = get_database()
-
     if request.method == 'POST':
-        create_one_news_result = create_one_news(db, request.form['title'], request.form['content'],
-                                                 request.form['date'] if request.form['date'] != '' else None,
-                                                 request.form['tags'] if request.form['tags'] != '' else None)
+        try:
+            the_news = News(
+                title=request.form['title'],
+                slug=slugify(request.form['title']),
+                content=request.form['content'],
+                date=arrow.get(request.form['date']).datetime if request.form['date'] != '' else None,
+                tags=None # TODO
+            )
 
-        if create_one_news_result.inserted_id:
+            db.session.add(the_news)
+            db.session.commit()
+
             flash('News created successfuly.', 'success')
 
-            return redirect(url_for('news_edit', news_id=str(create_one_news_result.inserted_id)))
-        else:
+            return redirect(url_for('news_edit', news_id=the_news.id))
+        except Exception as e:
             flash('Error creating this news.', 'error')
 
     return render_template('manage/news/create.html')
@@ -361,21 +367,26 @@ def news_create():
 @app.route('/manage/news/edit/<news_id>', methods=['GET', 'POST'])
 @auth.login_required
 def news_edit(news_id):
-    db = get_database()
-
-    the_news = get_one_news_by_id(db, news_id)
+    the_news = News.query.get(news_id)
 
     if the_news is None:
         abort(404)
 
     if request.method == 'POST':
-        if update_one_news(db, news_id, request.form['title'], request.form['content'],
-                           request.form['date'] if request.form['date'] != '' else None,
-                           request.form['tags'] if request.form['tags'] != '' else None):
+        try:
+            the_news.title = request.form['title']
+            the_news.slug = slugify(request.form['title'])
+            the_news.content = request.form['content']
+            the_news.date = arrow.get(request.form['date']).datetime if request.form['date'] != '' else None
+            the_news.tags = None # TODO
+
+            db.session.add(the_news)
+            db.session.commit()
+
             flash('News edited successfuly.', 'success')
 
-            return redirect(url_for('news_edit', news_id=the_news['_id']))
-        else:
+            return redirect(url_for('news_edit', news_id=the_news.id))
+        except Exception as e:
             flash('Error editing this news.', 'error')
 
     return render_template('manage/news/edit.html', the_news=the_news)
@@ -385,11 +396,17 @@ def news_edit(news_id):
 @app.route('/manage/news/delete/<news_id>')
 @auth.login_required
 def news_delete(news_id):
-    db = get_database()
+    the_news = News.query.get(news_id)
 
-    if delete_one_news(db, news_id):
+    if the_news is None:
+        abort(404)
+
+    try:
+        db.session.delete(the_news)
+        db.session.commit()
+
         flash('News deleted successfuly.', 'success')
-    else:
+    except Exception as e:
         flash('Error deleting this news.', 'error')
 
     return redirect(url_for('manage'))
