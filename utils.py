@@ -2,7 +2,6 @@ from bson.objectid import ObjectId
 from flask import g
 from pymongo import MongoClient
 from pystalkd import Beanstalkd
-from slugify import slugify
 from war import app
 import sample_store
 import arrow
