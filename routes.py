@@ -78,7 +78,7 @@ def news(tag):
     all_tags = None
 
     if tag is None:
-        all_tags = Tag.query.get_all_distinct()
+        all_tags = Tag.query.get_all()
 
     return render_template('news/list.html', news_list=news_list, tag=tag, all_tags=all_tags)
 
@@ -348,7 +348,7 @@ def news_create():
                 slug=slugify(request.form['title']),
                 content=request.form['content'],
                 date=arrow.get(request.form['date']).datetime if request.form['date'] != '' else None,
-                tags=[] # TODO
+                tags=Tag.query.create_or_get([tag.strip() for tag in request.form['tags'].split(',')])
             )
 
             db.session.add(the_news)
@@ -378,7 +378,7 @@ def news_edit(news_id):
             the_news.slug = slugify(request.form['title'])
             the_news.content = request.form['content']
             the_news.date = arrow.get(request.form['date']).datetime if request.form['date'] != '' else None
-            the_news.tags = [] # TODO
+            the_news.tags = Tag.query.create_or_get([tag.strip() for tag in request.form['tags'].split(',')])
 
             db.session.add(the_news)
             db.session.commit()

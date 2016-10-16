@@ -10,14 +10,29 @@ news_tags_table = db.Table('news_tags',
 
 class Tag(db.Model):
     class TagQuery(db.Query):
-        def get_all_distinct(self):
+        def get_all(self):
             q = self.filter(News.date != None, News.date <= arrow.now().datetime)
-            q = q.distinct(Tag.name)
-            q = q.group_by(Tag.name)
 
             results = q.all()
 
             return [tag.name for tag in results]
+
+        def create_or_get(self, tags_list):
+            q = self.filter(Tag.name.in_(tags_list))
+
+            results = q.all()
+
+            ret = []
+
+            for list_tag in tags_list:
+                for res_tag in results:
+                    if list_tag == res_tag.name:
+                        ret.append(res_tag)
+                        break
+                else:
+                    ret.append(Tag(name=list_tag))
+
+            return ret
 
     __tablename__ = 'tags'
     query_class = TagQuery
