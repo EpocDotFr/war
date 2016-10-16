@@ -78,7 +78,7 @@ def news(tag):
     all_tags = None
 
     if tag is None:
-        all_tags = News.query.get_all_tags()
+        all_tags = Tag.query.get_all_distinct()
 
     return render_template('news/list.html', news_list=news_list, tag=tag, all_tags=all_tags)
 

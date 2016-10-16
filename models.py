@@ -4,12 +4,21 @@ import arrow
 
 
 news_tags_table = db.Table('news_tags',
-    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'), nullable=False),
-    db.Column('news_id', db.Integer, db.ForeignKey('news.id'), nullable=False)
+    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'), primary_key=True, nullable=False),
+    db.Column('news_id', db.Integer, db.ForeignKey('news.id'), primary_key=True, nullable=False)
 )
 
 class Tag(db.Model):
+    class TagQuery(db.Query):
+        def get_all_distinct(self):
+            # q = self.filter(Tag.news.date != None, Tag.news.date <= arrow.now().datetime) # TODO
+
+            results = self.distinct(Tag.name).all()
+
+            return [tag.name for tag in results]
+
     __tablename__ = 'tags'
+    query_class = TagQuery
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
@@ -28,10 +37,10 @@ class News(db.Model):
                 q = q.filter(News.date != None, News.date <= arrow.now().datetime)
 
             if tag is not None:
-                pass # TODO
+                q = q.filter(News.tags.any(Tag.name == tag))
 
             if limit is not None:
-                q.limit(limit)
+                q = q.limit(limit)
 
             return q.all()
 
@@ -42,7 +51,7 @@ class News(db.Model):
 
         def get_latest(self):
             q = self.filter(News.date != None, News.date <= arrow.now().datetime)
-            q.order_by(News.date.desc())
+            q = q.order_by(News.date.desc())
 
             return q.first()
 
@@ -73,6 +82,9 @@ class News(db.Model):
     def date_arrowed(self):
         return arrow.get(self.date) if self.date is not None else None
 
+    @property
+    def tags_list(self):
+        return [tag.name for tag in self.tags]
 
 class AudioDatabase(db.Model):
     __tablename__ = 'audio_databases'
