@@ -15,7 +15,7 @@ The **WAR** (Web Audio Recognizer) website (https://thisiswar.online/).
   - uWSGI
   - Beanstalkd
   - Supervisord
-  - MongoDB
+  - Any SQL database supported by SQLAlchemy
   - A Pusher account
   - A Bugsnag account
   - A Gauges account

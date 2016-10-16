@@ -38,6 +38,45 @@ def get_push():
     return g.push
 
 
+# TODO TO BE REMOVED
+def get_news_list(db, limit=None, admin=False, tag=None):
+    params = {}
+
+    if not admin:
+        params = {'date': {'$ne': None, '$lte': arrow.now().datetime}}
+
+    if tag is not None:
+        params.update({'tags': {'$eq': tag}})
+
+    news_list_db = db.news.find(params).sort('date', -1)
+
+    if limit is not None:
+        news_list_db = news_list_db.limit(limit)
+
+    news_list = []
+
+    for the_news in news_list_db:
+        news_list.append(_get_one_news(the_news))
+
+    return news_list
+
+
+# TODO TO BE REMOVED
+def _get_one_news(the_news=None):
+    if the_news is None:
+        return None
+
+    the_news = dict(the_news)
+
+    if the_news['date'] is not None:
+        the_news['date'] = arrow.get(the_news['date'])
+
+    if 'tags' not in the_news or the_news['tags'] is None:
+        the_news['tags'] = []
+
+    return the_news
+
+
 def create_one_sample(db):
     data = {
         'done': False,
