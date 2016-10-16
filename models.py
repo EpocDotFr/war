@@ -11,7 +11,7 @@ news_tags_table = db.Table('news_tags',
 class Tag(db.Model):
     class TagQuery(db.Query):
         def get_all(self):
-            q = self.filter(News.date != None, News.date <= arrow.now().datetime)
+            q = self.join(Tag.news).filter(News.date != None, News.date <= arrow.now().datetime)
 
             results = q.all()
 
