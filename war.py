@@ -32,6 +32,10 @@ if not app.config['DEBUG']:
 else:
     import logging
     from logging.handlers import RotatingFileHandler
+    from flask_debugtoolbar import DebugToolbarExtension
+
+    app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
+    toolbar = DebugToolbarExtension(app)
 
     formatter = logging.Formatter("[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s")
     handler = RotatingFileHandler(os.path.join(app.config['LOGS_PATH'], 'app.log'), maxBytes=10000, backupCount=1)

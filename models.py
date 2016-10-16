@@ -4,16 +4,18 @@ import arrow
 
 
 news_tags_table = db.Table('news_tags',
-    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'), primary_key=True, nullable=False),
-    db.Column('news_id', db.Integer, db.ForeignKey('news.id'), primary_key=True, nullable=False)
+    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id', ondelete='delete'), primary_key=True, nullable=False),
+    db.Column('news_id', db.Integer, db.ForeignKey('news.id', ondelete='delete'), primary_key=True, nullable=False)
 )
 
 class Tag(db.Model):
     class TagQuery(db.Query):
         def get_all_distinct(self):
-            # q = self.filter(Tag.news.date != None, Tag.news.date <= arrow.now().datetime) # TODO
+            q = self.filter(News.date != None, News.date <= arrow.now().datetime)
+            q = q.distinct(Tag.name)
+            q = q.group_by(Tag.name)
 
-            results = self.distinct(Tag.name).all()
+            results = q.all()
 
             return [tag.name for tag in results]
 
@@ -22,7 +24,7 @@ class Tag(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-    name = db.Column(db.String(255), nullable=False)
+    name = db.Column(db.String(255), unique=True, nullable=False)
 
     def __init__(self, name):
         self.name = name
@@ -143,8 +145,8 @@ class RecognitionResult(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-    sample_id = db.Column(db.Integer, db.ForeignKey('samples.id'), nullable=False)
-    audio_database_id = db.Column(db.Integer, db.ForeignKey('audio_databases.id'), nullable=False)
+    sample_id = db.Column(db.Integer, db.ForeignKey('samples.id', ondelete='delete'), nullable=False)
+    audio_database_id = db.Column(db.Integer, db.ForeignKey('audio_databases.id', ondelete='delete'), nullable=False)
     is_final = db.Column(db.Boolean, default=False, nullable=False)
     status = db.Column(db.Enum(RecognitionResultStatus), nullable=False)
 

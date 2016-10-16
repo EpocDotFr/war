@@ -2,6 +2,7 @@ flask
 Flask-HTTPAuth
 Flask-SQLAlchemy
 Flask-Misaka
+flask-debugtoolbar
 SQLAlchemy
 pymysql
 requests

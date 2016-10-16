@@ -348,7 +348,7 @@ def news_create():
                 slug=slugify(request.form['title']),
                 content=request.form['content'],
                 date=arrow.get(request.form['date']).datetime if request.form['date'] != '' else None,
-                tags=None # TODO
+                tags=[] # TODO
             )
 
             db.session.add(the_news)
@@ -378,7 +378,7 @@ def news_edit(news_id):
             the_news.slug = slugify(request.form['title'])
             the_news.content = request.form['content']
             the_news.date = arrow.get(request.form['date']).datetime if request.form['date'] != '' else None
-            the_news.tags = None # TODO
+            the_news.tags = [] # TODO
 
             db.session.add(the_news)
             db.session.commit()
