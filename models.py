@@ -3,6 +3,22 @@ from enum import Enum
 import arrow
 
 
+news_tags_table = db.Table('news_tags',
+    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'), nullable=False),
+    db.Column('news_id', db.Integer, db.ForeignKey('news.id'), nullable=False)
+)
+
+class Tag(db.Model):
+    __tablename__ = 'tags'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+    name = db.Column(db.String(255), nullable=False)
+
+    def __init__(self, name):
+        self.name = name
+
+
 class News(db.Model):
     class NewsQuery(db.Query):
         def get_many(self, limit=None, admin=False, tag=None):
@@ -24,9 +40,6 @@ class News(db.Model):
 
             return q.first()
 
-        def get_all_tags(self):
-            return ['TODO'] # TODO
-
         def get_latest(self):
             q = self.filter(News.date != None, News.date <= arrow.now().datetime)
             q.order_by(News.date.desc())
@@ -43,7 +56,7 @@ class News(db.Model):
 
     date = db.Column(db.DateTime)
     content = db.Column(db.Text)
-    tags = db.Column(db.String(255))
+    tags = db.relationship('Tag', secondary=news_tags_table, backref=db.backref('news', lazy='dynamic'))
 
     def __init__(self, slug, title, date=None, content=None, tags=None):
         self.slug = slug
@@ -55,10 +68,6 @@ class News(db.Model):
 
     def __repr__(self):
         return '<News> #{} : {}'.format(self.id, self.title)
-
-    @property
-    def tags_list(self):
-        return self.tags.split(',') if self.tags is not None else None
 
     @property
     def date_arrowed(self):

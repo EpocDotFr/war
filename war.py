@@ -88,11 +88,15 @@ def base_seed_database():
 def fake_seed_database():
     """Seeds the database with fake data."""
 
+    fake_tag_1 = Tag(name='gtof')
+    fake_tag_2 = Tag(name='hey fucker')
+    fake_tag_3 = Tag(name='this is a very long tag gentlemens')
+
     fake_news = [
-        {'slug': 'ahah-ahah-ah', 'title': 'Ahah ahah AH', 'date': arrow.get('2016-10-12 18:00:00').datetime, 'content': '*Some* _fucking_ [markdown](https://epoc.fr)', 'tags': 'gtfo'},
-        {'slug': 'blah-blah', 'title': 'Blah blah', 'date': arrow.get('2016-10-11 15:45:00').datetime, 'content': '*Some* _fucking_ [markdown](https://epoc.fr)', 'tags': 'hey'},
-        {'slug': 'this-is-a-test-draft', 'title': 'THIS is a test draft!', 'date': None, 'content': '*Some* _fucking_ [markdown](https://epoc.fr)', 'tags': ''},
-        {'slug': 'one-more', 'title': 'One more', 'date': arrow.get('2016-10-09 10:30:00').datetime, 'content': '*Some* _fucking_ [markdown](https://epoc.fr)', 'tags': 'gtfo,hey'}
+        {'slug': 'ahah-ahah-ah', 'title': 'Ahah ahah AH', 'date': arrow.get('2016-10-12 18:00:00').datetime, 'content': '*Some* _fucking_ [markdown](https://epoc.fr)', 'tags': [fake_tag_1]},
+        {'slug': 'blah-blah', 'title': 'Blah blah', 'date': arrow.get('2016-10-11 15:45:00').datetime, 'content': '*Some* _fucking_ [markdown](https://epoc.fr)', 'tags': [fake_tag_1, fake_tag_2]},
+        {'slug': 'this-is-a-test-draft', 'title': 'THIS is a test draft!', 'date': None, 'content': '*Some* _fucking_ [markdown](https://epoc.fr)', 'tags': []},
+        {'slug': 'one-more', 'title': 'One more', 'date': arrow.get('2016-10-09 10:30:00').datetime, 'content': '*Some* _fucking_ [markdown](https://epoc.fr)', 'tags': [fake_tag_1, fake_tag_2, fake_tag_3]}
     ]
 
     for one_fake_news in fake_news:
@@ -140,19 +144,25 @@ def fake_seed_database():
 
 @app.cli.command()
 def migrate_database():
-    """Migrate the data from MongoDB to the SQL database."""
+    """Migrate the data from MongoDB."""
 
     mongo = get_database()
 
     mongo_news = get_news_list(mongo, admin=True)
 
     for one_mongo_news in mongo_news:
+        sql_tags = []
+
+        if 'tags' in one_mongo_news and one_mongo_news['tags'] is not None:
+            for mongo_tag in one_mongo_news['tags']:
+                sql_tags.append(Tag(name=mongo_tag))
+
         db.session.add(News(
             slug=one_mongo_news['slug'],
             title=one_mongo_news['title'],
             date=one_mongo_news['date'].datetime if 'date' in one_mongo_news and one_mongo_news['date'] is not None else None,
             content=one_mongo_news['content'],
-            tags=','.join(one_mongo_news['tags']) if 'tags' in one_mongo_news and one_mongo_news['tags'] is not None else None
+            tags=sql_tags
         ))
 
     db.session.commit()
