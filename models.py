@@ -125,8 +125,8 @@ class AudioDatabase(db.Model):
         return '<AudioDatabase> #{} : {}'.format(self.id, self.name)
 
 
-class Sample(db.Model):
-    __tablename__ = 'samples'
+class RecognitionRequest(db.Model):
+    __tablename__ = 'recognition_requests'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
@@ -134,19 +134,19 @@ class Sample(db.Model):
     submitted_at = db.Column(db.DateTime, nullable=False)
 
     done_at = db.Column(db.DateTime,)
-    wav_file_url = db.Column(db.String(255))
+    sample_wav_url = db.Column(db.String(255))
 
-    recognition_results = db.relationship('RecognitionResult', backref=db.backref('sample', lazy='joined'))
+    recognition_results = db.relationship('RecognitionResult', backref=db.backref('recognition_request', lazy='joined'))
 
-    def __init__(self, uuid, submitted_at, done_at=None, wav_file_url=None):
+    def __init__(self, uuid, submitted_at, done_at=None, sample_wav_url=None):
         self.uuid = uuid
         self.submitted_at = submitted_at
 
         self.done_at = done_at
-        self.wav_file_url = wav_file_url
+        self.sample_wav_url = sample_wav_url
 
     def __repr__(self):
-        return '<Sample> #{} : {}'.format(self.id, self.uuid)
+        return '<RecognitionRequest> #{} : {}'.format(self.id, self.uuid)
 
 
 class RecognitionResultStatus(Enum):
@@ -165,7 +165,7 @@ class RecognitionResult(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-    sample_id = db.Column(db.Integer, db.ForeignKey('samples.id', ondelete='cascade'), nullable=False)
+    recognition_request_id = db.Column(db.Integer, db.ForeignKey('recognition_requests.id', ondelete='cascade'), nullable=False)
     audio_database_id = db.Column(db.Integer, db.ForeignKey('audio_databases.id', ondelete='cascade'), nullable=False)
     is_final = db.Column(db.Boolean, default=False, nullable=False)
     status = db.Column(db.Enum(RecognitionResultStatus), nullable=False)
@@ -174,7 +174,7 @@ class RecognitionResult(db.Model):
     title = db.Column(db.String(255))
     infos = db.Column(db.Text)
 
-    def __init__(self, is_final, status, sample, audio_database, artist=None, title=None, infos=None):
+    def __init__(self, is_final, status, recognition_request, audio_database, artist=None, title=None, infos=None):
         self.is_final = is_final
         self.status = status
 
@@ -182,7 +182,7 @@ class RecognitionResult(db.Model):
         self.title = title
         self.infos = infos
 
-        self.sample = sample
+        self.recognition_request = recognition_request
         self.audio_database = audio_database
 
     def __repr__(self):
