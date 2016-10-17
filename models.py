@@ -104,7 +104,15 @@ class News(db.Model):
         return [tag.name for tag in self.tags]
 
 class AudioDatabase(db.Model):
+    class AudioDatabaseQuery(db.Query):
+        def get_stats(self):
+            pass
+            # TODO audio DB active onyly, only recognition requests with success or failed final result
+            # audio DB name, total, total success, percent success, total failure, percent failure
+            # total          total, total success, percent success, total failure, percent failure
+
     __tablename__ = 'audio_databases'
+    query_class = AudioDatabaseQuery
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
