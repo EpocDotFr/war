@@ -156,7 +156,12 @@ class RecognitionResultStatus(Enum):
 
 
 class RecognitionResult(db.Model):
+    class RecognitionResultQuery(db.Query):
+        def get_many(self):
+            pass
+
     __tablename__ = 'recognition_results'
+    query_class = RecognitionResultQuery
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
