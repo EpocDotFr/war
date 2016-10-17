@@ -157,9 +157,8 @@ def migrate_database():
     for one_mongo_news in mongo_news:
         sql_tags = []
 
-        if 'tags' in one_mongo_news and one_mongo_news['tags'] is not None:
-            for mongo_tag in one_mongo_news['tags']:
-                sql_tags.append(Tag(name=mongo_tag))
+        if 'tags' in one_mongo_news and one_mongo_news['tags']:
+            sql_tags = Tag.query.create_or_get(one_mongo_news['tags'])
 
         db.session.add(News(
             slug=one_mongo_news['slug'],
@@ -169,7 +168,7 @@ def migrate_database():
             tags=sql_tags
         ))
 
-    db.session.commit()
+        db.session.commit()
 
     mongo_samples = mongo.samples.find()
 
@@ -208,7 +207,7 @@ def migrate_database():
                 infos=audio_db['data']['message'] if 'message' in audio_db['data'] else None
             ))
 
-    db.session.commit()
+        db.session.commit()
 
 
 @app.cli.command()

@@ -4,8 +4,8 @@ import arrow
 
 
 news_tags_table = db.Table('news_tags',
-    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id', ondelete='delete'), primary_key=True, nullable=False),
-    db.Column('news_id', db.Integer, db.ForeignKey('news.id', ondelete='delete'), primary_key=True, nullable=False)
+    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id', ondelete='cascade'), primary_key=True, nullable=False),
+    db.Column('news_id', db.Integer, db.ForeignKey('news.id', ondelete='cascade'), primary_key=True, nullable=False)
 )
 
 class Tag(db.Model):
@@ -160,8 +160,8 @@ class RecognitionResult(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-    sample_id = db.Column(db.Integer, db.ForeignKey('samples.id', ondelete='delete'), nullable=False)
-    audio_database_id = db.Column(db.Integer, db.ForeignKey('audio_databases.id', ondelete='delete'), nullable=False)
+    sample_id = db.Column(db.Integer, db.ForeignKey('samples.id', ondelete='cascade'), nullable=False)
+    audio_database_id = db.Column(db.Integer, db.ForeignKey('audio_databases.id', ondelete='cascade'), nullable=False)
     is_final = db.Column(db.Boolean, default=False, nullable=False)
     status = db.Column(db.Enum(RecognitionResultStatus), nullable=False)
 
