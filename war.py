@@ -71,9 +71,9 @@ def base_seed_database():
 
     audio_databases = [
         {'name': 'ACRCloud', 'class_name': 'ACRCloud', 'website': 'https://www.acrcloud.com/', 'is_enabled': True},
-        {'name': 'Gracenote MusicID', 'class_name': 'GracenoteMusicID', 'website': 'http://www.gracenote.com/', 'is_enabled': False},
+        {'name': 'Gracenote', 'class_name': 'Gracenote', 'website': 'http://www.gracenote.com/', 'is_enabled': False},
         {'name': 'Audible Magic', 'class_name': 'AudibleMagic', 'website': 'http://www.audiblemagic.com/', 'is_enabled': False},
-        {'name': 'Mufin AudioID', 'class_name': 'MufinAudioID', 'website': 'https://www.mufin.com/', 'is_enabled': False},
+        {'name': 'Mufin', 'class_name': 'Mufin', 'website': 'https://www.mufin.com/', 'is_enabled': False},
         {'name': 'AcoustID', 'class_name': 'AcoustID', 'website': 'https://acoustid.org/', 'is_enabled': False},
         {'name': 'Doreso', 'class_name': 'Doreso', 'website': 'http://www.doreso.com/en/index.html', 'is_enabled': False},
         {'name': 'Enswers', 'class_name': 'Enswers', 'website': 'http://www.enswers.net/', 'is_enabled': False},
@@ -124,6 +124,8 @@ def fake_seed_database():
     ]
 
     ACRCloud = AudioDatabase.query.filter_by(class_name = 'ACRCloud').first()
+    Gracenote = AudioDatabase.query.filter_by(class_name = 'Gracenote').first()
+    AudibleMagic = AudioDatabase.query.filter_by(class_name = 'AudibleMagic').first()
 
     for one_fake_sample in fake_samples:
         fake_recognition_request = RecognitionRequest(
@@ -143,6 +145,21 @@ def fake_seed_database():
             audio_database=ACRCloud,
             artist='AC/DC',
             title='Hells Bells'
+        ))
+
+        db.session.add(RecognitionResult(
+            is_final=False,
+            status=RecognitionResultStatus.failure,
+            recognition_request=fake_recognition_request,
+            audio_database=Gracenote
+        ))
+
+        db.session.add(RecognitionResult(
+            is_final=False,
+            status=RecognitionResultStatus.error,
+            recognition_request=fake_recognition_request,
+            audio_database=AudibleMagic,
+            infos='Test error message'
         ))
 
     db.session.commit()

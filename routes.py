@@ -62,6 +62,9 @@ def stats():
     top_recognized_artists = get_top_recognized_artists(mongo_db)
     top_recognized_tracks = get_top_recognized_tracks(mongo_db)
 
+    # TODO TEMPORARY
+    print(AudioDatabase.query.get_stats())
+
     return render_template('stats.html',
                            audio_databases=audio_databases,
                            global_stats=global_stats,

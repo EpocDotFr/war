@@ -120,7 +120,7 @@ class ACRCloud(AudioDatabaseInterface):
         return results
 
 
-class GracenoteMusicID(AudioDatabaseInterface):
+class Gracenote(AudioDatabaseInterface):
     def get_website(self):
         return 'http://www.gracenote.com/'
 
@@ -142,7 +142,7 @@ class AudibleMagic(AudioDatabaseInterface):
         pass
 
 
-class MufinAudioID(AudioDatabaseInterface):
+class Mufin(AudioDatabaseInterface):
     def get_website(self):
         return 'https://www.mufin.com/'
 
