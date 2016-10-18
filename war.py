@@ -71,10 +71,12 @@ def base_seed_database():
 
     audio_databases = [
         {'name': 'ACRCloud', 'class_name': 'ACRCloud', 'website': 'https://www.acrcloud.com/', 'is_enabled': True},
-        {'name': 'Gracenote', 'class_name': 'Gracenote', 'website': 'http://www.gracenote.com/', 'is_enabled': False},
+        {'name': 'Gracenote MusicID', 'class_name': 'GracenoteMusicID', 'website': 'http://www.gracenote.com/', 'is_enabled': False},
         {'name': 'Audible Magic', 'class_name': 'AudibleMagic', 'website': 'http://www.audiblemagic.com/', 'is_enabled': False},
         {'name': 'Mufin AudioID', 'class_name': 'MufinAudioID', 'website': 'https://www.mufin.com/', 'is_enabled': False},
         {'name': 'AcoustID', 'class_name': 'AcoustID', 'website': 'https://acoustid.org/', 'is_enabled': False},
+        {'name': 'Doreso', 'class_name': 'Doreso', 'website': 'http://www.doreso.com/en/index.html', 'is_enabled': False},
+        {'name': 'Enswers', 'class_name': 'Enswers', 'website': 'http://www.enswers.net/', 'is_enabled': False},
     ]
 
     for one_audio_database in audio_databases:
