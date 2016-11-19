@@ -9,7 +9,7 @@ PyRSS2Gen
 psutil
 python-slugify
 blinker
-bugsnag
+bugsnag[flask]
 Flask-Misaka
 python-swiftclient
 python-keystoneclient
