@@ -12,7 +12,7 @@ pusher
 PyRSS2Gen
 psutil
 blinker
-bugsnag
+bugsnag[flask]
 python-swiftclient
 python-keystoneclient
 python-slugify
