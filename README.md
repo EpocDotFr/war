@@ -1,3 +1,5 @@
+> **Notice: this project is defunct.**
+
 # WAR (Web Audio Recognizer)
 
 The **WAR** (Web Audio Recognizer) website (https://thisiswar.online/).
@@ -5,8 +7,6 @@ The **WAR** (Web Audio Recognizer) website (https://thisiswar.online/).
   - Twitter: [@WebAudioReco](https://twitter.com/WebAudioReco)
   - Facebook: [WebAudioReco](https://www.facebook.com/WebAudioReco)
   - Email: [hello[at]thisiswar[dot]online](mailto:hello[at]thisiswar[dot]online)
-
-> Folders that starts with a `_` character should never be pushed to production.
 
 ## Prerequisites
 
@@ -26,29 +26,3 @@ The **WAR** (Web Audio Recognizer) website (https://thisiswar.online/).
   1. Clone this repo
   2. Create a Python 3.5 virtualenv in the `venv` directory (at the root of the cloned repo)
   3. Then the usual `source venv/bin/activate` and `pip install --upgrade -r requirements.txt`
-
-## Configuration
-
-### Nginx
-
-```
-TODO
-```
-
-### uWSGI
-
-```
-TODO
-```
-
-### Beanstalkd
-
-```
-TODO
-```
-
-### Supervisord
-
-```
-TODO
-```
