@@ -1,4 +1,8 @@
-> **Notice: this project is defunct.**
+#### DEPRECATION WARNING
+
+This project is defunct and is no longer maintained.
+
+----
 
 # WAR (Web Audio Recognizer)
 
